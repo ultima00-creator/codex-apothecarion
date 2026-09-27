@@ -39,7 +39,7 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
     <article className="space-y-5">
       <header>
         <p className="text-xs tracking-[0.2em] text-bronze uppercase">{kind === "peptide" ? "Peptídeo" : "Hormônio"}</p>
-        <h2 className="font-display text-3xl">{record.compound}</h2>
+        <h2 className="subject">{record.compound}</h2>
         <p className="text-muted">{record.form}</p>
         <p className="mt-2 text-sm">Meia-vida: {curve.half_life_days ?? "—"} dias. Classe: {wiki ? wiki.classes.map(classePt).join(", ") : "sem ficha na wiki"}. Descrição: {wiki?.lead_pt ? "da wiki, abaixo" : "a wiki não tem esta página"}.</p>
       </header>

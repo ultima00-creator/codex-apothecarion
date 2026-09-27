@@ -48,7 +48,7 @@ function CodexRow({ hit, favs, onToggle }: { hit: Hit; favs: Fav[]; onToggle: (h
   const on = favs.some((item) => item.kind === hit.kind && item.id === hit.id);
   return (
     <li className="border-b border-rule py-3">
-      <p className="font-display text-2xl leading-tight">{hit.title}</p>
+      <p className="datum">{hit.title}</p>
       <p className="text-sm text-muted">{hit.detail}</p>
       <div className="mt-2 flex flex-wrap gap-2">
         <Link to="/abrir/$kind/$id" params={{ kind: hit.kind, id: hit.id }} className="chip">Ler</Link>

@@ -32,20 +32,20 @@ export function WikiSheet({ slug }: { slug: string }) {
     <article className="space-y-5">
       <header>
         <p className="text-xs tracking-[0.2em] text-bronze uppercase">Wiki</p>
-        <h2 className="font-display text-3xl">{wikiTitle(row.slug, row.name)}</h2>
+        <h2 className="subject">{wikiTitle(row.slug, row.name)}</h2>
         {row.classes.length > 0 ? <p className="text-muted">{row.classes.map(classePt).join(" · ")}</p> : null}
         {row.commonNames.length > 0 ? <p className="text-sm">Também: {row.commonNames.join(", ")}</p> : null}
       </header>
       {row.lead_pt ? <p>{row.lead_pt}</p> : <p className="text-muted">A página não trouxe um parágrafo de abertura.</p>}
       <p className="text-sm">Meia-vida de eliminação: não está na ficha salva. A duração abaixo não substitui.</p>
       <section>
-        <h3 className="font-display text-2xl">Dose e duração</h3>
+        <h3 className="section-label">Dose e duração</h3>
         <p className="mb-2 text-sm text-muted">Tabela citada, não é prescrição. A linha do tempo do Diarium usa início, subida, pico e descida. Não é meia-vida de eliminação.</p>
         {row.roas.length === 0 ? <p className="text-sm">Sem via na ficha.</p> : null}
         <ul className="space-y-4">
           {row.roas.map((roa) => (
             <li key={roa.name} className="border border-rule p-3 text-sm">
-              <p className="font-display text-2xl">{viaPt(roa.name)}</p>
+              <p className="datum">{viaPt(roa.name)}</p>
               <p className="mt-2">
                 Limiar {doseText(roa.threshold, roa.dose_units)} · leve {doseText(roa.light, roa.dose_units)} · comum {doseText(roa.common, roa.dose_units)} · forte {doseText(roa.strong, roa.dose_units)} · pesada {doseText(roa.heavy, roa.dose_units)}
               </p>
@@ -61,7 +61,7 @@ export function WikiSheet({ slug }: { slug: string }) {
         </ul>
       </section>
       <section>
-        <h3 className="font-display text-2xl">Interações</h3>
+        <h3 className="section-label">Interações</h3>
         <p className="mb-2 text-sm text-muted">
           {row.interaction_quality === "analogy" ? "Analogia de classe. Não é interação citada nesta ficha." : row.interaction_quality === "cited" ? "Citada na ficha." : "Sem interação nesta ficha."}
           {" "}Negativa é perigosa ou insegura. Sinérgica é a mesma classe, sem esse aviso. O resto fica incerto.

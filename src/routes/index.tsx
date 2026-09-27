@@ -44,7 +44,7 @@ function DiaryHome() {
         <img src="/codex-mix.png" alt="" className="size-12 shrink-0 object-cover" />
         <span>
           <span className="kicker">Database</span>
-          <span className="block font-display text-2xl leading-none">Codex</span>
+          <span className="datum block">Codex</span>
         </span>
       </Link>
       <div className="mb-4">
@@ -61,7 +61,7 @@ function DiaryHome() {
               <Link to="/dia/$day" params={{ day: day.key }} className="flex min-h-16 gap-3 py-3">
                 <span className="w-1 shrink-0 border-l-4" style={{ borderColor: mark(`${day.rows[0].kind}:${day.rows[0].substanceId}`) }} />
                 <span className="min-w-0 flex-1">
-                  <span className="block font-display text-2xl leading-tight">{formatDay(day.key)}</span>
+          <span className="datum block">{formatDay(day.key)}</span>
                   <span className="block truncate">{names}</span>
                   <span className="block text-sm text-muted">{weekday(day.key)}</span>
                 </span>

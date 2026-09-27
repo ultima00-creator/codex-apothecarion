@@ -15,7 +15,7 @@ function DayPage() {
   return (
     <main className="space-y-4">
       <Link to="/" className="text-sm text-bronze">Diarium</Link>
-      <h1 className="font-display text-4xl leading-none">{formatDay(day)}</h1>
+      <h1 className="screen-title font-display">{formatDay(day)}</h1>
       <DiaryChart points={plot.points} series={plot.series} />
       {rows.length === 0 ? <p className="text-sm">Nada em efeito neste dia.</p> : null}
       <ul>
@@ -26,7 +26,7 @@ function DayPage() {
             <span className="w-1 shrink-0 self-stretch border-l-4" style={{ borderColor: mark(`${row.kind}:${row.substanceId}`) }} />
             <span className="min-w-0 flex-1">
               <span className="block text-sm text-muted">{clock(row.takenAt)}</span>
-              <Link to="/abrir/$kind/$id" params={{ kind: row.kind, id: row.substanceId }} className="font-display text-2xl">
+              <Link to="/abrir/$kind/$id" params={{ kind: row.kind, id: row.substanceId }} className="datum">
                 {row.name}
               </Link>
               <span className="block text-sm">

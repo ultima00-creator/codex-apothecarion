@@ -61,7 +61,7 @@ export function WingCodex({ wing }: { wing: WingId }) {
           const on = favs.includes(row.id);
           return (
             <li key={row.id} className="border-b border-rule py-3">
-              <p className="font-display text-2xl leading-tight">{row.name}</p>
+              <p className="datum">{row.name}</p>
               <p className="lede line-clamp-2">{row.className || "sem classe"}</p>
               {open === row.id ? (
                 <>

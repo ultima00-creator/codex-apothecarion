@@ -9,13 +9,13 @@ function Journal() {
   useEffect(() => setRows(loadNotes()), []);
   return (
     <main className="space-y-4">
-      <h2 className="font-display text-3xl">Journal</h2>
+      <h2 className="screen-title font-display">Journal</h2>
       <p className="text-sm text-muted">Só depois que a busca falha. Não é curva e não é medição.</p>
       {rows.length === 0 ? <p>Nenhuma nota.</p> : null}
       <ul className="space-y-3">
         {rows.map((row) => (
           <li key={row.id} className="border-t border-rule pt-3">
-            <p className="font-display text-2xl">{row.name}</p>
+            <p className="datum">{row.name}</p>
             <p>{row.text}</p>
           </li>
         ))}

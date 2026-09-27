@@ -105,7 +105,7 @@ function WingDoor({
       <img src={wingCopy[wing].seal} alt="" className="size-16 shrink-0 object-cover" />
       <span>
         <span className="block text-xs tracking-[0.28em] uppercase">{label}</span>
-        <span className="block font-display text-3xl leading-none">{wingCopy[wing].title}</span>
+        <span className="datum block text-xl">{wingCopy[wing].title}</span>
       </span>
     </>
   );
@@ -291,7 +291,7 @@ function CyclePage() {
         <ul className="space-y-3">
           {saved.map((row) => (
             <li key={row.id} className="border-t border-rule pt-3">
-              <p className="font-display text-2xl">{row.name}</p>
+              <p className="datum">{row.name}</p>
               <p className="text-sm text-muted">{row.weeks} semanas · {row.lines.length} linhas</p>
               {(row.adjuncts ?? []).map((item) => {
                 const compound = findWingCompound(item.wing, item.substanceId);

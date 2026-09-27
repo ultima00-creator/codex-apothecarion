@@ -7,7 +7,7 @@ export function CycleChart({ panel }: { panel: Panel }) {
   useEffect(() => setReady(true), []);
   return (
     <figure className="border border-rule p-3">
-      <figcaption className="mb-1 font-display text-2xl">{panel.title}</figcaption>
+      <figcaption className="datum mb-1">{panel.title}</figcaption>
       <p className="mb-2 text-sm text-muted">{panel.unit}. {panel.note}</p>
       <div className="h-56 w-full">
         {ready ? (

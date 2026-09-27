@@ -92,7 +92,7 @@ function TakePage() {
   return (
     <main className="space-y-4">
       <Link to="/codex" className="text-sm text-bronze">Retornar</Link>
-      <h1 className="font-display text-5xl leading-none">Novo composto</h1>
+      <h1 className="screen-title font-display">Novo composto</h1>
       <label className="block text-sm">
         Busca na database
         <input className="field mt-1" value={query} onChange={(e) => { setQuery(e.target.value); setPicked(null); }} placeholder="nomeie o composto, Frater" />
@@ -130,7 +130,7 @@ function TakePage() {
 
       {picked ? (
         <section className="space-y-3 border-t border-rule pt-3">
-          <h2 className="font-display text-3xl">{picked.title}</h2>
+          <h2 className="subject">{picked.title}</h2>
           <p className="text-sm text-muted">{picked.kind === "wiki" ? "Ficha da wiki. Duração não é meia-vida." : picked.kind === "medicine" ? "Remédio. Meia-vida em fração da dose, não concentração." : "Dose em mg, a unidade da curva."}</p>
           <div className="flex flex-wrap gap-2">
             {history.map((value) => (

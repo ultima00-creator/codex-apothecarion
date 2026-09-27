@@ -19,7 +19,7 @@ export function MedicineSheet({ id }: { id: string }) {
     <article className="space-y-4">
       <header>
         <p className="text-xs tracking-[0.2em] text-bronze uppercase">Remédio</p>
-        <h2 className="font-display text-3xl">{row.name}</h2>
+        <h2 className="subject">{row.name}</h2>
         <p className="text-muted">{row.className}</p>
       </header>
       <p>{row.description}</p>
