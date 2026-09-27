@@ -29,6 +29,7 @@ export function WingCodex({ wing }: { wing: WingId }) {
           </div>
         </header>
         <p>{copy.line}</p>
+      <p className="text-sm text-muted">{copy.aside}</p>
         <p className="text-sm text-muted">O selo não abre sem uma Implantation guardada, Frater.</p>
         <Link to="/protocolos" className="text-sm text-bronze">Voltar ao Gene-Seed</Link>
       </main>
@@ -49,6 +50,7 @@ export function WingCodex({ wing }: { wing: WingId }) {
         </div>
       </header>
       <p>{copy.line}</p>
+      <p className="text-sm text-muted">{copy.aside}</p>
       <p className="text-sm text-muted">O composto entra numa Implantation já guardada. Sem meia-vida, fica só a ficha.</p>
       <label className="block text-sm">
         Busca na database
@@ -66,7 +68,11 @@ export function WingCodex({ wing }: { wing: WingId }) {
               {open === row.id ? (
                 <div className="mt-2 space-y-2 text-sm">
                   <p>{row.description || "Sem descrição depositada."}</p>
-                  <p className="text-muted">{row.halfLifeDays ? `Meia-vida: ${row.halfLifeDays} dias. O traçado visual entra na Implantation.` : "Sem meia-vida. Não entra no traçado."}</p>
+                  <p><span className="text-muted">Meia-vida. </span>{row.halfLife}</p>
+                  <p><span className="text-muted">Mínima efetiva. </span>{row.minDose}</p>
+                  <p><span className="text-muted">Máxima efetiva. </span>{row.maxDose}</p>
+                  <p><span className="text-muted">Aviso. </span>{row.warning}</p>
+                  <p className="text-muted">{row.halfLifeDays ? `Traçado visual: ${row.halfLifeDays} dias. Não é medição.` : "Sem meia-vida numérica. Não entra no traçado."}</p>
                   <label className="block">
                     Implantation
                     <select className="field mt-1" value={target} onChange={(e) => setTarget(e.target.value)}>

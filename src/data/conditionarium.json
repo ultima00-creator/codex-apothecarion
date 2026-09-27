@@ -1,1 +1,280 @@
-[]
+[
+  {
+    "id": "nac",
+    "name": "NAC",
+    "aliases": [
+      "n-acetilcisteina",
+      "acetilcisteina"
+    ],
+    "className": "Precursor de cisteína para glutationa.",
+    "description": "A glutationa é o antioxidante de fábrica do hepatócito. A NAC entrega cisteína para o fígado repor glutationa, liga metabólitos tóxicos e reduz glutamato extracelular. Entra durante orais 17-alfa-alquilados, prevenir mais do que remediar, e cobre mecanismos que o TUDCA não cobre. Não é desintoxicante milagroso. Em overdose de paracetamol a dose é intravenosa, no hospital.",
+    "halfLife": "No plasma, cerca de 6 horas, faixa de 5,6 a 6,25 horas. Alguns textos citam 6 a 8 horas. Por isso duas ou três tomadas por dia. A glutationa no fígado não segue esse relógio.",
+    "halfLifeDays": 0.25,
+    "minDose": "600 mg/dia, como suporte antioxidante.",
+    "maxDose": "1 200 a 1 800 mg/dia em duas ou três tomadas. Teto oral típico perto de 2,4 g. Acima disso, só contexto clínico.",
+    "warning": "Náusea, gases, cheiro de enxofre. Há quem afaste do treino para não apagar o estímulo oxidativo da sessão. Asma: raros broncoespasmos. Não misturar a lógica com álcool."
+  },
+  {
+    "id": "tudca",
+    "name": "TUDCA",
+    "aliases": [
+      "UDCA",
+      "ursodiol",
+      "acido tauroursodesoxicolico"
+    ],
+    "className": "Ácido biliar hidrofílico, colerético.",
+    "description": "Orais 17-alfa-alquilados podem estagnar bile tóxica no hepatócito. TUDCA e UDCA são bile menos tóxica. Diluem o pool, aceleram a exportação e baixam a agressividade do que vaza. É o suporte hepático mais específico para oral. A NAC complementa. O cardo é secundário. O ursodiol de farmácia não é o mesmo produto de importação.",
+    "halfLife": "O ursodiol fica cerca de 3,5 a 5,8 dias, por recirculação entero-hepática. O TUDCA segue o mesmo eixo. O plasma aparente é mais curto. O efeito no pool biliar é de dias. Uma ou duas tomadas por dia bastam.",
+    "halfLifeDays": 4.65,
+    "minDose": "500 mg/dia, manutenção com oral.",
+    "maxDose": "1 000 mg/dia. Acima de 1 g só aparece como reparo pesado, não como rotina.",
+    "warning": "Não passar de cerca de 8 semanas contínuas. Pode piorar colesterol e HDL. Diarreia, cólica. Doença biliar obstrutiva: médico. Não cobre álcool mais oral."
+  },
+  {
+    "id": "silimarina",
+    "name": "Silimarina",
+    "aliases": [
+      "cardo-mariano",
+      "silibina",
+      "legalon"
+    ],
+    "className": "Flavonolignanos antioxidantes hepáticos.",
+    "description": "Estabiliza a membrana do hepatócito e poupa glutationa. O uso citado é depois do oral, não no meio do 17-alfa-alquilado, o contrário de TUDCA e NAC. Ensaios em esteatose baixam ALT e AST de forma modesta. O desfecho histológico duro muitas vezes falha. Não substitui TUDCA no oral.",
+    "halfLife": "Silibina livre no plasma, cerca de 1 a 3 horas. Os conjugados duram um pouco mais. Por isso os ensaios usam três tomadas por dia. O efeito no hepatócito não some em 3 horas, mas o pico no sangue some.",
+    "halfLifeDays": 0.083,
+    "minDose": "140 mg três vezes, 420 mg/dia de silimarina padronizada.",
+    "maxDose": "420 a 600 mg/dia na maior parte dos ensaios. 700 mg três vezes só aparece em esteatose, com benefício incerto.",
+    "warning": "Náusea, inchaço. Interage com CYP, varfarina, estatinas e alguns imunossupressores. Cardo 1000 mg no rótulo não é 1000 mg de silimarina."
+  },
+  {
+    "id": "omega-3",
+    "name": "Ômega-3",
+    "aliases": [
+      "EPA",
+      "DHA",
+      "oleo de peixe"
+    ],
+    "className": "Ácidos graxos poli-insaturados marinhos.",
+    "description": "EPA e DHA entram na membrana, geram eicosanoides menos inflamatórios, baixam triglicerídeos e melhoram um pouco a reologia. No anabolizante o sangue piora sobretudo no perfil lipídico. Quatro gramas de EPA puro em alto risco, com estatina, não é o mesmo que óleo de peixe de supermercado.",
+    "halfLife": "No plasma, EPA e DHA livres duram cerca de 1 a 3 dias. Incorporados na membrana, semanas. O efeito em triglicerídeos mede-se em 2 a 12 semanas. A lavagem no glóbulo vermelho leva cerca de 1 a 2 meses.",
+    "halfLifeDays": 2,
+    "minDose": "Cerca de 1 g/dia de EPA mais DHA somados, não 1 g de óleo.",
+    "maxDose": "2 a 4 g/dia de EPA mais DHA.",
+    "warning": "Leia o painel. Mil miligramas de óleo podem ter 300 mg de EPA mais DHA. Doses altas: fibrilação atrial em ensaios, sangramento com anticoagulante, refluxo. DHA pode subir um pouco o LDL."
+  },
+  {
+    "id": "acido-alfa-lipoico",
+    "name": "Ácido alfa-lipoico",
+    "aliases": [
+      "ALA",
+      "R-ALA"
+    ],
+    "className": "Antioxidante que entra em água e em gordura. Cofator mitocondrial.",
+    "description": "Recicla vitamina C, vitamina E e glutationa. Melhora a captação de glicose. Não é o ácido alfa-linolênico do ômega-3 vegetal. Toma-se com comida por causa do refluxo.",
+    "halfLife": "No plasma, cerca de 30 minutos. O isômero R dura um pouco mais que o racêmico. Os metabólitos duram de minutos a 1 hora. Por isso a dose se parte em duas ou três tomadas, com comida.",
+    "halfLifeDays": 0.021,
+    "minDose": "300 mg/dia.",
+    "maxDose": "600 a 1 200 mg/dia na literatura metabólica. Há quem use 300 a 500 mg três vezes.",
+    "warning": "Queimação e refluxo em jejum. Pode baixar a glicose. Cuidado com metformina e insulina. Formigamento raro em dose alta. Não confundir com B6."
+  },
+  {
+    "id": "curcumina",
+    "name": "Curcumina",
+    "aliases": [
+      "curcuma",
+      "piperina",
+      "acafrao-da-terra"
+    ],
+    "className": "Polifenol da cúrcuma. A piperina sobe a biodisponibilidade.",
+    "description": "Inibe NF-κB, o interruptor das citocinas inflamatórias. Sem piperina ou formulação em fosfolipídio, quase não entra no sangue. Não é ibuprofeno.",
+    "halfLife": "Curcumina livre, cerca de 1 a 2 horas, muitas vezes menos de 1 hora sem formulação. Com piperina ou micela o pico sobe e a meia-vida alonga um pouco, cerca de 2 a 4 horas.",
+    "halfLifeDays": 0.125,
+    "minDose": "500 mg/dia de curcumina com piperina, cerca de 5 mg, ou forma micelar.",
+    "maxDose": "1,5 a 2 g/dia se o quadro for inflamatório.",
+    "warning": "A piperina altera o nível de muitos fármacos. Pedra na vesícula e cólica biliar: cuidado. Mancha e desconforto intestinal."
+  },
+  {
+    "id": "metilfolato-b12-tmg",
+    "name": "Metilfolato, B12 e TMG",
+    "aliases": [
+      "5-MTHF",
+      "metilcobalamina",
+      "betaina",
+      "homocisteina"
+    ],
+    "className": "Doadores de metila do ciclo da homocisteína.",
+    "description": "Homocisteína alta é marcador de risco vascular. Folato como 5-MTHF, B12 e betaína empurram a remetilação. A B6 empurra a transulfuração, mas a dose alta do curso não deve ser copiada. Folato em miligramas mascara B12 baixa se a B12 não for reposta.",
+    "halfLife": "Metilfolato, cerca de 3 a 5 horas. B12 no plasma, de cerca de 6 horas a poucos dias. As reservas no fígado duram anos. TMG no plasma, cerca de 1 a 2 horas. B6 no corpo, cerca de 15 a 20 dias, por isso a neuropatia da dose alta é acumulativa.",
+    "halfLifeDays": null,
+    "minDose": "Folato 400 µg. B12 500 µg. TMG 500 mg/dia.",
+    "maxDose": "Folato cerca de 1 mg. B12 1 a 2 mg. TMG 500 mg três vezes, 1,5 g.",
+    "warning": "B6 de 300 a 500 mg está muito acima do uso crônico usual. Neuropatia sensorial aparece sobretudo acima de 100 mg/dia por tempo longo. Não copiar B6 alta."
+  },
+  {
+    "id": "magnesio",
+    "name": "Magnésio",
+    "aliases": [
+      "glicinato",
+      "citrato de magnesio"
+    ],
+    "className": "Cátion essencial. Relaxamento e cofator enzimático.",
+    "description": "Baixo magnésio piora pressão, sono, câimbra e irritabilidade. Glicinato costuma sentar melhor à noite. Citrato puxa o intestino. Óxido dá diarreia e absorve pouco. Pode baixar um pouco a pressão, por isso fica aqui e não no Agumentarium.",
+    "halfLife": "Não se descreve como fármaco. O magnésio extra no plasma cai em horas. O pool ósseo e muscular vira em semanas. Uma tomada à noite, ou duas se for citrato.",
+    "halfLifeDays": null,
+    "minDose": "Cerca de 200 mg de magnésio elementar.",
+    "maxDose": "350 a 400 mg elementares por dia, teto de suplemento. A dieta conta.",
+    "warning": "Insuficiência renal: acumula. Relaxa, não é benzodiazepínico."
+  },
+  {
+    "id": "vitamina-d3",
+    "name": "Vitamina D3",
+    "aliases": [
+      "colecalciferol",
+      "vitamina D"
+    ],
+    "className": "Secosteroide. Hormônio de receptor nuclear.",
+    "description": "Deficiência é banal e se associa a pressão, imunidade, humor e músculo. Não é anabolizante. Megadose sem 25-OH no sangue é chute.",
+    "halfLife": "Colecalciferol, cerca de 1 a 2 dias. O que o laboratório mede, 25-OH-D, cerca de 15 a 21 dias. Uma tomada por dia, ou uma por semana em reposição médica. O exame só faz sentido depois de cerca de 8 semanas.",
+    "halfLifeDays": 1.5,
+    "minDose": "1 000 UI/dia se estiver baixo ou no inverno.",
+    "maxDose": "2 000 a 4 000 UI/dia. Reposição terapêutica só com médico e 25-OH.",
+    "warning": "Intoxicação é cálcio alto, pedra e náusea. Juntar K2 é moda, não obrigação. Medir 25-hidroxivitamina D."
+  },
+  {
+    "id": "melatonina",
+    "name": "Melatonina",
+    "aliases": [
+      "pineal"
+    ],
+    "className": "Neuro-hormônio da pineal.",
+    "description": "Marca o anoitecer, desce a temperatura e abre o sono. Em dose baixa, 0,3 a 1 mg, muitas vezes funciona melhor do que 5 a 10 mg. Também aparece como antioxidante, não só como comprimido para dormir. Não é tratamento de apneia.",
+    "halfLife": "Cerca de 20 a 50 minutos. Média perto de 40 minutos. Formas prolongadas alongam um pouco. Toma-se 30 a 60 minutos antes de deitar. Dez miligramas à noite ainda podem estar no sangue de manhã.",
+    "halfLifeDays": 0.028,
+    "minDose": "0,3 a 1 mg, 30 a 60 minutos antes de deitar.",
+    "maxDose": "3 a 5 mg. Acima disso raramente se dorme melhor.",
+    "warning": "Sonolência no dia seguinte, sonhos vívidos, queda leve de pressão. Com álcool ou sedativo, soma."
+  },
+  {
+    "id": "tadalafila",
+    "name": "Tadalafila",
+    "aliases": [
+      "cialis",
+      "PDE5"
+    ],
+    "className": "Inibidor da PDE5.",
+    "description": "Relaxa músculo liso vascular. Ereção, esvaziamento prostático e, o que importa aqui, função endotelial, pequena queda de pressão e menos rigidez arterial. A bomba no treino existe, mas é efeito colateral do endotélio. Por isso não vai para o Agumentarium. Dois e meio a cinco miligramas uma vez por dia chegam. Dez a vinte miligramas é outra indicação, quando precisar, e não é mais saúde.",
+    "halfLife": "Cerca de 17,5 horas, faixa de 15 a 18 horas. Estado estável em cerca de 5 dias de tomada diária. O efeito de uma tomada avulsa chega a cerca de 36 horas. Nitrato está contraindicado por 48 horas depois da última tadalafila.",
+    "halfLifeDays": 0.729,
+    "minDose": "2,5 mg/dia.",
+    "maxDose": "5 mg/dia para uso diário de saúde. 20 mg não é mais saúde.",
+    "warning": "Nitrato, nitroglicerina e isossorbida são contraindicação. A pressão pode desabar. Alfabloqueador soma hipotensão. Cefaleia, azia, dor lombar, nariz entupido. Priapismo e perda súbita de visão ou audição são emergência. Receita."
+  },
+  {
+    "id": "telmisartana-losartana",
+    "name": "Telmisartana e losartana",
+    "aliases": [
+      "telmisartan",
+      "losartan",
+      "BRA",
+      "ARB"
+    ],
+    "className": "Antagonistas do receptor AT1 da angiotensina.",
+    "description": "Bloqueiam a angiotensina II. Os vasos dilatam, a aldosterona baixa, o rim se protege um pouco e a pressão cai. A telmisartana ainda mexe em PPAR-gama. É anti-hipertensivo de receita, não suporte de ciclo de importação. São dois fármacos na mesma ficha. O traçado não escolhe um relógio só.",
+    "halfLife": "Telmisartana, cerca de 24 horas, uma vez por dia. Losartana mãe, cerca de 2 horas. O metabólito ativo, cerca de 6 a 9 horas. A bula ainda é uma vez por dia, porque o receptor não desliga quando o plasma cai.",
+    "halfLifeDays": null,
+    "minDose": "Losartana 25 a 50 mg. Telmisartana 20 a 40 mg, uma vez por dia.",
+    "maxDose": "Losartana 100 mg. Telmisartana 80 mg, bula de hipertensão.",
+    "warning": "Receita. Potássio alto, creatinina, gravidez. A tosse é mais de inibidor da ECA do que de BRA. Medir a pressão em casa."
+  },
+  {
+    "id": "nebivolol",
+    "name": "Nebivolol",
+    "aliases": [
+      "beta-bloqueador"
+    ],
+    "className": "Betabloqueador seletivo para beta-1, com liberação de óxido nítrico.",
+    "description": "Abaixa a frequência e um pouco a contratilidade. O óxido nítrico extra o distingue de um betabloqueador seco. Aparece quando o problema é drive adrenérgico, pressão e frequência, como na trembolona. Não é suplemento. Não se corta de um dia para o outro.",
+    "halfLife": "Metabolizador rápido do CYP2D6, cerca de 10 a 12 horas. Metabolizador lento, cerca de 19 a 32 horas. Uma vez por dia na maior parte. O número do traçado, 17 horas, fica entre as duas faixas. Não é um relógio único.",
+    "halfLifeDays": 0.708,
+    "minDose": "5 mg/dia.",
+    "maxDose": "10 mg na maior parte. 20 mg é teto citado, não meta.",
+    "warning": "Receita. Asma, DPOC, frequência abaixo de 50, bloqueio, fadiga, mãos frias, disfunção erétil. Esconde taquicardia de hipoglicemia. Não cortar seco."
+  },
+  {
+    "id": "coenzima-q10",
+    "name": "Coenzima Q10",
+    "aliases": [
+      "ubiquinona",
+      "ubiquinol",
+      "coq10"
+    ],
+    "className": "Quinona da cadeia de transporte de elétrons.",
+    "description": "A estatina inibe a mesma via que fabrica a coenzima Q10. A reposição faz sentido se houver estatina. Ensaios de performance em atleta são fracos. Por isso fica no Conditionarium, coração e estatina, e não no Agumentarium.",
+    "halfLife": "Cerca de 33 horas, ubiquinona e ubiquinol na mesma ordem. Uma vez por dia, com a refeição mais gordurosa. Saturar tecido leva semanas.",
+    "halfLifeDays": 1.375,
+    "minDose": "100 mg/dia com refeição gordurosa.",
+    "maxDose": "200 a 300 mg/dia.",
+    "warning": "Desconforto intestinal. Insônia se for à noite, em alguns. Ubiquinol absorve melhor em idosos. O preço não multiplica o efeito na mesma proporção."
+  },
+  {
+    "id": "selegilina",
+    "name": "Selegilina",
+    "aliases": [
+      "deprenyl",
+      "MAO-B"
+    ],
+    "className": "Inibidor da MAO-B em dose baixa.",
+    "description": "A MAO-B decompõe dopamina e gera peróxido. Bloqueá-la em miligramas baixos poupa neurônio dopaminérgico. Acima de cerca de 2,5 a 5 mg perde a seletividade e vira IMAO clássico, com tiramina e crise hipertensiva. Não é nootrópico de stack.",
+    "halfLife": "O fármaco no plasma dura cerca de 1,5 a 3,5 horas. A enzima MAO-B que ela bloqueia leva dias a duas semanas para ser fabricada de novo. Metabólitos anfetamínicos duram horas. Uma tomada de manhã, mesmo com meia-vida curta.",
+    "halfLifeDays": 0.104,
+    "minDose": "1 mg/dia.",
+    "maxDose": "2 a 2,5 mg/dia neste contexto.",
+    "warning": "Receita. Nunca com ISRS, tramadol, meperidina ou outro IMAO. Queijo e vinho em dose alta. Insônia se for à noite."
+  },
+  {
+    "id": "l-teanina",
+    "name": "L-teanina",
+    "aliases": [
+      "teanina",
+      "cha verde"
+    ],
+    "className": "Aminoácido do chá verde. Modula GABA, glutamato e ondas alfa.",
+    "description": "Tira a aresta da cafeína e do drive adrenérgico sem apagar. O efeito é suave. Não é benzodiazepínico.",
+    "halfLife": "Cerca de 1 a 1,5 hora. Pico perto de 50 minutos. A cafeína dura cerca de 5 horas. A teanina some primeiro.",
+    "halfLifeDays": 0.052,
+    "minDose": "100 mg.",
+    "maxDose": "200 a 400 mg, muitas vezes com café.",
+    "warning": "Pouco. Potencializa sedativo. Tontura rara."
+  },
+  {
+    "id": "rhodiola-ginseng",
+    "name": "Rhodiola e ginseng",
+    "aliases": [
+      "rhodiola rosea",
+      "panax ginseng",
+      "adaptogeno"
+    ],
+    "className": "Adaptógenos.",
+    "description": "A ideia é deslocar a curva do estresse: menos fadiga percebida e um pouco melhor humor. A evidência é heterogênea. Extração e lote mandam mais do que o nome no frasco. Não é ansiolítico de crise.",
+    "halfLife": "Salidrosídeo, cerca de 1 a 4 horas. Ginsenossídeos, cerca de 2 a 8 horas conforme o composto. O efeito adaptógeno nos ensaios é de semanas, não de uma tomada. Dois compostos, dois relógios. Sem traçado único.",
+    "halfLifeDays": null,
+    "minDose": "Rhodiola cerca de 200 mg, padronizada em cerca de 3% de rosavina. Ginseng cerca de 200 mg de extrato.",
+    "maxDose": "Cerca de 400 mg/dia.",
+    "warning": "Agitação. Insônia se for à noite. Interação teórica com ISRS. Mania rara."
+  },
+  {
+    "id": "ashwagandha",
+    "name": "Ashwagandha",
+    "aliases": [
+      "withania",
+      "KSM-66"
+    ],
+    "className": "Adaptógeno com dados de cortisol e sono.",
+    "description": "Baixa o cortisol percebido e melhora o sono em vários ensaios. Secundariamente, um pouco de força e testosterona em homens, não o bastante para ir ao Agumentarium. Qualidade de vida primeiro.",
+    "halfLife": "Withanolídeos no plasma, cerca de 5 a 12 horas, conforme o extrato. Uma tomada por dia, de manhã ou à noite conforme a sedação, ou 300 mg duas vezes.",
+    "halfLifeDays": 0.354,
+    "minDose": "300 mg/dia de extrato padronizado.",
+    "maxDose": "600 mg/dia.",
+    "warning": "Sonolência. Hipertireoidismo pode piorar. Relatos raros de fígado. Sedação com outros depressores."
+  }
+]

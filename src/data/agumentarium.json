@@ -1,1 +1,137 @@
-[]
+[
+  {
+    "id": "creatina-monohidrato",
+    "name": "Creatina monohidrato",
+    "aliases": [
+      "creatina",
+      "monohidrato"
+    ],
+    "className": "Derivado de aminoácidos. Recarrega fosfocreatina no músculo.",
+    "description": "A fosfocreatina doa fosfato ao ADP nos primeiros segundos do esforço máximo. Mais fosfocreatina rende mais repetições no limite e um pouco de massa, entre água intramuscular e treino que rende. A forma com ensaios é o monohidrato. Citrato e ésteres não têm a mesma pilha. A carga de 20 g enche o intestino. Três gramas por dia, sem carga, saturam. Só demora mais. O uso primário é desempenho, por isso fica aqui e não no Conditionarium.",
+    "halfLife": "No plasma, cerca de 2 a 3 horas. No músculo, o estoque cai cerca de 1 a 2% ao dia depois de parar. A lavagem completa leva cerca de 4 a 6 semanas. Toma-se todo dia, treino ou não.",
+    "halfLifeDays": 0.104,
+    "minDose": "3 g/dia, todos os dias, inclusive descanso. Três a quatro semanas para saturar.",
+    "maxDose": "5 g/dia. Carga de 20 g por 5 a 7 dias é atalho opcional. Acima de 10 g raramente rende mais.",
+    "warning": "Um a dois quilos de água no músculo. A creatinina no sangue sobe. Avise o laboratório. Desconforto intestinal se a carga for de uma vez. Cafeína pode atenuar o efeito em alguns desenhos. Rim já doente: médico."
+  },
+  {
+    "id": "cafeina",
+    "name": "Cafeína",
+    "aliases": [
+      "caffeine"
+    ],
+    "className": "Antagonista dos receptores de adenosina.",
+    "description": "A adenosina pede pausa. Bloqueá-la reduz a percepção de esforço, sobe a potência e mobiliza um pouco de gordura. É o ergogênico mais replicado. O horário clássico é 30 a 60 minutos antes do treino. A tolerância aparece em dias. Um ou dois dias sem ela devolvem efeito.",
+    "halfLife": "Cerca de 3 a 7 horas. Média de cerca de 5 horas. Alonga com anticoncepcional oral, gravidez, fígado lento, ciprofloxacino e fluvoxamina. Encurta em fumantes. Pico em 30 a 60 minutos.",
+    "halfLifeDays": 0.208,
+    "minDose": "Cerca de 3 mg/kg. Uma pessoa de 70 kg, cerca de 200 mg.",
+    "maxDose": "Cerca de 6 mg/kg, perto de 400 mg em 70 kg. Acima de 9 mg/kg entra em toxicidade.",
+    "warning": "Insônia se for à tarde. Pressão e frequência sobem. Ansiedade, refluxo, diurese. Com efedrina o risco dispara. Não compensa noite mal dormida. Só mascara."
+  },
+  {
+    "id": "l-citrulina",
+    "name": "L-citrulina",
+    "aliases": [
+      "citrulina",
+      "citrulina malato",
+      "malato"
+    ],
+    "className": "Aminoácido não proteico. Atalho para arginina e óxido nítrico.",
+    "description": "Mais arginina no sangue leva a mais óxido nítrico, vasodilatação, pump e, em alguns ensaios, mais repetições. O malato 2:1 traz ácido málico. A dose útil conta pela citrulina, não pelo peso total do malato. Não é tadalafila. A citrulina tenta produzir óxido nítrico. O PDE5 trabalha depois disso.",
+    "halfLife": "L-citrulina no plasma, cerca de 1 hora. A arginina que ela gera tem pico em 1 a 2 horas e meia-vida de cerca de 1 a 2 horas. Janela útil de 30 a 90 minutos antes do treino. Não satura em semanas.",
+    "halfLifeDays": 0.042,
+    "minDose": "Cerca de 3 g de L-citrulina.",
+    "maxDose": "6 a 8 g de L-citrulina, 30 a 60 minutos antes. Cerca de 8 g de malato 2:1 é um equivalente grosseiro.",
+    "warning": "Intestino, se a dose alta for de uma vez. Hipotensão leve se já houver PDE5 e nitrato. Arginina em gramas é pior tolerada."
+  },
+  {
+    "id": "beta-alanina",
+    "name": "Beta-alanina",
+    "aliases": [
+      "carnosina"
+    ],
+    "className": "Aminoácido que limita a síntese de carnosina no músculo.",
+    "description": "A carnosina tampona hidrogênio dentro da fibra. Esforços de 1 a 4 minutos sentem mais do que uma repetição máxima. O efeito não é agudo. Precisa de semanas para saturar a carnosina. O formigamento na face e nas orelhas é o composto na pele, não alergia. Dose dividida reduz isso.",
+    "halfLife": "Beta-alanina livre, cerca de 1 hora. A carnosina muscular, o que rende, sobe em 2 a 4 semanas e desce em cerca de 6 a 15 semanas ao parar. Toma diária. Não precisa ser 30 minutos antes.",
+    "halfLifeDays": 0.042,
+    "minDose": "3,2 g/dia por pelo menos 2 a 4 semanas.",
+    "maxDose": "6,4 g/dia, em 2 ou 3 tomadas. Depois da saturação a manutenção pode baixar um pouco.",
+    "warning": "Parestesia inofensiva. Não mistura milagre com creatina. São mecanismos diferentes. Pouco efeito em série de 3 repetições pesadas."
+  },
+  {
+    "id": "nitrato-dietetico",
+    "name": "Nitrato dietético",
+    "aliases": [
+      "beterraba",
+      "nitrato",
+      "NO3"
+    ],
+    "className": "Íon nitrato convertido em nitrito e óxido nítrico.",
+    "description": "Economiza oxigênio para o mesmo esforço. O músculo rende mais com o mesmo ar. Brilha em endurance e em esforços repetidos, menos na repetição máxima. Precisa das bactérias da língua. Não escovar os dentes nem usar antisséptico bucal logo antes, senão a via quebra.",
+    "halfLife": "Nitrato no plasma, cerca de 5 a 8 horas. Nitrito, cerca de 20 a 45 minutos. Pico de efeito cerca de 2 a 3 horas depois da dose. Não se toma na porta do ginásio.",
+    "halfLifeDays": 0.271,
+    "minDose": "Cerca de 400 mg de nitrato, 2 a 3 horas antes.",
+    "maxDose": "Cerca de 800 mg.",
+    "warning": "A pressão pode cair. Fezes e urina cor de beterraba, inofensivo. Citrulina, tadalafila e nitrato são três alavancas de óxido nítrico. Hipotensão."
+  },
+  {
+    "id": "bicarbonato-de-sodio",
+    "name": "Bicarbonato de sódio",
+    "aliases": [
+      "bicarbonato",
+      "HCO3"
+    ],
+    "className": "Tampão extracelular.",
+    "description": "Sobe o pH do sangue. O hidrogênio que sai da fibra no esforço anaeróbio encontra sítio. Útil em provas ou blocos de 1 a 10 minutos. Não constrói músculo. É ferramenta de dia de prova.",
+    "halfLife": "Não é fármaco clássico. O pH extra no sangue dura cerca de 1 a 3 horas. A janela é 60 a 90 minutos antes. Depois o rim elimina o bicarbonato.",
+    "halfLifeDays": null,
+    "minDose": "0,2 g/kg. Cerca de 14 g em 70 kg.",
+    "maxDose": "0,3 g/kg, 60 a 90 minutos antes. Dividir a dose reduz o desastre intestinal.",
+    "warning": "Diarreia, náusea e inchaço. É o efeito adverso mais limitante. Sódio alto. Cuidado com a pressão. Não é pré-treino de todos os dias."
+  },
+  {
+    "id": "proteina",
+    "name": "Proteína",
+    "aliases": [
+      "whey",
+      "caseina"
+    ],
+    "className": "Substrato de aminoácidos para a síntese proteica muscular.",
+    "description": "Não é um booster. É o tijolo. A recomendação de 0,8 g/kg é o mínimo para não adoecer, não o ótimo de quem treina. O total do dia e três a cinco tomadas vencem um shake único de 80 g. Whey é conveniente, não mágica. O total do dia e a dose por refeição importam mais que a marca.",
+    "halfLife": "Aminoácidos no plasma, cerca de 1 a 3 horas depois da refeição. O whey tem pico mais cedo que a caseína. A síntese de uma tomada dura cerca de 3 a 5 horas.",
+    "halfLifeDays": 0.083,
+    "minDose": "Cerca de 1,6 g/kg/dia para quem treina.",
+    "maxDose": "Cerca de 2,2 g/kg/dia. Acima disso o retorno some na maior parte das pessoas.",
+    "warning": "Rim já doente: médico. Rim são aguenta atleta. Pó lácteo: intolerância. Mais proteína não corrige treino ruim nem calorias no chão."
+  },
+  {
+    "id": "hmb",
+    "name": "HMB",
+    "aliases": [
+      "beta-hidroxi-beta-metilbutirato",
+      "hidroximetilbutirato"
+    ],
+    "className": "Metabólito da leucina. Sinal anticatabólico fraco.",
+    "description": "Em iniciante, idoso ou déficit agressivo pode poupar massa. Em treinado que já come 1,6 a 2,2 g/kg de proteína, o efeito nos ensaios é pequeno ou nulo. Três gramas é a dose dos estudos. Não se sobe para render.",
+    "halfLife": "Cerca de 2,5 horas para o HMB livre. O sal de cálcio é um pouco mais lento. Os ensaios usam uma a três tomadas por dia, muitas vezes 1 g três vezes.",
+    "halfLifeDays": 0.104,
+    "minDose": "3 g/dia, em quem ainda responde.",
+    "maxDose": "3 g/dia.",
+    "warning": "Caro para o tamanho do efeito. Não substitui creatina nem proteína."
+  },
+  {
+    "id": "efedrina",
+    "name": "Efedrina",
+    "aliases": [
+      "efedrina e cafeina",
+      "ECA"
+    ],
+    "className": "Simpatomimético. Libera noradrenalina.",
+    "description": "Sobe termogênese e drive. O stack com cafeína e aspirina é lenda de cutting. O efeito em gordura e em output existe. A margem de segurança é estreita. Não é Conditionarium e não é chá verde forte.",
+    "halfLife": "Cerca de 3 a 6 horas. Média perto de 6 horas. Urina ácida acelera a saída. A cafeína anda junto no sangue. Por isso o esquema clássico era de 6 em 6 horas, e à noite a pressão ainda está alta.",
+    "halfLifeDays": 0.25,
+    "minDose": "10 a 20 mg de efedrina.",
+    "maxDose": "Esquemas clássicos usavam cerca de 20 mg três vezes com cafeína. Isso não é máxima segura. É o que o meio usava.",
+    "warning": "Pressão, taquicardia, arritmia, AVC, psicose. Proibida em muitos esportes e em vários países como suplemento. Com cafeína o risco soma."
+  }
+]

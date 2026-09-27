@@ -9,7 +9,11 @@ export type WingCompound = {
   aliases: string[];
   className: string;
   description: string;
+  halfLife: string;
   halfLifeDays: number | null;
+  minDose: string;
+  maxDose: string;
+  warning: string;
 };
 
 const tables: Record<WingId, WingCompound[]> = {
@@ -17,16 +21,18 @@ const tables: Record<WingId, WingCompound[]> = {
   conditionarium: conditionarium as WingCompound[],
 };
 
-export const wingCopy: Record<WingId, { title: string; line: string; seal: string }> = {
+export const wingCopy: Record<WingId, { title: string; line: string; seal: string; aside: string }> = {
   agumentarium: {
     title: "Agumentarium",
     line: "Selecione seu Combat-Stimm.",
-    seal: "/agumentarium-seal.png",
+    seal: "/agumentarium-tome.png",
+    aside: "Desempenho físico. AAS, SARM, GH e insulina não entram. É estudo, não protocolo.",
   },
   conditionarium: {
     title: "Conditionarium",
     line: "Selecione seu Med-Stimm.",
-    seal: "/conditionarium-seal.png",
+    seal: "/conditionarium-tome.png",
+    aside: "Dano e qualidade de vida. Inibidor de aromatase, SERM, cabergolina, hCG, GH e insulina não entram. Receita continua sendo receita.",
   },
 };
 
