@@ -167,8 +167,8 @@ function CyclePage() {
           <MateriaMark className="size-7 shrink-0 text-bronze" />
           Matéria Medica
         </p>
-        <p className="mt-1 text-sm text-muted">Implantation está aberta. Augmentation e Conditioning ficam para depois.</p>
-        <p className="mt-2 text-sm text-muted">Cada linha é um implante progenoide desta ala, mais os estradiol injetáveis valerato, enantato e benzoato. A dose é a que você informa. Não é prescrição.</p>
+        <p className="mt-1 text-sm text-muted">A Implantation está aberta, Frater. Augmentation e Conditioning aguardam selo.</p>
+        <p className="mt-2 text-sm text-muted">Cada linha é um implante progenoide desta ala, com os estradiol injetáveis já catalogados. A dose é a que o Frater declara. Não é prescrição.</p>
       </header>
       <label className="block text-sm">
         Semanas do gráfico

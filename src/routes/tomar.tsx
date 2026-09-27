@@ -9,11 +9,17 @@ import {
   type DiaryKind,
   type Ingestion,
 } from "@/lib/diary";
-import { findHormone, findPeptide, routesFor, search, type Hit } from "@/lib/search";
+import { findHormone, findPeptide, hitById, routesFor, search, type Hit } from "@/lib/search";
 import { saveNote } from "@/lib/store";
 import { viaPt } from "@/lib/pt";
 
-export const Route = createFileRoute("/tomar")({ component: TakePage });
+export const Route = createFileRoute("/tomar")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    kind: typeof search.kind === "string" ? search.kind : "",
+    id: typeof search.id === "string" ? search.id : "",
+  }),
+  component: TakePage,
+});
 
 function defaultRoute(hit: Hit): string {
   return routesFor(hit)[0] ?? "";
@@ -31,6 +37,7 @@ function unitFor(hit: Hit): string {
 
 function TakePage() {
   const navigate = useNavigate();
+  const preset = Route.useSearch();
   const [diary, setDiary] = useState<Ingestion[]>([]);
   const [query, setQuery] = useState("");
   const [picked, setPicked] = useState<Hit | null>(null);
@@ -42,6 +49,15 @@ function TakePage() {
   const [note, setNote] = useState("");
   const [kept, setKept] = useState("");
   useEffect(() => setDiary(loadDiary()), []);
+  useEffect(() => {
+    if (!preset.kind || !preset.id) return;
+    const hit = hitById(preset.kind, preset.id);
+    if (!hit) return;
+    setPicked(hit);
+    setRoute(defaultRoute(hit));
+    setDose(null);
+    setCustom("");
+  }, [preset.kind, preset.id]);
 
   const hits = search(query);
   const missed = query.trim().length >= 2 && hits.length === 0 && !picked;
@@ -75,17 +91,16 @@ function TakePage() {
 
   return (
     <main className="space-y-4">
-      <Link to="/" className="text-sm text-bronze">Cancelar</Link>
-      <h1 className="font-display text-5xl leading-none">Nova tomada</h1>
+      <Link to="/codex" className="text-sm text-bronze">Retornar</Link>
+      <h1 className="font-display text-5xl leading-none">Novo composto</h1>
       <label className="block text-sm">
-        Busca no índice
-        <input className="field mt-1" value={query} onChange={(e) => { setQuery(e.target.value); setPicked(null); }} placeholder="fármaco ou ancilar" />
+        Busca na database
+        <input className="field mt-1" value={query} onChange={(e) => { setQuery(e.target.value); setPicked(null); }} placeholder="nomeie o composto, Frater" />
       </label>
 
-      {!picked && query.trim().length < 2 ? (
+      {!picked && query.trim().length < 2 && frequent.length > 0 ? (
         <section className="space-y-4">
-          <p className="text-sm text-muted">As três mais usadas neste Diarium. A dose do botão é uma tomada anterior, não uma sugestão.</p>
-          {frequent.length === 0 ? <p className="text-sm">Ainda não há tomadas repetidas.</p> : null}
+          <p className="text-sm text-muted">Os que o Frater já repetiu. A dose é um registro anterior, não uma ordem.</p>
           {frequent.map((row) => (
             <button
               key={`${row.kind}-${row.substanceId}`}
@@ -182,7 +197,7 @@ function TakePage() {
 
       {missed ? (
         <section className="space-y-2 border-t border-rule pt-3">
-          <p className="text-sm text-muted">Não está no índice. Sem descrição de banco e sem curva. A nota não é medição.</p>
+          <p className="text-sm text-muted">Não está na database. Sem ficha e sem curva. A nota não é medição.</p>
           <textarea className="field min-h-24" value={note} onChange={(e) => setNote(e.target.value)} />
           <button
             type="button"

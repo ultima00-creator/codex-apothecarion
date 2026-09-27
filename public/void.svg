@@ -1,24 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 720">
-  <defs>
-    <radialGradient id="glow" cx="50%" cy="46%" r="42%">
-      <stop offset="0%" stop-color="#7dffc4" stop-opacity="0.42"/>
-      <stop offset="48%" stop-color="#14684a" stop-opacity="0.22"/>
-      <stop offset="100%" stop-color="#07090b" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="400" height="720" fill="#07090b"/>
-  <rect width="400" height="720" fill="url(#glow)"/>
-  <g fill="none" stroke="#b7ffe0" stroke-width="1.2">
-    <circle cx="200" cy="330" r="72" opacity="0.85"/>
-    <circle cx="200" cy="330" r="128" opacity="0.55"/>
-    <circle cx="200" cy="330" r="196" opacity="0.38"/>
-    <circle cx="200" cy="330" r="268" opacity="0.22"/>
+  <rect width="400" height="720" fill="#f3ead7"/>
+  <g fill="none" stroke="#0e2a56" stroke-width="1.2">
+    <circle cx="200" cy="300" r="72" opacity="0.28"/>
+    <circle cx="200" cy="300" r="128" opacity="0.18"/>
+    <circle cx="200" cy="300" r="196" opacity="0.12"/>
+    <circle cx="200" cy="300" r="268" opacity="0.08"/>
   </g>
-  <g stroke="#9ee8c4" stroke-width="1" opacity="0.28">
-    <path d="M200 40v580"/>
-    <path d="M20 330h360"/>
-    <path d="M78 120l244 420"/>
-    <path d="M322 120L78 540"/>
+  <g stroke="#0e2a56" stroke-width="1" opacity="0.12">
+    <path d="M200 20v640"/>
+    <path d="M20 300h360"/>
   </g>
-  <polygon points="200,300 226,330 200,360 174,330" fill="none" stroke="#e8fff4" stroke-width="1.4"/>
+  <polygon points="200,270 226,300 200,330 174,300" fill="none" stroke="#9d1c2f" stroke-width="1.4" opacity="0.55"/>
 </svg>

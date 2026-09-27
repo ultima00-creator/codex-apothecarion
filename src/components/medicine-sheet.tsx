@@ -51,7 +51,7 @@ export function MedicineSheet({ id }: { id: string }) {
           <p className="text-sm">Nesta hora: {now == null ? "—" : now}</p>
         </>
       ) : null}
-      <Link to="/tomar" className="inline-flex min-h-11 items-center text-sm underline">Registrar no Diarium</Link>
+      <Link to="/tomar" search={{ kind: "medicine", id: row.id }} className="inline-flex min-h-11 items-center text-sm underline">Usar este composto</Link>
     </article>
   );
 }

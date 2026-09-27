@@ -1,4 +1,4 @@
-import { medicines } from "@/lib/medicines";
+import { findMedicine, medicines } from "@/lib/medicines";
 import catalog from "@/data/catalog.json";
 
 export type Hit =
@@ -133,4 +133,24 @@ export function plotCompounds() {
 export function wikiByCompound(name: string) {
   const key = norm(name);
   return catalog.wiki.find((row) => norm(row.name) === key || row.commonNames.some((item) => norm(item) === key)) ?? null;
+}
+
+export function hitById(kind: string, id: string): Hit | null {
+  if (kind === "wiki") {
+    const row = findWiki(id);
+    return row ? { kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "wiki" } : null;
+  }
+  if (kind === "medicine") {
+    const row = findMedicine(id);
+    return row ? { kind: "medicine", id: row.id, title: row.name, detail: row.halfLifeDays ? "remédio · meia-vida" : "remédio · sem curva" } : null;
+  }
+  if (kind === "hormone") {
+    const row = findHormone(id);
+    return row ? { kind: "hormone", id: row.id, title: `${row.compound} ${row.form ?? ""}`.trim(), detail: "implante" } : null;
+  }
+  if (kind === "peptide") {
+    const row = findPeptide(id);
+    return row ? { kind: "peptide", id: row.id, title: `${row.compound} ${row.form ?? ""}`.trim(), detail: "peptídeo" } : null;
+  }
+  return null;
 }

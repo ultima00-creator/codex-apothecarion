@@ -22,7 +22,14 @@ function DiaryHome() {
           <h1 className="font-display text-5xl leading-none">Diarium</h1>
         </div>
       </header>
-      <p className="mb-4 text-sm text-muted">Fármacos da wiki e remédios do índice. A ala Gene-Seed não entra neste índice.</p>
+      <p className="mb-4 text-sm text-muted">O que ainda corre no organismo fica neste registro, Frater. O Codex abre a database.</p>
+      <Link to="/codex" className="codex-seal mb-4">
+        <img src="/codex-mark.png" alt="" className="size-16 shrink-0 object-cover" />
+        <span>
+          <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Database</span>
+          <span className="block font-display text-3xl leading-none">Codex</span>
+        </span>
+      </Link>
       {notices.map((notice) => (
         <p key={notice.id} className="mb-3 flex items-center justify-between gap-3 border border-bronze px-3 py-2 text-sm">
           <span>{notice.name}: {notice.word === "efeito" ? "o efeito acabou." : "o tempo desta curva acabou."}</span>
@@ -39,7 +46,7 @@ function DiaryHome() {
         </p>
       ))}
       {days.length === 0 ? (
-        <p className="text-sm">Nenhuma tomada em efeito. O + abre o índice. Quando a duração acaba, a tomada sai e fica o aviso.</p>
+        <p className="text-sm">Nenhum composto em efeito, Frater. Quando a duração se encerra, a linha sai e permanece o aviso.</p>
       ) : null}
       <ul>
         {days.map((day) => {

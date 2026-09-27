@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CodexRouteImport } from './routes/codex'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as ProtocolosRouteImport } from './routes/protocolos'
 import { Route as TomarRouteImport } from './routes/tomar'
@@ -19,6 +20,11 @@ import { Route as AbrirKindIdRouteImport } from './routes/abrir.$kind.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CodexRoute = CodexRouteImport.update({
+  id: '/codex',
+  path: '/codex',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JournalRoute = JournalRouteImport.update({
@@ -49,6 +55,7 @@ const AbrirKindIdRoute = AbrirKindIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/codex': typeof CodexRoute
   '/journal': typeof JournalRoute
   '/protocolos': typeof ProtocolosRoute
   '/tomar': typeof TomarRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/codex': typeof CodexRoute
   '/journal': typeof JournalRoute
   '/protocolos': typeof ProtocolosRoute
   '/tomar': typeof TomarRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/codex': typeof CodexRoute
   '/journal': typeof JournalRoute
   '/protocolos': typeof ProtocolosRoute
   '/tomar': typeof TomarRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/codex'
     | '/journal'
     | '/protocolos'
     | '/tomar'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/codex'
     | '/journal'
     | '/protocolos'
     | '/tomar'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/codex'
     | '/journal'
     | '/protocolos'
     | '/tomar'
@@ -101,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CodexRoute: typeof CodexRoute
   JournalRoute: typeof JournalRoute
   ProtocolosRoute: typeof ProtocolosRoute
   TomarRoute: typeof TomarRoute
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/codex': {
+      id: '/codex'
+      path: '/codex'
+      fullPath: '/codex'
+      preLoaderRoute: typeof CodexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/journal': {
@@ -157,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CodexRoute: CodexRoute,
   JournalRoute: JournalRoute,
   ProtocolosRoute: ProtocolosRoute,
   TomarRoute: TomarRoute,
