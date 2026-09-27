@@ -69,6 +69,22 @@ export function findWiki(slug: string) {
   return catalog.wiki.find((row) => row.slug === slug) ?? null;
 }
 
+export function routesFor(hit: Hit): string[] {
+  if (hit.kind === "wiki") {
+    const names = findWiki(hit.id)?.roas.map((roa) => (roa.name ?? "").toLowerCase()).filter(Boolean) ?? [];
+    return [...new Set(names)];
+  }
+  if (hit.kind === "hormone") {
+    const route = findHormone(hit.id)?.route_default;
+    return route ? [route] : [];
+  }
+  if (hit.kind === "peptide") {
+    const route = findPeptide(hit.id)?.route_default;
+    return route ? [route] : [];
+  }
+  return [];
+}
+
 export function plotCompounds() {
   const hormones = catalog.hormones.filter((row) => row.id !== "progesterone-vaginal").map((row) => ({
     kind: "hormone" as const,

@@ -12,11 +12,13 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className={`mx-auto min-h-screen max-w-3xl px-4 pb-28 pt-5 ${path.startsWith("/protocolos") ? "wing-gene" : "wing-base"}`}>
       <header className="mast">
-        <div>
-          <p className="text-xs tracking-[0.28em] text-bronze uppercase">Apothecarion</p>
-          <p className="font-display text-3xl leading-none">Codex</p>
+        <div className="flex items-center gap-3">
+          <img src="/helix-mark.png" alt="" className="helix-banner" />
+          <div>
+            <p className="text-xs tracking-[0.28em] text-bronze uppercase">Codex</p>
+            <p className="font-display text-3xl leading-none">Apothecarion</p>
+          </div>
         </div>
-        <span className="mb-1 h-1 w-12 bg-bronze" />
       </header>
       <div className="plate">
         <span className="tick tick-tl" />
@@ -33,7 +35,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </div>
       {path !== "/tomar" ? (
         <Link to="/tomar" aria-label="Nova tomada" className="take-hex">
-          +
+          <img src="/skull-take.png" alt="" className="size-full object-cover" />
         </Link>
       ) : null}
       <nav className="dock">

@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { AxisChart } from "@/components/axis-chart";
 import { citedSeries, fractionSeries, level, remainingFraction, type Curve } from "@/lib/kinetics";
 import { mark } from "@/lib/mark";
-import { classePt } from "@/lib/pt";
+import { classePt, viaPt } from "@/lib/pt";
 import { wikiByCompound } from "@/lib/search";
 
 type Record = {
@@ -17,14 +17,12 @@ type Record = {
   curve: Curve;
 };
 
-const routes = ["oral", "intramuscular", "intravenous", "subcutaneous", "sublingual", "topical", "vaginal"];
-
 export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_hormone" | "peptide" }) {
   const curve = record.curve;
   const cited = curve.model === "concentration" || curve.model === "amount" || curve.model === "release";
   const [dose, setDose] = useState(curve.dose_basis_mg ?? 1);
   const [hours, setHours] = useState(0);
-  const [route, setRoute] = useState(record.route_default);
+  const route = record.route_default;
   const [quarters, setQuarters] = useState(0);
   const wiki = wikiByCompound(record.compound);
 
@@ -73,12 +71,7 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
             Horas desde a tomada
             <input className="field mt-1" type="number" min={0} step="0.5" value={hours} onChange={(e) => setHours(Number(e.target.value))} />
           </label>
-          <label className="block text-sm">
-            Via
-            <select className="field mt-1" value={route} onChange={(e) => setRoute(e.target.value)}>
-              {routes.map((item) => <option key={item}>{item}</option>)}
-            </select>
-          </label>
+          <p className="text-sm">Via catalogada: {viaPt(record.route_default)}.</p>
           {route === "oral" ? (
             <label className="block text-sm">
               Estômago cheio

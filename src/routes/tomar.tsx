@@ -9,18 +9,14 @@ import {
   type DiaryKind,
   type Ingestion,
 } from "@/lib/diary";
-import { findHormone, findPeptide, search, type Hit } from "@/lib/search";
+import { findHormone, findPeptide, routesFor, search, type Hit } from "@/lib/search";
 import { saveNote } from "@/lib/store";
 import { viaPt } from "@/lib/pt";
 
 export const Route = createFileRoute("/tomar")({ component: TakePage });
 
-const routes = ["oral", "intramuscular", "intravenous", "subcutaneous", "sublingual", "topical", "vaginal", "insufflated", "smoked", "rectal"];
-
 function defaultRoute(hit: Hit): string {
-  if (hit.kind === "hormone") return findHormone(hit.id)?.route_default ?? "oral";
-  if (hit.kind === "peptide") return findPeptide(hit.id)?.route_default ?? "subcutaneous";
-  return "oral";
+  return routesFor(hit)[0] ?? "";
 }
 
 function referenceDose(hit: Hit): number | null {
@@ -152,9 +148,13 @@ function TakePage() {
           </label>
           <label className="block text-sm">
             Via
-            <select className="field mt-1" value={route} onChange={(e) => setRoute(e.target.value)}>
-              {routes.map((item) => <option key={item} value={item}>{viaPt(item)}</option>)}
-            </select>
+            {picked && routesFor(picked).length > 0 ? (
+              <select className="field mt-1" value={route} onChange={(e) => setRoute(e.target.value)}>
+                {routesFor(picked).map((item) => <option key={item} value={item}>{viaPt(item)}</option>)}
+              </select>
+            ) : (
+              <p className="mt-1 text-sm text-muted">Sem via catalogada nesta ficha.</p>
+            )}
           </label>
           {route === "oral" ? (
             <label className="block text-sm">
@@ -167,9 +167,9 @@ function TakePage() {
                 <option value={4}>4/4 · +2 h</option>
               </select>
             </label>
-          ) : (
+          ) : route ? (
             <p className="text-sm text-muted">Fora da via oral o estômago não atrasa a metabolização hepática. Na curva citada o atraso não entra.</p>
-          )}
+          ) : null}
           <label className="block text-sm">
             Hora
             <input className="field mt-1" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} />
