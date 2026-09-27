@@ -95,8 +95,8 @@
   width: 3.4rem;
   height: 3.4rem;
   object-fit: cover;
-  border: 1px solid #0e2a56;
-  box-shadow: 0 0 0 1px rgba(157, 28, 47, 0.45);
+  border: 1px solid #9d1c2f;
+  box-shadow: none;
 }
 
 .wing-gene .plate {
@@ -135,8 +135,8 @@
 
 .vial-mark {
   border: 1px solid #0e2a56;
-  box-shadow: inset 0 0 0 1px rgba(157, 28, 47, 0.35);
-  background: #fffaf2;
+  box-shadow: none;
+  background: #fff;
 }
 
 .crystal-line {

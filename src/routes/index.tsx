@@ -24,7 +24,7 @@ function DiaryHome() {
       </header>
       <p className="mb-4 text-sm text-muted">O que ainda corre no organismo fica neste registro, Frater. O Codex abre a database.</p>
       <Link to="/codex" className="codex-seal mb-4">
-        <img src="/codex-mark.png" alt="" className="size-16 shrink-0 object-cover" />
+        <img src="/codex-light.png" alt="" className="size-16 shrink-0 object-cover" />
         <span>
           <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Database</span>
           <span className="block font-display text-3xl leading-none">Codex</span>
