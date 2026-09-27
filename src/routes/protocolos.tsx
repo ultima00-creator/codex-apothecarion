@@ -155,7 +155,7 @@ function CyclePage() {
   return (
     <main className="space-y-5">
       <header className="gene-head">
-        <GeneSeedMark className="mx-auto h-28 w-48" />
+        <GeneSeedMark className="mx-auto size-28" />
         <p className="mt-3 text-xs tracking-[0.28em] text-bronze uppercase">Gene-Seed</p>
         <h1 className="font-display text-4xl leading-none">Implantation</h1>
         <svg viewBox="0 0 220 18" className="mx-auto mt-3 h-4 w-full max-w-xs text-bronze" aria-hidden="true">

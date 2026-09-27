@@ -9,7 +9,7 @@ export function DiariumMark({ className = "size-10" }: { className?: string }) {
   );
 }
 
-export function GeneSeedMark({ className = "h-16 w-28" }: { className?: string }) {
+export function GeneSeedMark({ className = "size-16" }: { className?: string }) {
   return <img src="/gene-seed-vials.png" alt="" className={`vial-mark object-cover ${className}`} />;
 }
 
