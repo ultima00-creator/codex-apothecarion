@@ -162,6 +162,11 @@ function CyclePage() {
             <h1 className="font-display text-4xl leading-none">Implantation</h1>
           </div>
         </div>
+        <svg viewBox="0 0 220 18" className="mt-3 h-4 w-full text-bronze" aria-hidden="true">
+          <path d="M4 9h62M154 9h62" stroke="currentColor" strokeWidth="1" />
+          <path d="M70 9c10-7 18-7 28 0 10 7 18 7 28 0 8-6 16-6 24 0" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M110 4.2 113.2 9 110 13.8 106.8 9Z" fill="currentColor" />
+        </svg>
         <p className="mt-3 flex items-center gap-2 text-sm">
           <MateriaMark className="size-8 shrink-0 text-bronze" />
           Matéria Medica

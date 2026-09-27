@@ -23,6 +23,11 @@ export function Shell({ children }: { children: ReactNode }) {
         <span className="tick tick-tr" />
         <span className="tick tick-bl" />
         <span className="tick tick-br" />
+        <p className="plate-motto">
+          <span>Codex</span>
+          <span />
+          <span>Apothecarion</span>
+        </p>
         {children}
       </div>
       {path !== "/tomar" ? (

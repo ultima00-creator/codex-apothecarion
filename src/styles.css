@@ -24,12 +24,23 @@
     font-family: var(--font-sans);
     line-height: 1.5;
     min-height: 100vh;
+    background: #07090b;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
     background:
-      radial-gradient(ellipse at 12% -8%, rgba(120, 255, 196, 0.22), transparent 42%),
-      radial-gradient(ellipse at 100% 100%, rgba(16, 72, 52, 0.55), transparent 46%),
-      repeating-linear-gradient(112deg, rgba(186, 255, 220, 0.045) 0 1px, transparent 1px 13px),
-      repeating-linear-gradient(68deg, rgba(61, 204, 150, 0.04) 0 2px, transparent 2px 18px),
-      linear-gradient(180deg, #24312c 0%, #101614 42%, #080b0a 100%);
+      radial-gradient(circle at 50% 38%, rgba(120, 255, 210, 0.16), transparent 22%),
+      radial-gradient(circle at 50% 38%, transparent 16%, rgba(61, 204, 150, 0.28) 16.35%, transparent 17%),
+      radial-gradient(circle at 50% 38%, transparent 30%, rgba(158, 232, 196, 0.16) 30.35%, transparent 31%),
+      radial-gradient(circle at 50% 38%, transparent 46%, rgba(61, 204, 150, 0.12) 46.3%, transparent 47%),
+      radial-gradient(circle at 50% 38%, transparent 64%, rgba(158, 232, 196, 0.08) 64.25%, transparent 65%),
+      repeating-conic-gradient(from 0deg at 50% 38%, rgba(158, 232, 196, 0.05) 0 0.4deg, transparent 0.4deg 30deg),
+      radial-gradient(circle at 18% 88%, rgba(12, 48, 36, 0.55), transparent 36%),
+      linear-gradient(180deg, #101614 0%, #07090b 55%, #050706 100%);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -42,18 +53,31 @@
 
 .plate {
   position: relative;
-  border: 1px solid #9ee8c4;
+  border: 1px solid rgba(158, 232, 196, 0.72);
   background:
-    linear-gradient(128deg, rgba(214, 255, 234, 0.2) 0%, transparent 22%),
-    linear-gradient(304deg, rgba(61, 204, 150, 0.28) 0%, transparent 30%),
-    linear-gradient(205deg, transparent 42%, rgba(170, 255, 214, 0.08) 49%, transparent 58%),
-    repeating-linear-gradient(118deg, rgba(61, 204, 150, 0.05) 0 1px, transparent 1px 10px),
-    linear-gradient(180deg, #31423b 0%, #1a2621 36%, #101614 100%);
+    linear-gradient(180deg, rgba(18, 28, 24, 0.88), rgba(7, 10, 9, 0.82));
   box-shadow:
-    inset 0 1px 0 rgba(230, 255, 242, 0.55),
-    inset 0 -18px 28px rgba(8, 28, 20, 0.45),
-    0 0 0 1px rgba(61, 204, 150, 0.35);
-  padding: 1.15rem 0.9rem 1.2rem;
+    inset 0 0 0 1px rgba(61, 204, 150, 0.28),
+    inset 0 1px 0 rgba(220, 255, 236, 0.28),
+    0 0 28px rgba(61, 204, 150, 0.08);
+  padding: 1.35rem 0.95rem 1.25rem;
+}
+
+.plate-motto {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.85rem;
+  color: var(--color-bronze);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.plate-motto span:nth-child(2) {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--color-bronze), transparent);
 }
 
 .tick {
