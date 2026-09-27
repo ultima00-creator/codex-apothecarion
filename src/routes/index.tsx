@@ -17,12 +17,12 @@ function DiaryHome() {
   return (
     <main>
       <header className="mb-4 flex items-center gap-3">
-        <DiariumMark className="size-12 shrink-0 text-bronze" />
+        <DiariumMark className="size-16 shrink-0 text-bronze" />
         <div>
           <h1 className="font-display text-5xl leading-none">Diarium</h1>
         </div>
       </header>
-      <p className="mb-4 text-sm text-muted">Fármacos da wiki e remédios ancilares. A ala Gene-Seed não entra neste índice.</p>
+      <p className="mb-4 text-sm text-muted">Fármacos da wiki e remédios do índice. A ala Gene-Seed não entra neste índice.</p>
       {notices.map((notice) => (
         <p key={notice.id} className="mb-3 flex items-center justify-between gap-3 border border-bronze px-3 py-2 text-sm">
           <span>{notice.name}: {notice.word === "efeito" ? "o efeito acabou." : "o tempo desta curva acabou."}</span>

@@ -9,23 +9,8 @@ export function DiariumMark({ className = "size-10" }: { className?: string }) {
   );
 }
 
-export function GeneSeedMark({ className = "size-10" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <rect x="1" y="9" width="20.6" height="16.4" stroke="currentColor" strokeWidth="1.25" />
-      <rect x="2.6" y="5.2" width="4.6" height="16.2" rx="0.6" fill="currentColor" fillOpacity="0.16" stroke="currentColor" strokeWidth="1.15" />
-      <rect x="8.6" y="5.2" width="4.6" height="16.2" rx="0.6" fill="currentColor" fillOpacity="0.16" stroke="currentColor" strokeWidth="1.15" />
-      <rect x="14.6" y="5.2" width="4.6" height="16.2" rx="0.6" fill="currentColor" fillOpacity="0.16" stroke="currentColor" strokeWidth="1.15" />
-      <path d="M2.6 7.6h4.6M8.6 7.6h4.6M14.6 7.6h4.6" stroke="currentColor" strokeWidth="1" />
-      <path d="M1.6 14.2h19.4" stroke="currentColor" strokeWidth="2.2" />
-      <path d="M4.2 14.2 6.2 12 8.2 14.2 6.2 16.4Z" fill="var(--color-parchment)" stroke="currentColor" strokeWidth="1.05" />
-      <path d="M8.4 14.2 11 11.2 13.6 14.2 11 17.2Z" fill="var(--color-parchment)" stroke="currentColor" strokeWidth="1.05" />
-      <path d="M13.8 14.2 15.8 12 17.8 14.2 15.8 16.4Z" fill="var(--color-parchment)" stroke="currentColor" strokeWidth="1.05" />
-      <rect x="22.6" y="9.6" width="8" height="12.2" stroke="currentColor" strokeWidth="1.15" />
-      <path d="M23.8 11h1.7v1.7h-1.7zM26.2 11h1.7v1.7h-1.7zM23.8 13.3h1.7v1.7h-1.7zM26.2 13.3h1.7v1.7h-1.7z" stroke="currentColor" strokeWidth="0.85" />
-      <circle cx="26.6" cy="18.6" r="1.45" stroke="currentColor" strokeWidth="1" />
-    </svg>
-  );
+export function GeneSeedMark({ className = "h-16 w-28" }: { className?: string }) {
+  return <img src="/gene-seed-vials.png" alt="" className={`vial-mark object-cover ${className}`} />;
 }
 
 export function MateriaMark({ className = "size-6" }: { className?: string }) {

@@ -40,11 +40,11 @@ export function Shell({ children }: { children: ReactNode }) {
             <li key={link.to} className="flex-1">
               <Link
                 to={link.to}
-                className="flex min-h-12 items-center justify-center gap-1 text-sm text-ink"
-                activeProps={{ className: "flex min-h-12 items-center justify-center gap-1 text-sm text-bronze" }}
+                className="flex min-h-14 items-center justify-center gap-2 text-sm text-ink"
+                activeProps={{ className: "flex min-h-14 items-center justify-center gap-2 text-sm text-bronze" }}
               >
-                {link.to === "/" ? <DiariumMark className="size-4" /> : null}
-                {link.to === "/protocolos" ? <GeneSeedMark className="size-4" /> : null}
+                {link.to === "/" ? <DiariumMark className="size-6" /> : null}
+                {link.to === "/protocolos" ? <GeneSeedMark className="h-8 w-12" /> : null}
                 {link.label}
               </Link>
             </li>

@@ -46,7 +46,7 @@ export function search(query: string): Hit[] {
   const hit = (hay: string) => forms.some((item) => hay.includes(item));
   for (const row of medicines) {
     const hay = norm([row.name, row.className, ...row.aliases].join(" "));
-    if (hit(hay)) hits.push({ kind: "medicine", id: row.id, title: row.name, detail: "remédio · meia-vida" });
+    if (hit(hay)) hits.push({ kind: "medicine", id: row.id, title: row.name, detail: row.halfLifeDays ? "remédio · meia-vida" : "remédio · sem curva" });
   }
   for (const row of catalog.wiki) {
     const hay = norm([row.name, ...row.commonNames].join(" "));
@@ -70,7 +70,7 @@ export function findWiki(slug: string) {
 }
 
 export function plotCompounds() {
-  const hormones = catalog.hormones.map((row) => ({
+  const hormones = catalog.hormones.filter((row) => row.id !== "progesterone-vaginal").map((row) => ({
     kind: "hormone" as const,
     id: row.id,
     compound: row.compound,
