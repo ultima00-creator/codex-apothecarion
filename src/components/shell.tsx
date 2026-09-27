@@ -47,7 +47,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 className="flex min-h-14 items-center justify-center gap-2 text-sm text-ink"
                 activeProps={{ className: "flex min-h-14 items-center justify-center gap-2 text-sm text-bronze" }}
               >
-                {link.to === "/" ? <DiariumMark className="size-6" /> : null}
+                {link.to === "/" ? <DiariumMark className="size-9" /> : null}
                 {link.to === "/protocolos" ? <GeneSeedMark className="size-9" /> : null}
                 {link.label}
               </Link>

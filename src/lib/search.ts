@@ -30,6 +30,32 @@ function queries(value: string): string[] {
   }
   return [...found];
 }
+function fold(value: string): string {
+  const compact = norm(value).replace(/ /g, "").replaceAll("ph", "f").replaceAll("y", "i").replaceAll("th", "t");
+  return compact.endsWith("o") ? compact.slice(0, -1) : compact;
+}
+
+const wikiByFold = new Map<string, (typeof catalog.wiki)[number]>();
+for (const row of catalog.wiki) {
+  for (const name of [row.name, ...row.commonNames]) {
+    const key = fold(name);
+    if (key && !wikiByFold.has(key)) wikiByFold.set(key, row);
+  }
+}
+
+const hiddenMedicine = new Set<string>();
+const titleBySlug = new Map<string, string>();
+for (const row of medicines) {
+  const wiki = wikiByFold.get(fold(row.name));
+  if (!wiki) continue;
+  hiddenMedicine.add(row.id);
+  if (!titleBySlug.has(wiki.slug)) titleBySlug.set(wiki.slug, row.name);
+}
+
+export function wikiTitle(slug: string, fallback: string): string {
+  return titleBySlug.get(slug) ?? fallback;
+}
+
 function norm(value: string): string {
   return value
     .toLowerCase()
@@ -45,13 +71,14 @@ export function search(query: string): Hit[] {
   const hits: Hit[] = [];
   const hit = (hay: string) => forms.some((item) => hay.includes(item));
   for (const row of medicines) {
+    if (hiddenMedicine.has(row.id)) continue;
     const hay = norm([row.name, row.className, ...row.aliases].join(" "));
     if (hit(hay)) hits.push({ kind: "medicine", id: row.id, title: row.name, detail: row.halfLifeDays ? "remédio · meia-vida" : "remédio · sem curva" });
   }
   for (const row of catalog.wiki) {
-    const hay = norm([row.name, ...row.commonNames].join(" "));
+    const hay = norm([wikiTitle(row.slug, row.name), row.name, ...row.commonNames].join(" "));
     if (hit(hay)) {
-      hits.push({ kind: "wiki", id: row.slug, title: row.name, detail: "wiki" });
+      hits.push({ kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "wiki" });
     }
   }
   return hits.slice(0, 40);

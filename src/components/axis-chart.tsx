@@ -31,7 +31,7 @@ export function AxisChart({
                 formatter={(value) => [value, unit]}
                 labelFormatter={(label) => `${xLabel} ${label}`}
               />
-              <Line type="monotone" dataKey="y" stroke={tone} dot={false} strokeWidth={2} name={unit} />
+              <Line type="monotone" dataKey="y" stroke={tone} dot={false} strokeWidth={3} name={unit} />
             </LineChart>
           </ResponsiveContainer>
         ) : null}

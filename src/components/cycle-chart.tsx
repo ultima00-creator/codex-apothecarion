@@ -18,7 +18,7 @@ export function CycleChart({ panel }: { panel: Panel }) {
               <YAxis stroke="var(--color-muted)" tick={{ fill: "var(--color-ink)", fontSize: 11 }} width={48} />
               <Tooltip />
               {panel.series.map((item) => (
-                <Line key={item.id} type="monotone" dataKey={item.id} name={item.name} stroke={item.tone} dot={false} strokeWidth={2} />
+                <Line key={item.id} type="monotone" dataKey={item.id} name={item.name} stroke={item.tone} dot={false} strokeWidth={3} />
               ))}
             </LineChart>
           </ResponsiveContainer>

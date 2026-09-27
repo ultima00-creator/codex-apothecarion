@@ -1,4 +1,4 @@
-import { findWiki } from "@/lib/search";
+import { findWiki, wikiTitle } from "@/lib/search";
 import { classePt, nomePt, tempoPt, viaPt } from "@/lib/pt";
 
 const levelLabel: Record<string, string> = {
@@ -32,7 +32,7 @@ export function WikiSheet({ slug }: { slug: string }) {
     <article className="space-y-5">
       <header>
         <p className="text-xs tracking-[0.2em] text-bronze uppercase">Wiki</p>
-        <h2 className="font-display text-3xl">{row.name}</h2>
+        <h2 className="font-display text-3xl">{wikiTitle(row.slug, row.name)}</h2>
         {row.classes.length > 0 ? <p className="text-muted">{row.classes.map(classePt).join(" · ")}</p> : null}
         {row.commonNames.length > 0 ? <p className="text-sm">Também: {row.commonNames.join(", ")}</p> : null}
       </header>

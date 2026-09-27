@@ -40,7 +40,7 @@ export function DiaryChart({
                   stroke={item.tone}
                   strokeDasharray={item.curve === "half_life" ? "5 4" : item.curve === "duration" ? "2 3" : undefined}
                   dot={false}
-                  strokeWidth={2}
+                  strokeWidth={3}
                   connectNulls
                 />
               ))}
