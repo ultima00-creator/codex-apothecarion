@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AxisChart } from "@/components/axis-chart";
 import { CycleChart } from "@/components/cycle-chart";
-import { GeneSeedMark, MateriaMark } from "@/components/marks";
+import { GeneSeedMark } from "@/components/marks";
 import { panels, type CycleLine, type PlotCompound } from "@/lib/cycle";
 import { plotCompounds } from "@/lib/search";
 import { loadCycles, removeCycle, saveCycle, type Cycle } from "@/lib/store";
@@ -189,22 +189,15 @@ function CyclePage() {
 
   return (
     <main className="space-y-5">
-      <header className="gene-head">
-        <GeneSeedMark className="mx-auto size-28" />
-        <p className="mt-3 text-xs tracking-[0.28em] text-bronze uppercase">Gene-Seed</p>
-        <h1 className="font-display text-4xl leading-none">Implantation</h1>
-        <svg viewBox="0 0 220 18" className="mx-auto mt-3 h-4 w-full max-w-xs text-bronze" aria-hidden="true">
-          <path d="M4 9h62M154 9h62" stroke="currentColor" strokeWidth="1" />
-          <path d="M70 9c10-7 18-7 28 0 10 7 18 7 28 0 8-6 16-6 24 0" fill="none" stroke="currentColor" strokeWidth="1" />
-          <path d="M110 4.2 113.2 9 110 13.8 106.8 9Z" fill="currentColor" />
-        </svg>
-        <p className="mt-2 flex items-center justify-center gap-2 font-display text-2xl italic">
-          <MateriaMark className="size-7 shrink-0 text-bronze" />
-          Matéria Medica
-        </p>
-        <p className="mt-1 text-sm text-muted">A Implantation está aberta, Frater. Agumentarium e Conditionarium esperam uma Implantation guardada.</p>
-        <p className="mt-2 text-sm text-muted">Cada linha é um implante progenoide desta ala, com os estradiol injetáveis já catalogados. A dose é a que o Frater declara. Não é prescrição.</p>
+      <header className="flex items-center gap-3">
+        <GeneSeedMark className="size-14 shrink-0" />
+        <div>
+          <p className="kicker">Gene-Seed</p>
+          <h1 className="screen-title font-display">Implantation</h1>
+          <p className="kicker mt-1">Matéria Medica</p>
+        </div>
       </header>
+      <p className="lede">A dose é a que o Frater declara. Não é prescrição. Agumentarium e Conditionarium acendem com uma Implantation guardada.</p>
       <div className="space-y-3">
         <WingDoor to="/agumentarium" wing="agumentarium" label="Combat-Stimm" open={saved.length > 0} />
         <WingDoor to="/conditionarium" wing="conditionarium" label="Med-Stimm" open={saved.length > 0} />

@@ -180,3 +180,53 @@
   border-color: #f4f7fa;
   color: #f4f7fa;
 }
+
+.kicker {
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.screen-title {
+  font-size: 2.5rem;
+  line-height: 0.95;
+}
+
+.lede {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.alert-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid #3a4e66;
+  border-left: 3px solid #f4f7fa;
+  background: #10283f;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.sheet dt {
+  margin-top: 0.55rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.sheet dd {
+  margin: 0;
+}
+
+.dock a {
+  color: var(--color-muted);
+}
+
+.dock a.text-ink {
+  color: var(--color-ink);
+}
+

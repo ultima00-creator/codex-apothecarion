@@ -18,25 +18,15 @@ function DiaryHome() {
   const plot = dayPlot(rows);
   return (
     <main>
-      <header className="mb-4 flex items-center gap-3">
-        <DiariumMark className="size-16 shrink-0 text-bronze" />
+      <header className="mb-3 flex items-center gap-3">
+        <DiariumMark className="size-12 shrink-0" />
         <div>
-          <h1 className="font-display text-5xl leading-none">Diarium</h1>
+          <p className="kicker">Registro</p>
+          <h1 className="screen-title font-display">Diarium</h1>
         </div>
       </header>
-      <p className="mb-4 text-sm text-muted">O que ainda corre no organismo fica neste registro, Frater. O Codex abre a database.</p>
-      <Link to="/codex" className="codex-seal mb-4">
-        <img src="/codex-mix.png" alt="" className="size-16 shrink-0 object-cover" />
-        <span>
-          <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Database</span>
-          <span className="block font-display text-3xl leading-none">Codex</span>
-        </span>
-      </Link>
-      <div className="mb-4">
-        <DiaryChart points={plot.points} series={plot.series} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
-      </div>
       {notices.map((notice) => (
-        <p key={notice.id} className="mb-3 flex items-center justify-between gap-3 border border-bronze px-3 py-2 text-sm">
+        <p key={notice.id} className="alert-line mb-3">
           <span>{notice.name}: {notice.word === "efeito" ? "o efeito acabou." : "o tempo desta curva acabou."}</span>
           <button
             type="button"
@@ -50,8 +40,18 @@ function DiaryHome() {
           </button>
         </p>
       ))}
+      <Link to="/codex" className="codex-seal mb-4">
+        <img src="/codex-mix.png" alt="" className="size-12 shrink-0 object-cover" />
+        <span>
+          <span className="kicker">Database</span>
+          <span className="block font-display text-2xl leading-none">Codex</span>
+        </span>
+      </Link>
+      <div className="mb-4">
+        <DiaryChart points={plot.points} series={plot.series} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
+      </div>
       {days.length === 0 ? (
-        <p className="text-sm">Nenhum composto em efeito, Frater. Quando a duração se encerra, a linha sai e permanece o aviso.</p>
+        <p className="lede">Nenhum composto em efeito, Frater. Quando a duração se encerra, a linha sai e permanece o aviso.</p>
       ) : null}
       <ul>
         {days.map((day) => {

@@ -24,8 +24,8 @@ export function WingCodex({ wing }: { wing: WingId }) {
         <header className="flex items-center gap-3">
           <img src={copy.seal} alt="" className="size-16 object-cover" />
           <div>
-            <p className="text-xs tracking-[0.28em] text-bronze uppercase">Selo fechado</p>
-            <h1 className="font-display text-5xl leading-none">{copy.title}</h1>
+            <p className="kicker">Selo fechado</p>
+            <h1 className="screen-title font-display">{copy.title}</h1>
           </div>
         </header>
         <p>{copy.line}</p>
@@ -44,8 +44,8 @@ export function WingCodex({ wing }: { wing: WingId }) {
       <header className="flex items-center gap-3">
         <img src={copy.seal} alt="" className="size-16 object-cover" />
         <div>
-          <p className="text-xs tracking-[0.28em] text-bronze uppercase">Database</p>
-          <h1 className="font-display text-5xl leading-none">{copy.title}</h1>
+          <p className="kicker">Database</p>
+          <h1 className="screen-title font-display">{copy.title}</h1>
         </div>
       </header>
       <p>{copy.line}</p>
@@ -62,16 +62,23 @@ export function WingCodex({ wing }: { wing: WingId }) {
           return (
             <li key={row.id} className="border-b border-rule py-3">
               <p className="font-display text-2xl leading-tight">{row.name}</p>
-              <p className="text-sm text-muted">{row.className || "sem classe"}</p>
+              <p className="lede line-clamp-2">{row.className || "sem classe"}</p>
               {open === row.id ? (
-                <div className="mt-2 space-y-2 text-sm">
-                  <p>{row.description || "Sem descrição depositada."}</p>
-                  <p><span className="text-muted">Meia-vida. </span>{row.halfLife}</p>
-                  <p><span className="text-muted">Mínima efetiva. </span>{row.minDose}</p>
-                  <p><span className="text-muted">Máxima efetiva. </span>{row.maxDose}</p>
-                  <p><span className="text-muted">Aviso. </span>{row.warning}</p>
-                  <p className="text-muted">{row.halfLifeDays ? `Traçado visual: ${row.halfLifeDays} dias. Não é medição.` : "Sem meia-vida numérica. Não entra no traçado."}</p>
-                  <label className="block">
+                <>
+                <dl className="sheet mt-2 text-sm">
+                  <dt>Descrição</dt>
+                  <dd>{row.description || "Sem descrição depositada."}</dd>
+                  <dt>Meia-vida</dt>
+                  <dd>{row.halfLife}</dd>
+                  <dt>Mínima efetiva</dt>
+                  <dd>{row.minDose}</dd>
+                  <dt>Máxima efetiva</dt>
+                  <dd>{row.maxDose}</dd>
+                  <dt>Aviso</dt>
+                  <dd>{row.warning}</dd>
+                  <dd className="lede">{row.halfLifeDays ? `Traçado visual: ${row.halfLifeDays} dias. Não é medição.` : "Sem meia-vida numérica. Não entra no traçado."}</dd>
+                </dl>
+                <label className="mt-2 block">
                     Implantation
                     <select className="field mt-1" value={target} onChange={(e) => setTarget(e.target.value)}>
                       {saved.map((cycle) => <option key={cycle.id} value={cycle.id}>{cycle.name}</option>)}
@@ -88,7 +95,7 @@ export function WingCodex({ wing }: { wing: WingId }) {
                     Selar nesta Implantation
                   </button>
                   {kept === row.name ? <p className="text-muted">Selado, Frater.</p> : null}
-                </div>
+                </>
               ) : null}
               <div className="mt-2 flex flex-wrap gap-2">
                 <button type="button" className="chip" onClick={() => setOpen(open === row.id ? null : row.id)}>Ler</button>

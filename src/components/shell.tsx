@@ -25,11 +25,6 @@ export function Shell({ children }: { children: ReactNode }) {
         <span className="tick tick-tr" />
         <span className="tick tick-bl" />
         <span className="tick tick-br" />
-        <p className="plate-motto">
-          <span>Codex</span>
-          <span />
-          <span>Apothecarion</span>
-        </p>
         {children}
         <div className="plate-hazard" aria-hidden="true" />
       </div>
@@ -39,8 +34,8 @@ export function Shell({ children }: { children: ReactNode }) {
             <li key={link.to} className="flex-1 border-l border-bronze/30 first:border-l-0">
               <Link
                 to={link.to}
-                className="flex min-h-14 items-center justify-center gap-2 text-sm text-ink"
-                activeProps={{ className: "flex min-h-14 items-center justify-center gap-2 text-sm text-bronze" }}
+                className="dock-link flex min-h-14 items-center justify-center gap-2 text-sm"
+                activeProps={{ className: "dock-link flex min-h-14 items-center justify-center gap-2 text-sm text-ink" }}
               >
                 {link.to === "/" ? <DiariumMark className="size-9" /> : null}
                 {link.to === "/protocolos" ? <GeneSeedMark className="size-9" /> : null}

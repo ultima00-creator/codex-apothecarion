@@ -22,8 +22,8 @@ function CodexPage() {
       <header className="flex items-center gap-3">
         <img src="/codex-mix.png" alt="" className="size-16 object-cover" />
         <div>
-          <p className="text-xs tracking-[0.28em] text-bronze uppercase">Database</p>
-          <h1 className="font-display text-5xl leading-none">Codex</h1>
+          <p className="kicker">Database</p>
+          <h1 className="screen-title font-display">Codex</h1>
         </div>
       </header>
       <p className="text-sm text-muted">Leia a ficha, marque o que deve ficar à mão, ou registre o uso, Frater.</p>
