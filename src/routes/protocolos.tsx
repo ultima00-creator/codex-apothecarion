@@ -89,6 +89,30 @@ function visualDecay(days: number, halfLifeDays: number) {
   return points;
 }
 
+function WingDoor({
+  to,
+  wing,
+  label,
+  open,
+}: {
+  to: "/agumentarium" | "/conditionarium";
+  wing: "agumentarium" | "conditionarium";
+  label: string;
+  open: boolean;
+}) {
+  const body = (
+    <>
+      <img src={wingCopy[wing].seal} alt="" className="size-16 shrink-0 object-cover" />
+      <span>
+        <span className="block text-xs tracking-[0.28em] uppercase">{label}</span>
+        <span className="block font-display text-3xl leading-none">{wingCopy[wing].title}</span>
+      </span>
+    </>
+  );
+  if (!open) return <div className="codex-seal seal-off" aria-disabled="true">{body}</div>;
+  return <Link to={to} className="codex-seal">{body}</Link>;
+}
+
 function formLabel(form: string | null | undefined) {
   if (!form || form === "None") return "";
   let text = form;
@@ -182,26 +206,8 @@ function CyclePage() {
         <p className="mt-2 text-sm text-muted">Cada linha é um implante progenoide desta ala, com os estradiol injetáveis já catalogados. A dose é a que o Frater declara. Não é prescrição.</p>
       </header>
       <div className="space-y-3">
-        {saved.length === 0 ? (
-          <p className="text-sm text-muted">Agumentarium e Conditionarium permanecem selados até a primeira Implantation guardada.</p>
-        ) : (
-          <>
-          <Link to="/agumentarium" className="codex-seal">
-            <img src={wingCopy.agumentarium.seal} alt="" className="size-16 shrink-0 object-cover" />
-            <span>
-              <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Combat-Stimm</span>
-              <span className="block font-display text-3xl leading-none">{wingCopy.agumentarium.title}</span>
-            </span>
-          </Link>
-          <Link to="/conditionarium" className="codex-seal">
-            <img src={wingCopy.conditionarium.seal} alt="" className="size-16 shrink-0 object-cover" />
-            <span>
-              <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Med-Stimm</span>
-              <span className="block font-display text-3xl leading-none">{wingCopy.conditionarium.title}</span>
-            </span>
-          </Link>
-          </>
-        )}
+        <WingDoor to="/agumentarium" wing="agumentarium" label="Combat-Stimm" open={saved.length > 0} />
+        <WingDoor to="/conditionarium" wing="conditionarium" label="Med-Stimm" open={saved.length > 0} />
       </div>
       <label className="block text-sm">
         Semanas do gráfico

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { addAdjunct, loadCycles, type Cycle } from "@/lib/store";
-import { findWingCompound, loadWingFavs, searchWing, toggleWingFav, wingCompounds, wingCopy, type WingCompound, type WingId } from "@/lib/wings";
+import { loadWingFavs, searchWing, toggleWingFav, wingCompounds, wingCopy, type WingCompound, type WingId } from "@/lib/wings";
 
 export function WingCodex({ wing }: { wing: WingId }) {
   const copy = wingCopy[wing];
@@ -37,8 +37,7 @@ export function WingCodex({ wing }: { wing: WingId }) {
   }
 
   const hits = searchWing(wing, query);
-  const marked = favs.map((id) => findWingCompound(wing, id)).filter((row): row is WingCompound => row != null);
-  const listed = query.trim().length < 2 ? marked : hits;
+  const listed = query.trim().length < 2 ? wingCompounds(wing) : hits;
 
   return (
     <main className="space-y-4">
@@ -57,7 +56,6 @@ export function WingCodex({ wing }: { wing: WingId }) {
         <input className="field mt-1" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="nomeie o composto, Frater" />
       </label>
       {wingCompounds(wing).length === 0 ? <p className="text-sm">A database deste selo ainda aguarda os compostos. A organização já está pronta.</p> : null}
-      {query.trim().length < 2 ? <p className="text-sm text-muted">Marcados pelo Frater.</p> : null}
       <ul>
         {listed.map((row) => {
           const on = favs.includes(row.id);

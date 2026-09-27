@@ -10,10 +10,10 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Codex:Apothecarion" },
-      { name: "theme-color", content: "#f4efe4" },
+      { name: "theme-color", content: "#07111c" },
     ],
     links: [
-      { rel: "icon", type: "image/png", href: "/favicon-light.png" },
+      { rel: "icon", type: "image/png", href: "/favicon-bio.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/__grok/manifest.webmanifest" },
       { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
