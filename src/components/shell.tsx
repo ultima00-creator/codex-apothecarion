@@ -10,8 +10,8 @@ const links = [
 export function Shell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (state) => state.location.pathname });
   return (
-    <div className="mx-auto min-h-screen max-w-3xl px-4 pb-28 pt-5">
-      <header className="mb-3 flex items-end justify-between border-b border-bronze pb-2">
+    <div className={`mx-auto min-h-screen max-w-3xl px-4 pb-28 pt-5 ${path.startsWith("/protocolos") ? "wing-gene" : "wing-base"}`}>
+      <header className="mast">
         <div>
           <p className="text-xs tracking-[0.28em] text-bronze uppercase">Apothecarion</p>
           <p className="font-display text-3xl leading-none">Codex</p>
@@ -29,20 +29,17 @@ export function Shell({ children }: { children: ReactNode }) {
           <span>Apothecarion</span>
         </p>
         {children}
+        <div className="plate-hazard" aria-hidden="true" />
       </div>
       {path !== "/tomar" ? (
-        <Link
-          to="/tomar"
-          aria-label="Nova tomada"
-          className="fixed right-4 bottom-20 flex size-14 items-center justify-center border border-bronze bg-plate text-3xl leading-none text-bronze"
-        >
+        <Link to="/tomar" aria-label="Nova tomada" className="take-hex">
           +
         </Link>
       ) : null}
-      <nav className="fixed inset-x-0 bottom-0 border-t-2 border-bronze bg-parchment">
+      <nav className="dock">
         <ul className="mx-auto flex max-w-3xl">
           {links.map((link) => (
-            <li key={link.to} className="flex-1">
+            <li key={link.to} className="flex-1 border-l border-bronze/30 first:border-l-0">
               <Link
                 to={link.to}
                 className="flex min-h-14 items-center justify-center gap-2 text-sm text-ink"
