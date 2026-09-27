@@ -11,18 +11,20 @@ function legend(curve: DiarySeries["curve"]): string {
 export function DiaryChart({
   points,
   series,
+  empty = "Sem duração e sem meia-vida neste dia. A lista fica. A curva não é inventada.",
 }: {
   points: Record<string, number | string | null>[];
   series: DiarySeries[];
+  empty?: string;
 }) {
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   if (series.length === 0) {
-    return <p className="text-sm text-muted">Sem duração e sem meia-vida neste dia. A lista fica. A curva não é inventada.</p>;
+    return <p className="text-sm text-muted">{empty}</p>;
   }
   return (
     <figure>
-      <figcaption className="mb-2 text-sm text-muted">Fração da própria dose. Não é concentração compartilhada.</figcaption>
+      <figcaption className="mb-2 text-sm text-muted">Traçado visual. Fração da própria dose. Não é medição.</figcaption>
       <div className="h-56 w-full">
         {ready ? (
           <ResponsiveContainer width="100%" height="100%">

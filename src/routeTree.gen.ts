@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgumentariumRouteImport } from './routes/agumentarium'
 import { Route as CodexRouteImport } from './routes/codex'
+import { Route as ConditionariumRouteImport } from './routes/conditionarium'
 import { Route as JournalRouteImport } from './routes/journal'
 import { Route as ProtocolosRouteImport } from './routes/protocolos'
 import { Route as TomarRouteImport } from './routes/tomar'
@@ -22,9 +24,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgumentariumRoute = AgumentariumRouteImport.update({
+  id: '/agumentarium',
+  path: '/agumentarium',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CodexRoute = CodexRouteImport.update({
   id: '/codex',
   path: '/codex',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConditionariumRoute = ConditionariumRouteImport.update({
+  id: '/conditionarium',
+  path: '/conditionarium',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JournalRoute = JournalRouteImport.update({
@@ -55,7 +67,9 @@ const AbrirKindIdRoute = AbrirKindIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agumentarium': typeof AgumentariumRoute
   '/codex': typeof CodexRoute
+  '/conditionarium': typeof ConditionariumRoute
   '/journal': typeof JournalRoute
   '/protocolos': typeof ProtocolosRoute
   '/tomar': typeof TomarRoute
@@ -64,7 +78,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agumentarium': typeof AgumentariumRoute
   '/codex': typeof CodexRoute
+  '/conditionarium': typeof ConditionariumRoute
   '/journal': typeof JournalRoute
   '/protocolos': typeof ProtocolosRoute
   '/tomar': typeof TomarRoute
@@ -74,7 +90,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agumentarium': typeof AgumentariumRoute
   '/codex': typeof CodexRoute
+  '/conditionarium': typeof ConditionariumRoute
   '/journal': typeof JournalRoute
   '/protocolos': typeof ProtocolosRoute
   '/tomar': typeof TomarRoute
@@ -85,7 +103,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agumentarium'
     | '/codex'
+    | '/conditionarium'
     | '/journal'
     | '/protocolos'
     | '/tomar'
@@ -94,7 +114,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agumentarium'
     | '/codex'
+    | '/conditionarium'
     | '/journal'
     | '/protocolos'
     | '/tomar'
@@ -103,7 +125,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/agumentarium'
     | '/codex'
+    | '/conditionarium'
     | '/journal'
     | '/protocolos'
     | '/tomar'
@@ -113,7 +137,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgumentariumRoute: typeof AgumentariumRoute
   CodexRoute: typeof CodexRoute
+  ConditionariumRoute: typeof ConditionariumRoute
   JournalRoute: typeof JournalRoute
   ProtocolosRoute: typeof ProtocolosRoute
   TomarRoute: typeof TomarRoute
@@ -130,11 +156,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agumentarium': {
+      id: '/agumentarium'
+      path: '/agumentarium'
+      fullPath: '/agumentarium'
+      preLoaderRoute: typeof AgumentariumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/codex': {
       id: '/codex'
       path: '/codex'
       fullPath: '/codex'
       preLoaderRoute: typeof CodexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conditionarium': {
+      id: '/conditionarium'
+      path: '/conditionarium'
+      fullPath: '/conditionarium'
+      preLoaderRoute: typeof ConditionariumRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/journal': {
@@ -177,7 +217,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgumentariumRoute: AgumentariumRoute,
   CodexRoute: CodexRoute,
+  ConditionariumRoute: ConditionariumRoute,
   JournalRoute: JournalRoute,
   ProtocolosRoute: ProtocolosRoute,
   TomarRoute: TomarRoute,

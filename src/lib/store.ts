@@ -48,11 +48,18 @@ export function saveProtocol(entry: Omit<Protocol, "id" | "savedAt">): Protocol 
 
 const CYCLES = "apothecarion-cycles";
 
+export type CycleAdjunct = {
+  wing: "agumentarium" | "conditionarium";
+  substanceId: string;
+  name: string;
+};
+
 export type Cycle = {
   id: string;
   name: string;
   weeks: number;
   lines: { substanceId: string; kind: "hormone" | "peptide"; dose: number; every: number; start: number; end: number }[];
+  adjuncts?: CycleAdjunct[];
   savedAt: string;
 };
 
@@ -68,6 +75,17 @@ export function saveCycle(entry: Omit<Cycle, "id" | "savedAt">): Cycle {
 
 export function removeCycle(id: string) {
   write(CYCLES, loadCycles().filter((row) => row.id !== id));
+}
+
+export function addAdjunct(cycleId: string, adjunct: CycleAdjunct) {
+  const rows = loadCycles().map((row) => {
+    if (row.id !== cycleId) return row;
+    const adjuncts = row.adjuncts ?? [];
+    if (adjuncts.some((item) => item.wing === adjunct.wing && item.substanceId === adjunct.substanceId)) return row;
+    return { ...row, adjuncts: [...adjuncts, adjunct] };
+  });
+  write(CYCLES, rows);
+  return rows;
 }
 
 export function loadNotes(): JournalNote[] {

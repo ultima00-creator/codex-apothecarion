@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { dismissNotice, formatDay, groupDays, loadDiary, loadNotices, weekday, type EndedNotice, type Ingestion } from "@/lib/diary";
+import { dismissNotice, dayPlot, formatDay, groupDays, loadDiary, loadNotices, weekday, type EndedNotice, type Ingestion } from "@/lib/diary";
+import { DiaryChart } from "@/components/diary-chart";
 import { DiariumMark } from "@/components/marks";
 import { mark } from "@/lib/mark";
 
@@ -14,6 +15,7 @@ function DiaryHome() {
     setNotices(loadNotices());
   }, []);
   const days = groupDays(rows);
+  const plot = dayPlot(rows);
   return (
     <main>
       <header className="mb-4 flex items-center gap-3">
@@ -24,12 +26,15 @@ function DiaryHome() {
       </header>
       <p className="mb-4 text-sm text-muted">O que ainda corre no organismo fica neste registro, Frater. O Codex abre a database.</p>
       <Link to="/codex" className="codex-seal mb-4">
-        <img src="/codex-light.png" alt="" className="size-16 shrink-0 object-cover" />
+        <img src="/codex-mix.png" alt="" className="size-16 shrink-0 object-cover" />
         <span>
           <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Database</span>
           <span className="block font-display text-3xl leading-none">Codex</span>
         </span>
       </Link>
+      <div className="mb-4">
+        <DiaryChart points={plot.points} series={plot.series} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
+      </div>
       {notices.map((notice) => (
         <p key={notice.id} className="mb-3 flex items-center justify-between gap-3 border border-bronze px-3 py-2 text-sm">
           <span>{notice.name}: {notice.word === "efeito" ? "o efeito acabou." : "o tempo desta curva acabou."}</span>

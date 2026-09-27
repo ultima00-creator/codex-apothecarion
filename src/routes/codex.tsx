@@ -20,7 +20,7 @@ function CodexPage() {
   return (
     <main className="space-y-4">
       <header className="flex items-center gap-3">
-        <img src="/codex-light.png" alt="" className="size-16 object-cover" />
+        <img src="/codex-mix.png" alt="" className="size-16 object-cover" />
         <div>
           <p className="text-xs tracking-[0.28em] text-bronze uppercase">Database</p>
           <h1 className="font-display text-5xl leading-none">Codex</h1>

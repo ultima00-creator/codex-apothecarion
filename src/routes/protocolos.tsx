@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { AxisChart } from "@/components/axis-chart";
 import { CycleChart } from "@/components/cycle-chart";
 import { GeneSeedMark, MateriaMark } from "@/components/marks";
 import { panels, type CycleLine, type PlotCompound } from "@/lib/cycle";
 import { plotCompounds } from "@/lib/search";
 import { loadCycles, removeCycle, saveCycle, type Cycle } from "@/lib/store";
+import { findWingCompound, wingCopy } from "@/lib/wings";
 
 export const Route = createFileRoute("/protocolos")({ component: CyclePage });
 
@@ -76,6 +78,15 @@ const families = familiesOf(compounds);
 
 function baseLabel(compound: string) {
   return baseName[compound] ?? compound;
+}
+
+function visualDecay(days: number, halfLifeDays: number) {
+  const step = Math.max(1, Math.round(days / 24));
+  const points: { x: number; y: number }[] = [];
+  for (let day = 0; day <= days; day += step) {
+    points.push({ x: day, y: Math.round(Math.pow(0.5, day / halfLifeDays) * 1000) / 1000 });
+  }
+  return points;
 }
 
 function formLabel(form: string | null | undefined) {
@@ -167,9 +178,31 @@ function CyclePage() {
           <MateriaMark className="size-7 shrink-0 text-bronze" />
           Matéria Medica
         </p>
-        <p className="mt-1 text-sm text-muted">A Implantation está aberta, Frater. Augmentation e Conditioning aguardam selo.</p>
+        <p className="mt-1 text-sm text-muted">A Implantation está aberta, Frater. Agumentarium e Conditionarium esperam uma Implantation guardada.</p>
         <p className="mt-2 text-sm text-muted">Cada linha é um implante progenoide desta ala, com os estradiol injetáveis já catalogados. A dose é a que o Frater declara. Não é prescrição.</p>
       </header>
+      <div className="space-y-3">
+        {saved.length === 0 ? (
+          <p className="text-sm text-muted">Agumentarium e Conditionarium permanecem selados até a primeira Implantation guardada.</p>
+        ) : (
+          <>
+          <Link to="/agumentarium" className="codex-seal">
+            <img src={wingCopy.agumentarium.seal} alt="" className="size-16 shrink-0 object-cover" />
+            <span>
+              <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Combat-Stimm</span>
+              <span className="block font-display text-3xl leading-none">{wingCopy.agumentarium.title}</span>
+            </span>
+          </Link>
+          <Link to="/conditionarium" className="codex-seal">
+            <img src={wingCopy.conditionarium.seal} alt="" className="size-16 shrink-0 object-cover" />
+            <span>
+              <span className="block text-xs tracking-[0.28em] text-bronze uppercase">Med-Stimm</span>
+              <span className="block font-display text-3xl leading-none">{wingCopy.conditionarium.title}</span>
+            </span>
+          </Link>
+          </>
+        )}
+      </div>
       <label className="block text-sm">
         Semanas do gráfico
         <NumericField value={weeks} min={1} onChange={commitWeeks} />
@@ -238,7 +271,7 @@ function CyclePage() {
       <button type="button" className="min-h-11 border border-bronze px-4" onClick={() => setLines((rows) => [...rows, blank(weeks)])}>
         Acrescentar implante progenoide
       </button>
-      {drawn.length === 0 ? <p className="text-sm">Nenhuma linha na Implantation.</p> : null}
+      {drawn.length === 0 ? <p className="text-sm">Nenhuma linha na Implantation.</p> : <p className="text-sm text-muted">Traçado visual da Implantation. Não é medição.</p>}
       {drawn.map((panel) => <CycleChart key={panel.key} panel={panel} />)}
       <section className="space-y-2 border-t border-rule pt-4">
         <label className="block text-sm">Nome da Implantation
@@ -261,6 +294,16 @@ function CyclePage() {
             <li key={row.id} className="border-t border-rule pt-3">
               <p className="font-display text-2xl">{row.name}</p>
               <p className="text-sm text-muted">{row.weeks} semanas · {row.lines.length} linhas</p>
+              {(row.adjuncts ?? []).map((item) => {
+                const compound = findWingCompound(item.wing, item.substanceId);
+                const points = compound?.halfLifeDays ? visualDecay(row.weeks * 7, compound.halfLifeDays) : [];
+                return (
+                  <div key={`${item.wing}-${item.substanceId}`} className="mt-2">
+                    <p className="text-sm">{wingCopy[item.wing].title}: {item.name}</p>
+                    {points.length > 0 ? <AxisChart unit="fração visual" xLabel="dias" points={points} /> : <p className="text-sm text-muted">Sem meia-vida. A ficha fica. O traçado não.</p>}
+                  </div>
+                );
+              })}
               <button
                 type="button"
                 className="min-h-11 text-sm underline"

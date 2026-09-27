@@ -31,15 +31,44 @@ function queries(value: string): string[] {
   return [...found];
 }
 function fold(value: string): string {
-  const compact = norm(value).replace(/ /g, "").replaceAll("ph", "f").replaceAll("y", "i").replaceAll("th", "t");
-  return compact.endsWith("o") ? compact.slice(0, -1) : compact;
+  let text = norm(value).replace(
+    /^(dicloridrato|cloridrato|bromidrato|hemifumarato|hemitartarato|sulfato|maleato|fosfato|nitrato|acetato|citrato|mesilato|besilato|tartarato|succinato|fumarato|hidrobrometo|hidrocloreto|benzoato|valerato) de /,
+    "",
+  );
+  text = text.replace(/ /g, "").replaceAll("ph", "f").replaceAll("y", "i").replaceAll("th", "t").replaceAll("k", "c");
+  const endings: [string, string][] = [
+    ["ato", "at"],
+    ["ate", "at"],
+    ["ina", "in"],
+    ["ine", "in"],
+    ["ona", "on"],
+    ["one", "on"],
+    ["ido", "id"],
+    ["ide", "id"],
+  ];
+  for (const [from, to] of endings) {
+    if (text.endsWith(from) && text.length > from.length + 3) {
+      text = text.slice(0, -from.length) + to;
+      break;
+    }
+  }
+  if (text.length > 4 && (text.endsWith("o") || text.endsWith("e"))) text = text.slice(0, -1);
+  return text;
+}
+
+function plainName(name: string): string {
+  return name.replace(
+    /^(Dicloridrato|Cloridrato|Bromidrato|Hemifumarato|Hemitartarato|Sulfato|Maleato|Fosfato|Nitrato|Acetato|Citrato|Mesilato|Besilato|Tartarato|Succinato|Fumarato|Hidrobrometo|Hidrocloreto|Benzoato|Valerato) de /,
+    "",
+  );
 }
 
 const wikiByFold = new Map<string, (typeof catalog.wiki)[number]>();
 for (const row of catalog.wiki) {
   for (const name of [row.name, ...row.commonNames]) {
     const key = fold(name);
-    if (key && !wikiByFold.has(key)) wikiByFold.set(key, row);
+    if (key.length < 6 || wikiByFold.has(key)) continue;
+    wikiByFold.set(key, row);
   }
 }
 
@@ -47,9 +76,11 @@ const hiddenMedicine = new Set<string>();
 const titleBySlug = new Map<string, string>();
 for (const row of medicines) {
   const wiki = wikiByFold.get(fold(row.name));
-  if (!wiki) continue;
+  if (!wiki || row.name.includes(";")) continue;
   hiddenMedicine.add(row.id);
-  if (!titleBySlug.has(wiki.slug)) titleBySlug.set(wiki.slug, row.name);
+  const title = plainName(row.name);
+  const current = titleBySlug.get(wiki.slug);
+  if (!current || title.length < current.length) titleBySlug.set(wiki.slug, title);
 }
 
 export function wikiTitle(slug: string, fallback: string): string {
