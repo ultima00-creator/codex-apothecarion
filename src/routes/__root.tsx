@@ -10,7 +10,7 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Codex:Apothecarion" },
-      { name: "theme-color", content: "#07111c" },
+      { name: "theme-color", content: "#12304a" },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon-bio.png" },

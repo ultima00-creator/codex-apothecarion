@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-parchment: #07111c;
+  --color-parchment: #12304a;
   --color-plate: #102033;
   --color-ink: #c9d4e0;
   --color-bronze: #9aabbd;
@@ -26,10 +26,11 @@
     font-variant-numeric: tabular-nums lining-nums;
     font-feature-settings: "tnum" 1, "lnum" 1;
     min-height: 100vh;
-    background-color: #07111c;
+    background-color: #12304a;
     background-image:
-      radial-gradient(ellipse at 50% 0%, rgba(110, 145, 185, 0.2), transparent 58%),
-      repeating-linear-gradient(90deg, rgba(214, 224, 234, 0.045) 0 1px, transparent 1px 4px);
+      radial-gradient(ellipse at 50% 0%, rgba(170, 220, 255, 0.28), transparent 58%),
+      repeating-linear-gradient(0deg, rgba(190, 230, 255, 0.08) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, rgba(190, 230, 255, 0.05) 0 1px, transparent 1px 24px);
   }
   body::before {
     content: "";
@@ -37,7 +38,7 @@
     inset: 0;
     pointer-events: none;
     z-index: -1;
-    background: repeating-linear-gradient(0deg, rgba(197, 208, 220, 0.045) 0 1px, transparent 1px 22px);
+    background: repeating-linear-gradient(0deg, rgba(200, 230, 255, 0.06) 0 1px, transparent 1px 18px);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -53,36 +54,39 @@
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 0.85rem;
-  border: 1px solid #4e6278;
-  background: linear-gradient(180deg, #1a334f 0%, #0d1c30 100%);
+  border: 1px solid rgba(186, 224, 255, 0.45);
+  background: linear-gradient(180deg, rgba(170, 215, 255, 0.2), rgba(40, 110, 170, 0.12));
   padding: 0.45rem 0.7rem 0.55rem;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 24px rgba(160, 210, 255, 0.12);
+  backdrop-filter: blur(8px);
 }
 
 .plate {
   position: relative;
-  border: 1px solid #4e6278;
-  background: linear-gradient(180deg, #17324e 0%, #0c1a2c 42%, #091422 100%);
+  border: 1px solid rgba(190, 226, 255, 0.55);
+  background:
+    linear-gradient(180deg, rgba(186, 224, 255, 0.2), rgba(50, 120, 180, 0.1)),
+    repeating-linear-gradient(0deg, rgba(210, 235, 255, 0.05) 0 1px, transparent 1px 5px);
   box-shadow:
-    0 0 0 5px #07111c,
-    0 0 0 6px #3d5168,
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 0 28px rgba(90, 180, 240, 0.16),
+    inset 0 0 36px rgba(180, 220, 255, 0.08);
+  backdrop-filter: blur(10px);
   padding: 1.5rem 0.95rem 0.4rem;
 }
 
 .plate-hazard {
   height: 0.7rem;
   margin: 1rem -0.95rem 0;
-  background: repeating-linear-gradient(-58deg, #0b1c33 0 8px, #3d5168 8px 14px);
+  background: repeating-linear-gradient(-58deg, rgba(20, 70, 110, 0.15) 0 8px, rgba(170, 215, 255, 0.28) 8px 14px);
 }
 
 .codex-seal {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  border: 1px solid #4e6278;
-  background: linear-gradient(180deg, #1a334f 0%, #0e1e33 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(186, 224, 255, 0.4);
+  background: linear-gradient(180deg, rgba(160, 210, 255, 0.16), rgba(30, 90, 150, 0.1));
+  box-shadow: inset 0 0 18px rgba(160, 210, 255, 0.1);
   padding: 0.55rem 0.75rem;
 }
 
@@ -96,22 +100,24 @@
   position: fixed;
   inset-inline: 0;
   bottom: 0;
-  border-top: 1px solid #4e6278;
-  background: linear-gradient(180deg, #16304a 0%, #091422 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(186, 224, 255, 0.4);
+  background: linear-gradient(180deg, rgba(150, 205, 255, 0.18), rgba(12, 40, 70, 0.55));
+  box-shadow: inset 0 0 16px rgba(160, 210, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .helix-banner {
   width: 3.4rem;
   height: 3.4rem;
   object-fit: cover;
-  border: 1px solid #d5dee8;
-  box-shadow: none;
-  background: #fff;
+  border: 0;
+  background: transparent;
 }
 
 .wing-gene .plate {
-  background: linear-gradient(180deg, #14304c 0%, #0a1828 100%);
+  background:
+    linear-gradient(180deg, rgba(170, 215, 255, 0.16), rgba(30, 90, 150, 0.1)),
+    repeating-linear-gradient(0deg, rgba(210, 235, 255, 0.05) 0 1px, transparent 1px 5px);
 }
 
 .plate-motto {
@@ -135,7 +141,7 @@
   position: absolute;
   width: 1.15rem;
   height: 1.15rem;
-  border: 3px solid #5d7188;
+  border: 3px solid rgba(186, 224, 255, 0.75);
   pointer-events: none;
 }
 
@@ -145,25 +151,22 @@
 .tick-br { bottom: 1.15rem; right: 0.35rem; border-left: 0; border-top: 0; }
 
 .vial-mark {
-  border: 1px solid #d5dee8;
-  box-shadow: none;
-  background: #fff;
+  border: 0;
+  background: transparent;
 }
 
 .crystal-line {
   position: relative;
-  border: 1px solid #4e6278;
-  background: linear-gradient(180deg, #12283f, #0b1828);
-  box-shadow:
-    0 0 0 3px #07111c,
-    0 0 0 4px #3d5168;
+  border: 1px solid rgba(186, 224, 255, 0.35);
+  background: rgba(8, 28, 48, 0.28);
+  box-shadow: inset 0 0 16px rgba(150, 205, 255, 0.08);
 }
 
 .field {
   width: 100%;
   min-height: 2.75rem;
-  border: 1px solid #8ea0b5;
-  background: #071422;
+  border: 1px solid rgba(186, 224, 255, 0.4);
+  background: rgba(6, 24, 42, 0.35);
   color: #f4f8fb;
   font-weight: 500;
   padding: 0.5rem 0.75rem;
@@ -173,9 +176,9 @@
 
 .chip {
   min-height: 2.75rem;
-  border: 1px solid #8ea0b5;
-  background: #071422;
-  color: var(--color-ink);
+  border: 1px solid rgba(186, 224, 255, 0.4);
+  background: rgba(6, 24, 42, 0.35);
+  color: #f4f8fb;
   font-weight: 500;
   padding: 0.35rem 0.7rem;
 }
@@ -279,5 +282,45 @@
 
 .dock a.text-ink {
   color: #f7fafc;
+}
+
+.kicker,
+.lede,
+.section-label,
+.sheet dt,
+.sheet dd,
+.mast .font-display,
+.dock a,
+.plate p,
+.plate label,
+.plate li {
+  background-image: linear-gradient(185deg, #fff6d2 0%, #e8c56b 34%, #8d6428 52%, #f8e7b0 74%, #c4963f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.screen-title,
+.subject,
+.datum,
+.field,
+.chip,
+.dock a.text-ink,
+.plate .alert-line,
+.sheet dd.warn,
+.sheet dt.warn {
+  background-image: none;
+  background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+}
+
+.plate .alert-line {
+  color: #f0d7a2;
+}
+
+.sheet dd.warn,
+.sheet dt.warn {
+  color: #e7a08f;
 }
 
