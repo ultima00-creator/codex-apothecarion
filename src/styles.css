@@ -284,6 +284,9 @@
   color: #f7fafc;
 }
 
+.screen-title,
+.subject,
+.datum,
 .kicker,
 .lede,
 .section-label,
@@ -292,27 +295,44 @@
 .mast .font-display,
 .dock a,
 .plate p,
+.plate span,
+.plate a,
 .plate label,
-.plate li {
-  background-image: linear-gradient(185deg, #fff6d2 0%, #e8c56b 34%, #8d6428 52%, #f8e7b0 74%, #c4963f 100%);
+.plate h1,
+.plate h2 {
+  background-image: repeating-linear-gradient(
+    102deg,
+    #fff8dc 0 2px,
+    #f0d48a 2px 4px,
+    #a8742e 4px 5px,
+    #fff1c2 5px 7px,
+    #8a5a1c 7px 8px,
+    #e8c56b 8px 12px
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
 
-.screen-title,
-.subject,
-.datum,
 .field,
 .chip,
-.dock a.text-ink,
 .plate .alert-line,
+.plate .alert-line span,
+.plate .alert-line button,
 .sheet dd.warn,
 .sheet dt.warn {
   background-image: none;
   background-clip: border-box;
   -webkit-text-fill-color: currentColor;
+}
+
+.dock a.text-ink {
+  background-image: linear-gradient(180deg, #fff8dc, #f0d48a 55%, #c4963f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .plate .alert-line {
