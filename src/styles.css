@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-parchment: #1d8ee6;
+  --color-parchment: #0b3a5c;
   --color-plate: #102033;
   --color-ink: #f7fafc;
   --color-bronze: #9aabbd;
@@ -26,11 +26,11 @@
     font-variant-numeric: tabular-nums lining-nums;
     font-feature-settings: "tnum" 1, "lnum" 1;
     min-height: 100vh;
-    background-color: #1d8ee6;
+    background-color: #0b3a5c;
     background-image:
-      radial-gradient(ellipse at 50% 0%, rgba(230, 248, 255, 0.55), transparent 52%),
-      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px 4px),
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 22px);
+      radial-gradient(ellipse at 50% 0%, rgba(80, 170, 230, 0.28), transparent 55%),
+      repeating-linear-gradient(0deg, rgba(170, 215, 255, 0.07) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, rgba(170, 215, 255, 0.04) 0 1px, transparent 1px 22px);
   }
   body::before {
     content: "";
@@ -54,8 +54,8 @@
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background: linear-gradient(180deg, rgba(210, 240, 255, 0.42), rgba(70, 170, 235, 0.28));
+  border: 1px solid rgba(150, 200, 235, 0.35);
+  background: linear-gradient(180deg, rgba(20, 70, 120, 0.72), rgba(8, 36, 68, 0.78));
   padding: 0.45rem 0.7rem 0.55rem;
   box-shadow: inset 0 0 24px rgba(160, 210, 255, 0.12);
   backdrop-filter: blur(8px);
@@ -63,13 +63,13 @@
 
 .plate {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(160, 205, 240, 0.4);
   background:
-    linear-gradient(180deg, rgba(220, 245, 255, 0.48), rgba(80, 180, 240, 0.3)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 5px);
+    linear-gradient(180deg, rgba(24, 78, 130, 0.72), rgba(8, 32, 62, 0.8)),
+    repeating-linear-gradient(0deg, rgba(180, 220, 255, 0.05) 0 1px, transparent 1px 5px);
   box-shadow:
-    0 0 32px rgba(180, 230, 255, 0.35),
-    inset 0 0 36px rgba(255, 255, 255, 0.16);
+    0 0 24px rgba(20, 80, 140, 0.28),
+    inset 0 0 28px rgba(40, 110, 180, 0.12);
   backdrop-filter: blur(10px);
   padding: 1.5rem 0.95rem 0.4rem;
 }
@@ -77,15 +77,15 @@
 .plate-hazard {
   height: 0.7rem;
   margin: 1rem -0.95rem 0;
-  background: repeating-linear-gradient(-58deg, rgba(255, 255, 255, 0.22) 0 8px, rgba(255, 255, 255, 0.5) 8px 14px);
+  background: repeating-linear-gradient(-58deg, rgba(6, 24, 48, 0.35) 0 8px, rgba(90, 150, 200, 0.28) 8px 14px);
 }
 
 .codex-seal {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  background: linear-gradient(180deg, rgba(200, 235, 255, 0.4), rgba(60, 160, 230, 0.24));
+  border: 1px solid rgba(150, 200, 235, 0.32);
+  background: linear-gradient(180deg, rgba(18, 64, 110, 0.7), rgba(8, 32, 60, 0.78));
   box-shadow: inset 0 0 18px rgba(160, 210, 255, 0.1);
   padding: 0.55rem 0.75rem;
 }
@@ -100,8 +100,8 @@
   position: fixed;
   inset-inline: 0;
   bottom: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.7);
-  background: linear-gradient(180deg, rgba(190, 230, 255, 0.55), rgba(20, 120, 200, 0.72));
+  border-top: 1px solid rgba(150, 200, 235, 0.35);
+  background: linear-gradient(180deg, rgba(16, 58, 100, 0.88), rgba(6, 24, 48, 0.94));
   box-shadow: inset 0 0 16px rgba(160, 210, 255, 0.1);
   backdrop-filter: blur(10px);
 }
@@ -116,8 +116,8 @@
 
 .wing-gene .plate {
   background:
-    linear-gradient(180deg, rgba(210, 240, 255, 0.4), rgba(50, 160, 230, 0.24)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 5px);
+    linear-gradient(180deg, rgba(20, 72, 120, 0.7), rgba(8, 30, 58, 0.78)),
+    repeating-linear-gradient(0deg, rgba(180, 220, 255, 0.05) 0 1px, transparent 1px 5px);
 }
 
 .plate-motto {
@@ -141,7 +141,7 @@
   position: absolute;
   width: 1.15rem;
   height: 1.15rem;
-  border: 3px solid rgba(255, 255, 255, 0.85);
+  border: 3px solid rgba(170, 210, 240, 0.45);
   pointer-events: none;
 }
 
@@ -157,8 +157,8 @@
 
 .crystal-line {
   position: relative;
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(150, 200, 235, 0.28);
+  background: rgba(6, 24, 48, 0.45);
   box-shadow: inset 0 0 16px rgba(150, 205, 255, 0.08);
 }
 
