@@ -1,6 +1,7 @@
+import { useEffect, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import type { ReactNode } from "react";
 import { DiariumMark, GeneSeedMark } from "@/components/marks";
+import { watchHerald } from "@/lib/signal";
 
 const links = [
   { to: "/", label: "Diarium" },
@@ -9,6 +10,7 @@ const links = [
 
 export function Shell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (state) => state.location.pathname });
+  useEffect(() => watchHerald(), []);
   return (
     <div className={`mx-auto min-h-screen max-w-3xl px-4 pb-28 pt-5 ${path.startsWith("/protocolos") ? "wing-gene" : "wing-base"}`}>
       <header className="mast">

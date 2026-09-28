@@ -74,6 +74,16 @@ function effectLimit(row: Ingestion): { hours: number; word: EndedNotice["word"]
   return null;
 }
 
+export function upcomingEnds(now = Date.now()): { id: string; name: string; end: number; word: EndedNotice["word"] }[] {
+  return read().flatMap((row) => {
+    const limit = effectLimit(row);
+    if (!limit) return [];
+    const end = new Date(row.takenAt).getTime() + limit.hours * 3600000;
+    if (end <= now) return [];
+    return [{ id: row.id, name: row.name, end, word: limit.word }];
+  });
+}
+
 export function settleDiary(now = Date.now()): EndedNotice[] {
   if (typeof localStorage === "undefined") return [];
   const rows = read();
