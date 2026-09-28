@@ -74,8 +74,8 @@ export function WingCodex({ wing }: { wing: WingId }) {
                   <dd>{row.minDose}</dd>
                   <dt>Máxima efetiva</dt>
                   <dd>{row.maxDose}</dd>
-                  <dt>Aviso</dt>
-                  <dd>{row.warning}</dd>
+                  <dt className="warn">Aviso</dt>
+                  <dd className="warn">{row.warning}</dd>
                   <dd className="lede">{row.halfLifeDays ? `Traçado visual: ${row.halfLifeDays} dias. Não é medição.` : "Sem meia-vida numérica. Não entra no traçado."}</dd>
                 </dl>
                 <label className="mt-2 block">
