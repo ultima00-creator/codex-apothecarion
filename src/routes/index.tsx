@@ -44,7 +44,7 @@ function DiaryHome() {
         <img src="/codex-mix.png" alt="" className="size-12 shrink-0 object-cover" />
         <span>
           <span className="kicker">Database</span>
-          <span className="datum block">Codex</span>
+          <span className="datum block">Compound Codex</span>
         </span>
       </Link>
       <div className="mb-4">

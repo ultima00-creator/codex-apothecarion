@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { loadFavs, toggleFav, type Fav } from "@/lib/favorites";
-import { hitById, search, type Hit } from "@/lib/search";
+import { hitById, listCompounds, search, type Hit } from "@/lib/search";
 
 export const Route = createFileRoute("/codex")({ component: CodexPage });
 
@@ -23,7 +23,7 @@ function CodexPage() {
         <img src="/codex-mix.png" alt="" className="size-16 object-cover" />
         <div>
           <p className="kicker">Database</p>
-          <h1 className="screen-title font-display">Codex</h1>
+          <h1 className="screen-title font-display">Compound Codex</h1>
         </div>
       </header>
       <p className="text-sm text-muted">Leia a ficha, marque o que deve ficar à mão, ou registre o uso, Frater.</p>
@@ -33,13 +33,14 @@ function CodexPage() {
       </label>
       {showFavs ? (
         <section className="space-y-2">
-          <p className="text-sm text-muted">Marcados pelo Frater.</p>
-          {marked.length === 0 ? <p className="text-sm">A database ainda não tem marcas. Nomeie um composto.</p> : null}
+          {marked.length === 0 ? <p className="text-sm">A database ainda não tem registros pessoais, mas ela suporta.</p> : <p className="kicker">Favoritos.</p>}
           <ul>{marked.map((hit) => <CodexRow key={`${hit.kind}-${hit.id}`} hit={hit} favs={favs} onToggle={flip} />)}</ul>
         </section>
-      ) : (
-        <ul>{hits.map((hit) => <CodexRow key={`${hit.kind}-${hit.id}`} hit={hit} favs={favs} onToggle={flip} />)}</ul>
-      )}
+      ) : null}
+      <section className="space-y-2">
+        <p className="kicker">compounds</p>
+        <ul>{(showFavs ? listCompounds() : hits).map((hit) => <CodexRow key={`${hit.kind}-${hit.id}`} hit={hit} favs={favs} onToggle={flip} />)}</ul>
+      </section>
     </main>
   );
 }

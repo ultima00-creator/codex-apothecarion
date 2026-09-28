@@ -104,15 +104,32 @@ export function search(query: string): Hit[] {
   for (const row of medicines) {
     if (hiddenMedicine.has(row.id)) continue;
     const hay = norm([row.name, row.className, ...row.aliases].join(" "));
-    if (hit(hay)) hits.push({ kind: "medicine", id: row.id, title: row.name, detail: row.halfLifeDays ? "remédio · meia-vida" : "remédio · sem curva" });
+    if (hit(hay)) hits.push({ kind: "medicine", id: row.id, title: row.name, detail: "compound" });
   }
   for (const row of catalog.wiki) {
     const hay = norm([wikiTitle(row.slug, row.name), row.name, ...row.commonNames].join(" "));
     if (hit(hay)) {
-      hits.push({ kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "wiki" });
+      hits.push({ kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "compound" });
     }
   }
   return hits.slice(0, 40);
+}
+
+let compoundList: Hit[] | null = null;
+
+export function listCompounds(): Hit[] {
+  if (compoundList) return compoundList;
+  const hits: Hit[] = [];
+  for (const row of medicines) {
+    if (hiddenMedicine.has(row.id)) continue;
+    hits.push({ kind: "medicine", id: row.id, title: row.name, detail: "compound" });
+  }
+  for (const row of catalog.wiki) {
+    hits.push({ kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "compound" });
+  }
+  hits.sort((a, b) => a.title.localeCompare(b.title, "pt"));
+  compoundList = hits;
+  return hits;
 }
 
 export function findHormone(id: string) {
@@ -169,11 +186,11 @@ export function wikiByCompound(name: string) {
 export function hitById(kind: string, id: string): Hit | null {
   if (kind === "wiki") {
     const row = findWiki(id);
-    return row ? { kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "wiki" } : null;
+    return row ? { kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "compound" } : null;
   }
   if (kind === "medicine") {
     const row = findMedicine(id);
-    return row ? { kind: "medicine", id: row.id, title: row.name, detail: row.halfLifeDays ? "remédio · meia-vida" : "remédio · sem curva" } : null;
+    return row ? { kind: "medicine", id: row.id, title: row.name, detail: "compound" } : null;
   }
   if (kind === "hormone") {
     const row = findHormone(id);
