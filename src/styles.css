@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-parchment: #12304a;
+  --color-parchment: #1d8ee6;
   --color-plate: #102033;
-  --color-ink: #c9d4e0;
+  --color-ink: #f7fafc;
   --color-bronze: #9aabbd;
-  --color-muted: #8ea0b5;
+  --color-muted: #e7f2fa;
   --color-rule: #3a4e66;
   --color-wine: #9d1c2f;
   --color-olive: #7f93ad;
@@ -26,11 +26,11 @@
     font-variant-numeric: tabular-nums lining-nums;
     font-feature-settings: "tnum" 1, "lnum" 1;
     min-height: 100vh;
-    background-color: #12304a;
+    background-color: #1d8ee6;
     background-image:
-      radial-gradient(ellipse at 50% 0%, rgba(170, 220, 255, 0.28), transparent 58%),
-      repeating-linear-gradient(0deg, rgba(190, 230, 255, 0.08) 0 1px, transparent 1px 4px),
-      repeating-linear-gradient(90deg, rgba(190, 230, 255, 0.05) 0 1px, transparent 1px 24px);
+      radial-gradient(ellipse at 50% 0%, rgba(230, 248, 255, 0.55), transparent 52%),
+      repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.16) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 22px);
   }
   body::before {
     content: "";
@@ -54,8 +54,8 @@
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 0.85rem;
-  border: 1px solid rgba(186, 224, 255, 0.45);
-  background: linear-gradient(180deg, rgba(170, 215, 255, 0.2), rgba(40, 110, 170, 0.12));
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: linear-gradient(180deg, rgba(210, 240, 255, 0.42), rgba(70, 170, 235, 0.28));
   padding: 0.45rem 0.7rem 0.55rem;
   box-shadow: inset 0 0 24px rgba(160, 210, 255, 0.12);
   backdrop-filter: blur(8px);
@@ -63,13 +63,13 @@
 
 .plate {
   position: relative;
-  border: 1px solid rgba(190, 226, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   background:
-    linear-gradient(180deg, rgba(186, 224, 255, 0.2), rgba(50, 120, 180, 0.1)),
-    repeating-linear-gradient(0deg, rgba(210, 235, 255, 0.05) 0 1px, transparent 1px 5px);
+    linear-gradient(180deg, rgba(220, 245, 255, 0.48), rgba(80, 180, 240, 0.3)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 5px);
   box-shadow:
-    0 0 28px rgba(90, 180, 240, 0.16),
-    inset 0 0 36px rgba(180, 220, 255, 0.08);
+    0 0 32px rgba(180, 230, 255, 0.35),
+    inset 0 0 36px rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(10px);
   padding: 1.5rem 0.95rem 0.4rem;
 }
@@ -77,15 +77,15 @@
 .plate-hazard {
   height: 0.7rem;
   margin: 1rem -0.95rem 0;
-  background: repeating-linear-gradient(-58deg, rgba(20, 70, 110, 0.15) 0 8px, rgba(170, 215, 255, 0.28) 8px 14px);
+  background: repeating-linear-gradient(-58deg, rgba(255, 255, 255, 0.22) 0 8px, rgba(255, 255, 255, 0.5) 8px 14px);
 }
 
 .codex-seal {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  border: 1px solid rgba(186, 224, 255, 0.4);
-  background: linear-gradient(180deg, rgba(160, 210, 255, 0.16), rgba(30, 90, 150, 0.1));
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: linear-gradient(180deg, rgba(200, 235, 255, 0.4), rgba(60, 160, 230, 0.24));
   box-shadow: inset 0 0 18px rgba(160, 210, 255, 0.1);
   padding: 0.55rem 0.75rem;
 }
@@ -100,8 +100,8 @@
   position: fixed;
   inset-inline: 0;
   bottom: 0;
-  border-top: 1px solid rgba(186, 224, 255, 0.4);
-  background: linear-gradient(180deg, rgba(150, 205, 255, 0.18), rgba(12, 40, 70, 0.55));
+  border-top: 1px solid rgba(255, 255, 255, 0.7);
+  background: linear-gradient(180deg, rgba(190, 230, 255, 0.55), rgba(20, 120, 200, 0.72));
   box-shadow: inset 0 0 16px rgba(160, 210, 255, 0.1);
   backdrop-filter: blur(10px);
 }
@@ -116,8 +116,8 @@
 
 .wing-gene .plate {
   background:
-    linear-gradient(180deg, rgba(170, 215, 255, 0.16), rgba(30, 90, 150, 0.1)),
-    repeating-linear-gradient(0deg, rgba(210, 235, 255, 0.05) 0 1px, transparent 1px 5px);
+    linear-gradient(180deg, rgba(210, 240, 255, 0.4), rgba(50, 160, 230, 0.24)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 5px);
 }
 
 .plate-motto {
@@ -141,7 +141,7 @@
   position: absolute;
   width: 1.15rem;
   height: 1.15rem;
-  border: 3px solid rgba(186, 224, 255, 0.75);
+  border: 3px solid rgba(255, 255, 255, 0.85);
   pointer-events: none;
 }
 
@@ -157,8 +157,8 @@
 
 .crystal-line {
   position: relative;
-  border: 1px solid rgba(186, 224, 255, 0.35);
-  background: rgba(8, 28, 48, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.16);
   box-shadow: inset 0 0 16px rgba(150, 205, 255, 0.08);
 }
 
@@ -286,18 +286,7 @@
 
 .screen-title,
 .subject,
-.datum,
-.kicker,
-.lede,
-.section-label,
-.sheet dt,
-.sheet dd,
 .mast .font-display,
-.dock a,
-.plate p,
-.plate span,
-.plate a,
-.plate label,
 .plate h1,
 .plate h2 {
   background-image: repeating-linear-gradient(
@@ -315,32 +304,59 @@
   color: transparent;
 }
 
+.datum,
+.kicker,
+.lede,
+.section-label,
+.sheet dt,
+.sheet dd,
+.dock a,
+.plate p,
+.plate span,
+.plate a,
+.plate label,
 .field,
-.chip,
-.plate .alert-line,
-.plate .alert-line span,
-.plate .alert-line button,
-.sheet dd.warn,
-.sheet dt.warn {
+.chip {
   background-image: none;
   background-clip: border-box;
-  -webkit-text-fill-color: currentColor;
+  -webkit-text-fill-color: #f7fafc;
+  color: #f7fafc;
 }
 
 .dock a.text-ink {
-  background-image: linear-gradient(180deg, #fff8dc, #f0d48a 55%, #c4963f);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  background-image: none;
+  -webkit-text-fill-color: #ffffff;
+  color: #ffffff;
 }
 
-.plate .alert-line {
+.plate .alert-line,
+.plate .alert-line span,
+.plate .alert-line button {
+  background-image: none;
+  -webkit-text-fill-color: #f0d7a2;
   color: #f0d7a2;
 }
 
 .sheet dd.warn,
 .sheet dt.warn {
-  color: #e7a08f;
+  background-image: none;
+  -webkit-text-fill-color: #ffd0c4;
+  color: #ffd0c4;
+}
+
+.codex-seal .datum {
+  background-image: repeating-linear-gradient(
+    102deg,
+    #fff8dc 0 2px,
+    #f0d48a 2px 4px,
+    #a8742e 4px 5px,
+    #fff1c2 5px 7px,
+    #8a5a1c 7px 8px,
+    #e8c56b 8px 12px
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
