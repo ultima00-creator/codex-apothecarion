@@ -30,10 +30,10 @@ export function DiaryChart({
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={points}>
               <CartesianGrid stroke="var(--color-rule)" />
-              <XAxis dataKey="x" stroke="#111" tick={{ fill: "#111", fontSize: 11 }} minTickGap={18} />
-              <YAxis domain={[0, 1]} stroke="#111" tick={{ fill: "#111", fontSize: 11 }} width={32} />
+              <XAxis dataKey="x" stroke="var(--color-muted)" tick={{ fill: "#111", fontSize: 11 }} minTickGap={18} />
+              <YAxis domain={[0, 1]} stroke="var(--color-muted)" tick={{ fill: "#111", fontSize: 11 }} width={32} />
               <Tooltip
-                contentStyle={{ background: "#fff", color: "#111", border: "1px solid #111" }}
+                contentStyle={{ color: "#111" }}
                 labelStyle={{ color: "#111" }}
                 itemStyle={{ color: "#111" }}
               />
@@ -56,9 +56,8 @@ export function DiaryChart({
       </div>
       <ul className="mt-2 space-y-1 text-sm">
         {series.map((item) => (
-          <li key={item.id} className="flex items-center gap-2 text-black">
-            <span className="inline-block size-2 shrink-0" style={{ background: item.tone }} />
-            <span>{item.name} · {legend(item.curve)}</span>
+          <li key={item.id} style={{ color: "#f7fafc" }}>
+            {item.name} · {legend(item.curve)}
           </li>
         ))}
       </ul>

@@ -344,22 +344,11 @@
   color: #ffd0c4;
 }
 
-.chart-ink .recharts-wrapper {
-  background: rgba(255, 252, 248, 0.94);
-}
-
 .plate .chart-ink .recharts-tooltip-wrapper,
 .plate .chart-ink .recharts-tooltip-wrapper span,
 .plate .chart-ink .recharts-tooltip-wrapper p,
 .plate .chart-ink .recharts-default-tooltip,
 .plate .chart-ink .recharts-default-tooltip span {
-  background-image: none;
-  -webkit-text-fill-color: #111;
-  color: #111;
-}
-
-.plate .chart-ink li,
-.plate .chart-ink li span {
   background-image: none;
   -webkit-text-fill-color: #111;
   color: #111;
