@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { addAdjunct, loadCycles, type Cycle } from "@/lib/store";
-import { loadWingFavs, searchWing, toggleWingFav, wingCompounds, wingCopy, type WingCompound, type WingId } from "@/lib/wings";
+import { loadWingFavs, toggleWingFav, wingCompounds, wingCopy, type WingId } from "@/lib/wings";
 
 export function WingCodex({ wing }: { wing: WingId }) {
   const copy = wingCopy[wing];
-  const [query, setQuery] = useState("");
   const [saved, setSaved] = useState<Cycle[]>([]);
   const [favs, setFavs] = useState<string[]>([]);
   const [open, setOpen] = useState<string | null>(null);
   const [target, setTarget] = useState("");
+  const [days, setDays] = useState("1");
   const [kept, setKept] = useState("");
   useEffect(() => {
     const cycles = loadCycles();
     setSaved(cycles);
     setTarget(cycles[0]?.id ?? "");
+    setDays(String(Math.max(1, (cycles[0]?.weeks ?? 1) * 7)));
     setFavs(loadWingFavs(wing));
   }, [wing]);
 
@@ -36,8 +37,8 @@ export function WingCodex({ wing }: { wing: WingId }) {
     );
   }
 
-  const hits = searchWing(wing, query);
-  const listed = query.trim().length < 2 ? wingCompounds(wing) : hits;
+  const listed = wingCompounds(wing);
+  const limit = Math.max(1, (saved.find((row) => row.id === target)?.weeks ?? 1) * 7);
 
   return (
     <main className="space-y-4">
@@ -50,11 +51,7 @@ export function WingCodex({ wing }: { wing: WingId }) {
       </header>
       <p>{copy.line}</p>
       <p className="text-sm text-muted">{copy.aside}</p>
-      <p className="text-sm text-muted">O composto entra numa Implantation já guardada. Sem meia-vida, fica só a ficha.</p>
-      <label className="block text-sm">
-        Busca na database
-        <input className="field mt-1" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="nomeie o composto, Frater" />
-      </label>
+      <p className="text-sm text-muted">O composto entra numa Implantation já guardada. A duração, em dias, não passa da dela.</p>
       {wingCompounds(wing).length === 0 ? <p className="text-sm">A database deste selo ainda aguarda os compostos. A organização já está pronta.</p> : null}
       <ul>
         {listed.map((row) => {
@@ -76,25 +73,58 @@ export function WingCodex({ wing }: { wing: WingId }) {
                   <dd>{row.maxDose}</dd>
                   <dt className="warn">Aviso</dt>
                   <dd className="warn">{row.warning}</dd>
-                  <dd className="lede">{row.halfLifeDays ? `Traçado visual: ${row.halfLifeDays} dias. Não é medição.` : "Sem meia-vida numérica. Não entra no traçado."}</dd>
                 </dl>
                 <label className="mt-2 block">
                     Implantation
-                    <select className="field mt-1" value={target} onChange={(e) => setTarget(e.target.value)}>
+                    <select
+                      className="field mt-1"
+                      value={target}
+                      onChange={(e) => {
+                        const id = e.target.value;
+                        const cap = Math.max(1, (saved.find((cycle) => cycle.id === id)?.weeks ?? 1) * 7);
+                        setTarget(id);
+                        setDays((current) => {
+                          const parsed = Number(current);
+                          if (!Number.isFinite(parsed) || parsed < 1) return String(cap);
+                          return String(Math.min(cap, Math.round(parsed)));
+                        });
+                      }}
+                    >
                       {saved.map((cycle) => <option key={cycle.id} value={cycle.id}>{cycle.name}</option>)}
                     </select>
                   </label>
+                  <label className="mt-2 block">
+                    Duração em dias
+                    <input
+                      className="field mt-1"
+                      inputMode="numeric"
+                      value={days}
+                      onChange={(e) => {
+                        const next = e.target.value.replace(/\D/g, "");
+                        setDays(next);
+                      }}
+                      onBlur={() => {
+                        const parsed = Number(days);
+                        const next = !Number.isFinite(parsed) || days.trim() === "" ? limit : Math.min(limit, Math.max(1, Math.round(parsed)));
+                        setDays(String(next));
+                      }}
+                    />
+                  </label>
+                  <p className="text-sm text-muted">No máximo {limit} dias. Não passa desta Implantation.</p>
                   <button
                     type="button"
                     className="chip chip-on"
                     onClick={() => {
-                      addAdjunct(target, { wing, substanceId: row.id, name: row.name });
-                      setKept(row.name);
+                      const parsed = Number(days);
+                      const next = !Number.isFinite(parsed) || days.trim() === "" ? limit : Math.min(limit, Math.max(1, Math.round(parsed)));
+                      setDays(String(next));
+                      addAdjunct(target, { wing, substanceId: row.id, name: row.name, days: next });
+                      setKept(`${row.id}:${next}`);
                     }}
                   >
                     Selar nesta Implantation
                   </button>
-                  {kept === row.name ? <p className="text-muted">Selado, Frater.</p> : null}
+                  {kept === `${row.id}:${days}` ? <p className="text-muted">Selado por {days} dias, Frater.</p> : null}
                 </>
               ) : null}
               <div className="mt-2 flex flex-wrap gap-2">

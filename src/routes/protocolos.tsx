@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { AxisChart } from "@/components/axis-chart";
 import { CycleChart } from "@/components/cycle-chart";
 import { GeneSeedMark } from "@/components/marks";
 import { panels, type CycleLine, type PlotCompound } from "@/lib/cycle";
 import { plotCompounds } from "@/lib/search";
 import { loadCycles, removeCycle, saveCycle, type Cycle } from "@/lib/store";
-import { findWingCompound, wingCopy } from "@/lib/wings";
+import { wingCopy } from "@/lib/wings";
 
 export const Route = createFileRoute("/protocolos")({ component: CyclePage });
 
@@ -80,13 +79,10 @@ function baseLabel(compound: string) {
   return baseName[compound] ?? compound;
 }
 
-function visualDecay(days: number, halfLifeDays: number) {
-  const step = Math.max(1, Math.round(days / 24));
-  const points: { x: number; y: number }[] = [];
-  for (let day = 0; day <= days; day += step) {
-    points.push({ x: day, y: Math.round(Math.pow(0.5, day / halfLifeDays) * 1000) / 1000 });
-  }
-  return points;
+function declaredDays(days: number, weeks: number) {
+  const cap = Math.max(1, weeks * 7);
+  if (typeof days !== "number" || !Number.isFinite(days)) return cap;
+  return Math.min(cap, Math.max(1, Math.round(days)));
 }
 
 function WingDoor({
@@ -272,6 +268,35 @@ function CyclePage() {
       </button>
       {drawn.length === 0 ? <p className="text-sm">Nenhuma linha na Implantation.</p> : <p className="text-sm text-muted">Traçado visual da Implantation. Não é medição.</p>}
       {drawn.map((panel) => <CycleChart key={panel.key} panel={panel} />)}
+      {saved.some((row) => (row.adjuncts ?? []).length > 0) ? (
+        <section className="space-y-4 border-t border-rule pt-4">
+          {saved.map((row) => {
+            const groups = [
+              { wing: "agumentarium" as const, title: "Combat-Stimm" },
+              { wing: "conditionarium" as const, title: "Med-Stimm" },
+            ];
+            const filled = groups
+              .map((group) => ({ ...group, items: (row.adjuncts ?? []).filter((item) => item.wing === group.wing) }))
+              .filter((group) => group.items.length > 0);
+            if (filled.length === 0) return null;
+            return (
+              <div key={row.id}>
+                <p className="datum">{row.name}</p>
+                {filled.map((group) => (
+                  <div key={group.wing} className="mt-2">
+                    <p className="kicker">{group.title}</p>
+                    <ul>
+                      {group.items.map((item) => (
+                        <li key={item.substanceId} className="text-sm">{item.name} — {declaredDays(item.days, row.weeks)} dias</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </section>
+      ) : null}
       <section className="space-y-2 border-t border-rule pt-4">
         <label className="block text-sm">Nome da Implantation
           <input className="field mt-1" value={name} onChange={(e) => setName(e.target.value)} />
@@ -293,16 +318,6 @@ function CyclePage() {
             <li key={row.id} className="border-t border-rule pt-3">
               <p className="datum">{row.name}</p>
               <p className="text-sm text-muted">{row.weeks} semanas · {row.lines.length} linhas</p>
-              {(row.adjuncts ?? []).map((item) => {
-                const compound = findWingCompound(item.wing, item.substanceId);
-                const points = compound?.halfLifeDays ? visualDecay(row.weeks * 7, compound.halfLifeDays) : [];
-                return (
-                  <div key={`${item.wing}-${item.substanceId}`} className="mt-2">
-                    <p className="text-sm">{wingCopy[item.wing].title}: {item.name}</p>
-                    {points.length > 0 ? <AxisChart unit="fração visual" xLabel="dias" points={points} /> : <p className="text-sm text-muted">Sem meia-vida. A ficha fica. O traçado não.</p>}
-                  </div>
-                );
-              })}
               <button
                 type="button"
                 className="min-h-11 text-sm underline"

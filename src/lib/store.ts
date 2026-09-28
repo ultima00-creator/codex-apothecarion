@@ -52,6 +52,7 @@ export type CycleAdjunct = {
   wing: "agumentarium" | "conditionarium";
   substanceId: string;
   name: string;
+  days: number;
 };
 
 export type Cycle = {
@@ -80,9 +81,17 @@ export function removeCycle(id: string) {
 export function addAdjunct(cycleId: string, adjunct: CycleAdjunct) {
   const rows = loadCycles().map((row) => {
     if (row.id !== cycleId) return row;
+    const limit = Math.max(1, row.weeks * 7);
+    const days = Math.min(limit, Math.max(1, Math.round(adjunct.days)));
+    const next = { ...adjunct, days };
     const adjuncts = row.adjuncts ?? [];
-    if (adjuncts.some((item) => item.wing === adjunct.wing && item.substanceId === adjunct.substanceId)) return row;
-    return { ...row, adjuncts: [...adjuncts, adjunct] };
+    const index = adjuncts.findIndex((item) => item.wing === next.wing && item.substanceId === next.substanceId);
+    if (index >= 0) {
+      const copy = adjuncts.slice();
+      copy[index] = next;
+      return { ...row, adjuncts: copy };
+    }
+    return { ...row, adjuncts: [...adjuncts, next] };
   });
   write(CYCLES, rows);
   return rows;

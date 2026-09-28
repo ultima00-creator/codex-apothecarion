@@ -44,25 +44,6 @@ export function findWingCompound(wing: WingId, id: string): WingCompound | null 
   return tables[wing].find((row) => row.id === id) ?? null;
 }
 
-export function searchWing(wing: WingId, query: string): WingCompound[] {
-  const needle = query
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
-  if (needle.length < 2) return [];
-  return tables[wing]
-    .filter((row) =>
-      [row.name, row.className, row.description, ...row.aliases]
-        .join(" ")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .includes(needle),
-    )
-    .slice(0, 40);
-}
-
 const FAV = "apothecarion-wing-fav";
 
 export function loadWingFavs(wing: WingId): string[] {
