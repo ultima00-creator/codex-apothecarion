@@ -86,7 +86,7 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
           ) : (
             <p className="text-sm text-muted">Fora da via oral o estômago não atrasa a metabolização hepática.</p>
           )}
-          <AxisChart unit="fração da dose" xLabel="horas" points={fraction} tone={mark(`${kind === "peptide" ? "peptide" : "hormone"}:${record.id}`)} />
+          <AxisChart unit="fração da dose" xLabel="horas" points={fraction} tone={mark(`${kind === "peptide" ? "peptide" : "hormone"}:${record.id}`)} dash />
           <p className="text-sm">Nesta hora: {fracNow == null ? "—" : fracNow} · regra do app, não medição.</p>
         </section>
       ) : null}

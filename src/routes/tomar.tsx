@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { DoseScaleView } from "@/components/dose-face";
+import { tradeLine } from "@/lib/brands";
 import {
   dosesFor,
   loadDiary,
@@ -9,10 +11,11 @@ import {
   type DiaryKind,
   type Ingestion,
 } from "@/lib/diary";
-import { findHormone, findPeptide, hitById, routesFor, search, type Hit } from "@/lib/search";
-import { saveNote } from "@/lib/store";
-import { bandWord, doseBand, doseScale, unitOf } from "@/lib/dose";
+import { doseScale, unitOf } from "@/lib/dose";
+import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
+import { findHormone, findPeptide, findWiki, hitById, routesFor, search, type Hit } from "@/lib/search";
+import { saveNote } from "@/lib/store";
 
 export const Route = createFileRoute("/tomar")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -21,6 +24,14 @@ export const Route = createFileRoute("/tomar")({
   }),
   component: TakePage,
 });
+
+const stomach = [
+  { quarters: 0, name: "vazio", delay: "~0 h" },
+  { quarters: 1, name: "1/4", delay: "~0,5 h" },
+  { quarters: 2, name: "meio", delay: "~1 h" },
+  { quarters: 3, name: "cheio", delay: "~1,5 h" },
+  { quarters: 4, name: "muito cheio", delay: "~2 h" },
+] as const;
 
 function defaultRoute(hit: Hit): string {
   return routesFor(hit)[0] ?? "";
@@ -35,19 +46,33 @@ function unitFor(hit: Hit): string {
   return unitOf(hit.kind, hit.id, hit.title);
 }
 
+function subtitle(hit: Hit): string {
+  if (hit.kind === "wiki") {
+    const row = findWiki(hit.id);
+    return tradeLine(hit.title, row?.commonNames) || hit.detail;
+  }
+  return hit.detail === "compound" ? tradeLine(hit.title) : hit.detail;
+}
+
+function nowLocal(): string {
+  return new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
 function TakePage() {
   const navigate = useNavigate();
   const preset = Route.useSearch();
   const [diary, setDiary] = useState<Ingestion[]>([]);
   const [query, setQuery] = useState("");
   const [picked, setPicked] = useState<Hit | null>(null);
+  const [step, setStep] = useState<"buscar" | "dose" | "fechar">("buscar");
   const [dose, setDose] = useState<number | null>(null);
   const [custom, setCustom] = useState("");
   const [route, setRoute] = useState("oral");
   const [quarters, setQuarters] = useState(0);
-  const [when, setWhen] = useState(() => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16));
+  const [when, setWhen] = useState(nowLocal);
   const [note, setNote] = useState("");
   const [kept, setKept] = useState("");
+  const [showNote, setShowNote] = useState(false);
   useEffect(() => setDiary(loadDiary()), []);
   useEffect(() => {
     if (!preset.kind || !preset.id) return;
@@ -57,17 +82,19 @@ function TakePage() {
     setRoute(defaultRoute(hit));
     setDose(null);
     setCustom("");
+    setStep("dose");
   }, [preset.kind, preset.id]);
 
   const hits = search(query);
   const missed = query.trim().length >= 2 && hits.length === 0 && !picked;
   const frequent = mostUsed(diary);
 
-  function choose(hit: Hit) {
+  function choose(hit: Hit, nextDose: number | null) {
     setPicked(hit);
-    setRoute(defaultRoute(hit));
-    setDose(null);
-    setCustom("");
+    setRoute(defaultRoute(hit) || diary.find((row) => row.kind === hit.kind && row.substanceId === hit.id)?.route || "oral");
+    setDose(nextDose);
+    setCustom(nextDose == null ? "" : String(nextDose));
+    setStep(nextDose == null ? "dose" : "fechar");
   }
 
   function register() {
@@ -83,147 +110,184 @@ function TakePage() {
       takenAt: new Date(when).toISOString(),
       curve: resolveCurve(picked.kind, picked.id),
     });
+    if (note.trim()) saveNote(picked.title, note.trim());
     navigate({ to: "/" });
   }
 
   const history = picked ? dosesFor(diary, picked.kind as DiaryKind, picked.id) : [];
   const basis = picked ? referenceDose(picked) : null;
+  const scale = picked ? doseScale(picked.kind, picked.id, route) : null;
+  const stomachNow = stomach.find((item) => item.quarters === quarters) ?? stomach[0];
 
   return (
     <main className="space-y-4">
-      <Link to="/codex" className="text-sm text-bronze">Retornar</Link>
-      <h1 className="screen-title font-display">Novo composto</h1>
-      <label className="block text-sm">
-        Busca na database
-        <input className="field mt-1" value={query} onChange={(e) => { setQuery(e.target.value); setPicked(null); }} placeholder="nomeie o composto, Frater" />
-      </label>
+      <div className="step-bar">
+        {step === "buscar" ? (
+          <Link to="/" className="text-sm text-bronze">Cancelar</Link>
+        ) : (
+          <button type="button" className="text-sm text-bronze" onClick={() => setStep(step === "fechar" ? "dose" : "buscar")}>Cancelar</button>
+        )}
+        {step === "dose" ? (
+          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose)} onClick={() => setStep("fechar")}>Seguir</button>
+        ) : null}
+        {step === "fechar" ? (
+          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose)} onClick={register}>Registrar</button>
+        ) : null}
+      </div>
 
-      {!picked && query.trim().length < 2 && frequent.length > 0 ? (
-        <section className="space-y-4">
-          <p className="text-sm text-muted">Os que o Frater já repetiu. A dose é um registro anterior, não uma ordem.</p>
-          {frequent.map((row) => (
-            <button
-              key={`${row.kind}-${row.substanceId}`}
-              type="button"
-              className="block w-full border-b border-rule py-3 text-left"
-              onClick={() => choose({ kind: row.kind, id: row.substanceId, title: row.name, detail: "" })}
-            >
-              <span className="block">{row.name}</span>
-              <span className="text-sm text-muted">{dosesFor(diary, row.kind, row.substanceId).slice(0, 4).join(" · ") || "sem dose anterior"} {row.unit}</span>
-            </button>
-          ))}
-        </section>
-      ) : null}
-
-      {!picked ? (
-        <ul>
-          {hits.map((hit) => (
-            <li key={`${hit.kind}-${hit.id}`}>
-              <button type="button" className="block min-h-11 w-full border-b border-rule py-2 text-left" onClick={() => choose(hit)}>
-                <span className="block">{hit.title}</span>
-                <span className="text-sm text-muted">{hit.detail}</span>
+      {step === "buscar" ? (
+        <>
+          <h1 className="screen-title font-display">Novo composto</h1>
+          <label className="block text-sm">
+            <span className="sr-only">Busca</span>
+            <input className="field" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar" />
+          </label>
+          {query.trim().length < 2 && frequent.length > 0 ? (
+            <section>
+              <p className="mb-2 text-sm text-muted">Os que o Frater já repetiu. A pastilha é um registro anterior, não uma ordem.</p>
+              {frequent.map((row) => {
+                const hit: Hit = { kind: row.kind, id: row.substanceId, title: row.name, detail: tradeLine(row.name) };
+                const past = dosesFor(diary, row.kind, row.substanceId);
+                return (
+                  <div key={`${row.kind}-${row.substanceId}`} className="recent-block">
+                    <p className="recent-name">
+                      <i className="swatch" style={{ background: mark(`${row.kind}:${row.substanceId}`) }} />
+                      {row.name}, {viaPt(row.route)}
+                    </p>
+                    <div className="dose-pills">
+                      {past.map((value) => (
+                        <button key={value} type="button" className="dose-pill" onClick={() => choose(hit, value)}>
+                          {value} {row.unit}
+                        </button>
+                      ))}
+                      <button type="button" className="dose-pill on" onClick={() => choose(hit, null)}>Outra dose</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </section>
+          ) : null}
+          {query.trim().length >= 2 ? (
+            <ul>
+              {hits.map((hit) => (
+                <li key={`${hit.kind}-${hit.id}`}>
+                  <button type="button" className="block min-h-11 w-full border-b border-rule py-2 text-left" onClick={() => choose(hit, null)}>
+                    <span className="block">{hit.title}</span>
+                    <span className="text-sm text-muted">{subtitle(hit) || unitFor(hit)}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {missed ? (
+            <section className="space-y-2 border-t border-rule pt-3">
+              <p className="text-sm text-muted">Não está na database. Sem ficha e sem curva. A nota não é medição.</p>
+              <textarea className="field min-h-24" value={note} onChange={(event) => setNote(event.target.value)} />
+              <button
+                type="button"
+                className="min-h-11 border border-bronze px-4"
+                disabled={!note.trim()}
+                onClick={() => {
+                  saveNote(query.trim(), note.trim());
+                  setKept(query.trim());
+                  setNote("");
+                }}
+              >
+                Guardar nota
               </button>
-            </li>
-          ))}
-        </ul>
+              {kept ? <p className="text-sm">Nota guardada para {kept}.</p> : null}
+              <Link to="/journal" className="block text-sm underline">Ver notas</Link>
+            </section>
+          ) : null}
+        </>
       ) : null}
 
-      {picked ? (
-        <section className="space-y-3 border-t border-rule pt-3">
-          <h2 className="subject">{picked.title}</h2>
-          <p className="text-sm text-muted">{picked.detail === "compound" ? "Compound" : picked.detail}</p>
-          {(() => {
-            const scale = doseScale(picked.kind, picked.id, route);
-            if (!scale) return null;
-            const band = dose == null ? 0 : doseBand(picked.kind, picked.id, route, dose);
-            return (
-              <p className="text-sm">
-                Limiar {scale.threshold ?? "—"} · leve {scale.light ?? "—"} · comum {scale.common ?? "—"} · forte {scale.strong ?? "—"} · pesada {scale.heavy ?? "—"} {scale.unit}
-                {band > 0 ? ` · ${bandWord[band]}` : ""}
-              </p>
-            );
-          })()}
-          <div className="flex flex-wrap gap-2">
+      {picked && step === "dose" ? (
+        <section className="space-y-3">
+          <h1 className="screen-title font-display">{picked.title}</h1>
+          <p className="kicker">{viaPt(route)} · dose</p>
+          {subtitle(picked) ? <p className="text-sm text-muted">{subtitle(picked)}</p> : null}
+          {scale ? (
+            <div className="glass-card">
+              <DoseScaleView scale={scale} dose={dose} />
+            </div>
+          ) : (
+            <p className="text-sm text-muted">Sem faixa de dose nesta ficha. A unidade continua {unitFor(picked)}.</p>
+          )}
+          {routesFor(picked).length > 1 ? (
+            <label className="block text-sm">
+              Via
+              <select className="field mt-1" value={route} onChange={(event) => setRoute(event.target.value)}>
+                {routesFor(picked).map((item) => <option key={item} value={item}>{viaPt(item)}</option>)}
+              </select>
+            </label>
+          ) : null}
+          <div className="dose-pills">
             {history.map((value) => (
-              <button key={value} type="button" className={dose === value ? "chip chip-on" : "chip"} onClick={() => { setDose(value); setCustom(""); }}>
+              <button key={value} type="button" className={dose === value ? "dose-pill on" : "dose-pill"} onClick={() => { setDose(value); setCustom(String(value)); }}>
                 {value} {unitFor(picked)}
               </button>
             ))}
             {basis != null ? (
-              <button type="button" className={dose === basis ? "chip chip-on" : "chip"} onClick={() => { setDose(basis); setCustom(""); }}>
+              <button type="button" className={dose === basis ? "dose-pill on" : "dose-pill"} onClick={() => { setDose(basis); setCustom(String(basis)); }}>
                 {basis} mg · referência da curva
               </button>
             ) : null}
-            <button type="button" className={custom !== "" && dose === Number(custom) ? "chip chip-on" : "chip"} onClick={() => setDose(custom === "" ? null : Number(custom))}>
-              Outra dose
-            </button>
           </div>
-          <label className="block text-sm">
-            Outra dose
-            <input
-              className="field mt-1"
-              type="number"
-              min={0}
-              step="0.1"
-              value={custom}
-              onChange={(e) => {
-                setCustom(e.target.value);
-                setDose(e.target.value === "" ? null : Number(e.target.value));
-              }}
-            />
+          <label className="glass-card block">
+            <span className="flex items-end justify-between gap-3">
+              <input
+                className="field"
+                inputMode="decimal"
+                value={custom}
+                placeholder="Dose"
+                onChange={(event) => {
+                  const next = event.target.value.replace(",", ".");
+                  if (next !== "" && !/^\d*\.?\d*$/.test(next)) return;
+                  setCustom(next);
+                  setDose(next === "" || next === "." ? null : Number(next));
+                }}
+              />
+              <b className="text-2xl">{unitFor(picked)}</b>
+            </span>
           </label>
-          <label className="block text-sm">
-            Via
-            {picked && routesFor(picked).length > 0 ? (
-              <select className="field mt-1" value={route} onChange={(e) => setRoute(e.target.value)}>
-                {routesFor(picked).map((item) => <option key={item} value={item}>{viaPt(item)}</option>)}
-              </select>
-            ) : (
-              <p className="mt-1 text-sm text-muted">Sem via catalogada nesta ficha.</p>
-            )}
-          </label>
-          {route === "oral" ? (
-            <label className="block text-sm">
-              Estômago cheio
-              <select className="field mt-1" value={quarters} onChange={(e) => setQuarters(Number(e.target.value))}>
-                <option value={0}>vazio · ~0 h</option>
-                <option value={1}>1/4 · ~0,5 h</option>
-                <option value={2}>meio · ~1 h</option>
-                <option value={3}>cheio · ~1,5 h</option>
-                <option value={4}>muito cheio · ~2 h</option>
-              </select>
-            </label>
-          ) : route ? (
-            <p className="text-sm text-muted">Fora da via oral o estômago não atrasa a metabolização hepática. Na curva citada o atraso não entra.</p>
-          ) : null}
-          <label className="block text-sm">
-            Hora
-            <input className="field mt-1" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} />
-          </label>
-          <button type="button" className="min-h-11 border border-bronze px-4" disabled={dose == null || Number.isNaN(dose)} onClick={register}>
-            Registrar
-          </button>
         </section>
       ) : null}
 
-      {missed ? (
-        <section className="space-y-2 border-t border-rule pt-3">
-          <p className="text-sm text-muted">Não está na database. Sem ficha e sem curva. A nota não é medição.</p>
-          <textarea className="field min-h-24" value={note} onChange={(e) => setNote(e.target.value)} />
-          <button
-            type="button"
-            className="min-h-11 border border-bronze px-4"
-            disabled={!note.trim()}
-            onClick={() => {
-              saveNote(query.trim(), note.trim());
-              setKept(query.trim());
-              setNote("");
-            }}
-          >
-            Guardar nota
-          </button>
-          {kept ? <p className="text-sm">Nota guardada para {kept}.</p> : null}
-          <Link to="/journal" className="block text-sm underline">Ver notas</Link>
+      {picked && step === "fechar" ? (
+        <section className="space-y-3">
+          <h1 className="screen-title font-display">Fechar registro</h1>
+          <p className="kicker">{picked.title} · {dose} {unitFor(picked)}</p>
+          <div className="glass-card space-y-3">
+            <label className="block text-sm">
+              Hora
+              <span className="mt-1 flex items-center gap-2">
+                <input className="field" type="datetime-local" value={when} onChange={(event) => setWhen(event.target.value)} />
+                <button type="button" className="dose-pill" onClick={() => setWhen(nowLocal())}>Agora</button>
+              </span>
+            </label>
+            {route === "oral" ? (
+              <div>
+                <p className="text-sm">Estômago {stomachNow.name}</p>
+                <div className="stomach-row mt-2">
+                  {stomach.map((item) => (
+                    <button key={item.quarters} type="button" className={quarters === item.quarters ? "on" : ""} onClick={() => setQuarters(item.quarters)}>
+                      {item.name}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-sm text-muted">Atraso de ~{stomachNow.delay.replace("~", "")} na via oral. Fora dela o estômago não entra.</p>
+              </div>
+            ) : (
+              <p className="text-sm text-muted">Via {viaPt(route)}. O estômago não atrasa esta tomada.</p>
+            )}
+            {showNote ? (
+              <textarea className="field min-h-20" value={note} onChange={(event) => setNote(event.target.value)} placeholder="Nota. Não é medição." />
+            ) : (
+              <button type="button" className="text-sm text-bronze" onClick={() => setShowNote(true)}>+ Nota</button>
+            )}
+          </div>
+          <button type="button" className="go w-full" disabled={dose == null || Number.isNaN(dose)} onClick={register}>Registrar</button>
         </section>
       ) : null}
     </main>

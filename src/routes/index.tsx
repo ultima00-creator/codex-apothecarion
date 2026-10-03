@@ -4,7 +4,8 @@ import { dismissNotice, dayPlot, formatDay, groupDays, loadDiary, loadNotices, w
 import { DiaryChart } from "@/components/diary-chart";
 import { DiariumMark } from "@/components/marks";
 import { tradeLine } from "@/lib/brands";
-import { doseBand } from "@/lib/dose";
+import { DoseDots } from "@/components/dose-face";
+import { dotCount } from "@/lib/dose";
 import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
 import { armSignal, disarmSignal, signalArmed, signalStatus, testSignal } from "@/lib/signal";
@@ -26,10 +27,10 @@ function DiaryHome() {
   const days = groupDays(rows);
   const plot = dayPlot(rows);
   const ordered = [...rows].sort((a, b) => b.takenAt.localeCompare(a.takenAt));
-  const totals = new Map<string, { name: string; unit: string; dose: number; tone: string }>();
+  const totals = new Map<string, { name: string; unit: string; dose: number; tone: string; kind: Ingestion["kind"]; substanceId: string; route: string }>();
   for (const row of rows) {
-    const key = `${row.kind}:${row.substanceId}:${row.unit}`;
-    const current = totals.get(key) ?? { name: row.name, unit: row.unit, dose: 0, tone: mark(`${row.kind}:${row.substanceId}`) };
+    const key = `${row.kind}:${row.substanceId}:${row.unit}:${row.route}`;
+    const current = totals.get(key) ?? { name: row.name, unit: row.unit, dose: 0, tone: mark(`${row.kind}:${row.substanceId}`), kind: row.kind, substanceId: row.substanceId, route: row.route };
     current.dose += row.dose;
     totals.set(key, current);
   }
@@ -76,16 +77,19 @@ function DiaryHome() {
             const when = new Date(row.takenAt);
             const clock = when.toLocaleString("pt-BR", { weekday: "short", hour: "2-digit", minute: "2-digit" });
             const brands = tradeLine(row.name);
+            const dots = dotCount(row.kind, row.substanceId, row.route, row.dose);
             return (
-              <li key={row.id} className="journal-row">
-                <span className="journal-bar" style={{ background: mark(`${row.kind}:${row.substanceId}`) }} />
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm text-muted">{clock}</span>
-                  <span className="datum block">{row.name}</span>
-                  {brands ? <span className="block text-sm text-muted">{brands}</span> : null}
-                  <span className="block text-sm">{row.dose} {row.unit} {viaPt(row.route)}</span>
-                </span>
-                <DoseDots n={doseBand(row.kind, row.substanceId, row.route, row.dose)} />
+              <li key={row.id}>
+                <Link to="/abrir/$kind/$id" params={{ kind: row.kind, id: row.substanceId }} className="journal-row">
+                  <span className="journal-bar" style={{ background: mark(`${row.kind}:${row.substanceId}`) }} />
+                  <span className="min-w-0 flex-1">
+                    <span className="muted-ink block text-sm">{clock}</span>
+                    <span className="datum block">{row.name}</span>
+                    {brands ? <span className="muted-ink block text-sm">{brands}</span> : null}
+                    <span className="block text-sm">{row.dose} {row.unit} {viaPt(row.route)}</span>
+                  </span>
+                  {dots == null ? null : <DoseDots n={dots} />}
+                </Link>
               </li>
             );
           })}
@@ -95,15 +99,21 @@ function DiaryHome() {
         <section className="mt-5">
           <p className="kicker">Dose acumulada</p>
           <ul className="journal-list mt-2">
-            {[...totals.values()].map((row) => (
-              <li key={`${row.name}-${row.unit}`} className="journal-row">
-                <span className="journal-bar" style={{ background: row.tone }} />
-                <span className="min-w-0 flex-1">
-                  <span className="datum block">{row.name}</span>
-                  <span className="block text-sm">{Math.round(row.dose * 1000) / 1000} {row.unit}</span>
-                </span>
-              </li>
-            ))}
+            {[...totals.values()].map((row) => {
+              const dots = dotCount(row.kind, row.substanceId, row.route, row.dose);
+              return (
+                <li key={`${row.kind}-${row.substanceId}-${row.unit}-${row.route}`}>
+                  <Link to="/abrir/$kind/$id" params={{ kind: row.kind, id: row.substanceId }} className="journal-row">
+                    <span className="journal-bar" style={{ background: row.tone }} />
+                    <span className="min-w-0 flex-1">
+                      <span className="datum block">{row.name}</span>
+                      <span className="block text-sm">{Math.round(row.dose * 1000) / 1000} {row.unit} {viaPt(row.route)}</span>
+                    </span>
+                    {dots == null ? null : <DoseDots n={dots} mute />}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
@@ -121,14 +131,6 @@ function DiaryHome() {
       ) : null}
       <Link to="/tomar" search={{ kind: "", id: "" }} className="fab" aria-label="Novo composto">+</Link>
     </main>
-  );
-}
-
-function DoseDots({ n }: { n: number }) {
-  return (
-    <span className="dose-dots" aria-label={n ? `${n} de 5` : undefined}>
-      {[0, 1, 2, 3, 4].map((col) => <i key={col} className={col < n ? "on" : ""} />)}
-    </span>
   );
 }
 

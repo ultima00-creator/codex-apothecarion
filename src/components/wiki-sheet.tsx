@@ -1,97 +1,203 @@
-import { findWiki, wikiTitle } from "@/lib/search";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { DoseScaleView } from "@/components/dose-face";
 import { tradeLine } from "@/lib/brands";
+import { doseScale } from "@/lib/dose";
+import { durationAt, durationEnd, type Timeline } from "@/lib/duration";
+import { wikiLine } from "@/lib/diary";
+import { mark } from "@/lib/mark";
 import { classePt, nomePt, tempoPt, viaPt } from "@/lib/pt";
+import { findWiki, wikiTitle } from "@/lib/search";
 
 const levelLabel: Record<string, string> = {
-  dangerous: "perigosa",
+  dangerous: "perigo",
   unsafe: "insegura",
   uncertain: "incerta",
 };
 
-function bucket(classes: string[], name: string, level: string): "negativa" | "sinergica" | "incerta" {
-  const partner = name.toLowerCase();
-  const same = classes.some((item) => {
-    const own = item.toLowerCase();
-    return partner === own || partner.includes(own) || own.includes(partner);
-  });
-  if (level === "dangerous" || level === "unsafe") return "negativa";
-  if (same) return "sinergica";
-  return "incerta";
+const stomach = [
+  { quarters: 0, name: "vazio", hours: 0 },
+  { quarters: 1, name: "1/4", hours: 0.5 },
+  { quarters: 2, name: "meio", hours: 1 },
+  { quarters: 3, name: "cheio", hours: 1.5 },
+  { quarters: 4, name: "muito cheio", hours: 2 },
+] as const;
+
+function clock(time: number, spanHours: number): string {
+  const date = new Date(time);
+  if (spanHours > 20) return date.toLocaleString("pt-BR", { day: "2-digit", hour: "2-digit", minute: "2-digit" });
+  return date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
-function doseText(value: string | number | null | undefined, unit: string | null): string {
-  if (value == null || value === "") return "—";
-  const text = String(value).replace(/\.0+(?=(\D|$))/g, "");
-  if (unit && !/[a-zA-Zµ]/.test(text)) return `${text} ${unit}`;
-  return text;
+function DurationPlot({ line, tone, oral }: { line: Timeline; tone: string; oral: boolean }) {
+  const [start, setStart] = useState(() => new Date());
+  const [quarters, setQuarters] = useState(0);
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  const delay = oral ? (stomach.find((item) => item.quarters === quarters)?.hours ?? 0) : 0;
+  const span = Math.max(durationEnd(line) + delay + 0.5, 1);
+  const plot = useMemo(() => {
+    const step = span > 24 ? 0.5 : 0.25;
+    const points: { x: string; y: number }[] = [];
+    let nowLabel: string | null = null;
+    let nowDistance = Number.POSITIVE_INFINITY;
+    const now = Date.now();
+    for (let hour = 0; hour <= span + 1e-9; hour += step) {
+      const at = start.getTime() + hour * 3600000;
+      const x = clock(at, span);
+      const y = hour < delay ? 0 : (durationAt(hour - delay, line) ?? 0);
+      points.push({ x, y: Math.round(y * 1000) / 1000 });
+      const distance = Math.abs(at - now);
+      if (distance < nowDistance && at >= start.getTime() && at <= start.getTime() + span * 3600000) {
+        nowDistance = distance;
+        nowLabel = x;
+      }
+    }
+    return { points, nowLabel };
+  }, [delay, line, span, start]);
+  const local = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  return (
+    <div className="glass-card space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm">Início</p>
+        <span className="time-chips">
+          <input
+            className="field w-auto"
+            type="datetime-local"
+            value={local}
+            onChange={(event) => {
+              const next = new Date(event.target.value);
+              if (!Number.isNaN(next.getTime())) setStart(next);
+            }}
+          />
+          <button type="button" className="dose-pill" onClick={() => setStart(new Date())}>Agora</button>
+        </span>
+      </div>
+      <div className="h-52 w-full">
+        {ready ? (
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={plot.points}>
+            <CartesianGrid stroke="rgba(90,70,64,0.35)" />
+            <XAxis dataKey="x" stroke="#8a7b72" tick={{ fill: "#2a211c", fontSize: 11 }} minTickGap={18} />
+            <YAxis hide domain={[0, 1]} />
+            <Tooltip contentStyle={{ background: "#fff", color: "#111", border: "1px solid #2a211c" }} />
+            {plot.nowLabel ? <ReferenceLine x={plot.nowLabel} stroke="#1a120f" strokeWidth={2} label={{ value: "Agora", fill: "#1a120f", fontSize: 11, position: "top" }} /> : null}
+            <Area type="monotone" dataKey="y" stroke={tone} fill={tone} fillOpacity={0.28} strokeDasharray="5 4" strokeWidth={2.5} name="duração citada" />
+          </AreaChart>
+        </ResponsiveContainer>
+        ) : null}
+      </div>
+      <p className="text-sm">A linha usa início, subida, pico e descida da ficha. Não é meia-vida de eliminação.</p>
+      {oral ? (
+        <div>
+          <p className="text-sm">Atraso do estômago</p>
+          <div className="stomach-row mt-2">
+            {stomach.map((item) => (
+              <button key={item.quarters} type="button" className={quarters === item.quarters ? "on" : ""} onClick={() => setQuarters(item.quarters)}>
+                {item.name}
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-sm">Início atrasado em ~{delay} h.</p>
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 export function WikiSheet({ slug }: { slug: string }) {
   const row = findWiki(slug);
+  const [via, setVia] = useState("");
   if (!row) return <p>Não está no catálogo da wiki.</p>;
+  const title = wikiTitle(row.slug, row.name);
+  const brands = tradeLine(title, row.commonNames);
+  const routes = [...new Set(row.roas.map((roa) => (roa.name ?? "").toLowerCase()).filter(Boolean))].sort((a, b) => Number(b === "oral") - Number(a === "oral"));
+  const route = via && routes.includes(via) ? via : routes[0] ?? "";
+  const roa = row.roas.find((item) => (item.name ?? "").toLowerCase() === route) ?? row.roas[0];
+  const scale = roa ? doseScale("wiki", slug, route) : null;
+  const line = wikiLine(slug, route);
+  const tone = mark(`wiki:${slug}`);
+  const ordered = [...row.interactions].sort((a, b) => rank(a.level) - rank(b.level));
   return (
-    <article className="space-y-5">
+    <article className="space-y-4">
       <header>
-        <p className="text-xs tracking-[0.2em] text-bronze uppercase">Wiki</p>
-        <h2 className="subject">{wikiTitle(row.slug, row.name)}</h2>
-        {row.classes.length > 0 ? <p className="text-muted">{row.classes.map(classePt).join(" · ")}</p> : null}
-        {row.commonNames.length > 0 || tradeLine(wikiTitle(row.slug, row.name), row.commonNames) ? (
-          <p className="text-sm">Também: {tradeLine(wikiTitle(row.slug, row.name), row.commonNames) || row.commonNames.join(", ")}</p>
-        ) : null}
+        <p className="kicker">Wiki</p>
+        <h2 className="subject">{title}</h2>
+        {brands ? <p className="text-sm text-muted">{brands}</p> : null}
       </header>
-      {row.lead_pt ? <p>{row.lead_pt}</p> : <p className="text-muted">A página não trouxe um parágrafo de abertura.</p>}
-      <p className="text-sm">Meia-vida de eliminação: não está na ficha salva. A duração abaixo não substitui.</p>
-      <section>
-        <h3 className="section-label">Dose e duração</h3>
-        <p className="mb-2 text-sm text-muted">Tabela citada, não é prescrição. A linha do tempo do Diarium usa início, subida, pico e descida. Não é meia-vida de eliminação.</p>
-        {row.roas.length === 0 ? <p className="text-sm">Sem via na ficha.</p> : null}
-        <ul className="space-y-4">
-          {row.roas.map((roa) => (
-            <li key={roa.name} className="border border-rule p-3 text-sm">
-              <p className="datum">{viaPt(roa.name)}</p>
-              <p className="mt-2">
-                Limiar {doseText(roa.threshold, roa.dose_units)} · leve {doseText(roa.light, roa.dose_units)} · comum {doseText(roa.common, roa.dose_units)} · forte {doseText(roa.strong, roa.dose_units)} · pesada {doseText(roa.heavy, roa.dose_units)}
-              </p>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                <li className="chip">início {tempoPt(roa.onset)}</li>
-                <li className="chip">subida {tempoPt(roa.comeup)}</li>
-                <li className="chip">pico {tempoPt(roa.peak)}</li>
-                <li className="chip">descida {tempoPt(roa.offset)}</li>
-              </ul>
-              <p className="mt-2 text-muted">Total {tempoPt(roa.total)} · resíduo {tempoPt(roa.afterglow)}</p>
-            </li>
-          ))}
-        </ul>
+      <p className="glass-card flex items-center justify-between">
+        <span>Cor no Diarium</span>
+        <i className="swatch" style={{ background: tone }} />
+      </p>
+      <section className="glass-card space-y-2">
+        <p className="kicker">Resumo</p>
+        {row.lead_pt ? <p>{row.lead_pt}</p> : <p>A página não trouxe um parágrafo de abertura.</p>}
+        {row.classes.length > 0 ? (
+          <p className="time-chips">
+            {row.classes.map((item) => <span key={item} className="dose-pill">{classePt(item)}</span>)}
+          </p>
+        ) : null}
       </section>
-      <section>
+      <section className="space-y-2">
+        <div className="flex items-end justify-between gap-3">
+          <h3 className="section-label">Dose</h3>
+          {routes.length > 1 ? (
+            <select className="field w-auto" value={route} onChange={(event) => setVia(event.target.value)}>
+              {routes.map((item) => <option key={item} value={item}>{viaPt(item)}</option>)}
+            </select>
+          ) : null}
+        </div>
+        <p className="text-sm text-muted">Tabela citada, não é prescrição. {roa ? viaPt(roa.name) : "Sem via"}.</p>
+        {scale ? (
+          <div className="glass-card">
+            <DoseScaleView scale={scale} dose={null} />
+          </div>
+        ) : <p className="text-sm">Sem faixa de dose nesta via.</p>}
+      </section>
+      <section className="space-y-2">
+        <h3 className="section-label">Duração</h3>
+        {line ? <DurationPlot line={line.line} tone={tone} oral={route === "oral"} /> : <p className="text-sm">Sem duração nesta ficha. A curva não é inventada.</p>}
+        {roa ? (
+          <div className="glass-card">
+            <p className="datum">{viaPt(roa.name)}</p>
+            <ul className="time-chips mt-2">
+              <li className="dose-pill">início {tempoPt(roa.onset)}</li>
+              <li className="dose-pill">subida {tempoPt(roa.comeup)}</li>
+              <li className="dose-pill">pico {tempoPt(roa.peak)}</li>
+              <li className="dose-pill">descida {tempoPt(roa.offset)}</li>
+              <li className="dose-pill">total {tempoPt(roa.total)}</li>
+            </ul>
+          </div>
+        ) : null}
+      </section>
+      <section className="space-y-2">
         <h3 className="section-label">Interações</h3>
-        <p className="mb-2 text-sm text-muted">
+        <p className="text-sm text-muted">
           {row.interaction_quality === "analogy" ? "Analogia de classe. Não é interação citada nesta ficha." : row.interaction_quality === "cited" ? "Citada na ficha." : "Sem interação nesta ficha."}
-          {" "}Negativa é perigosa ou insegura. Sinérgica é a mesma classe, sem esse aviso. O resto fica incerto.
         </p>
-        {(["negativa", "sinergica", "incerta"] as const).map((key) => {
-          const items = row.interactions.filter((item) => bucket(row.classes, item.name, item.level) === key);
-          const title = key === "negativa" ? "Negativas" : key === "sinergica" ? "Sinérgicas" : "Incertas";
-          return (
-            <div key={key} className="mb-3">
-              <h4 className="text-sm text-bronze">{title}</h4>
-              {items.length === 0 ? <p className="text-sm text-muted">Nenhuma.</p> : null}
-              <ul className="space-y-1 text-sm">
-                {items.map((item) => (
-                  <li key={`${item.quality}-${item.level}-${item.name}`}>
-                    {levelLabel[item.level] ?? item.level}: {nomePt(item.name)}
-                    {item.quality === "analogy" ? " · analogia" : ""}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
+        {ordered.length > 0 ? (
+          <div className="glass-card">
+            {ordered.map((item) => (
+              <p key={`${item.quality}-${item.level}-${item.name}`} className="warn-row">
+                <span>{nomePt(item.name)}{item.quality === "analogy" ? " · analogia" : ""}</span>
+                <b className={levelLabel[item.level] ?? item.level}>{levelLabel[item.level] ?? item.level}</b>
+              </p>
+            ))}
+          </div>
+        ) : null}
       </section>
+      <Link to="/tomar" search={{ kind: "wiki", id: row.slug }} className="go inline-flex items-center">Registrar este composto</Link>
       <footer className="border-t border-rule pt-3 text-sm text-muted">
         <a className="underline" href={row.url}>{row.url}</a>
         <p className="mt-2">Colaboradores da PsychonautWiki, psychonautwiki.org, CC BY-SA 4.0.</p>
       </footer>
     </article>
   );
+}
+
+function rank(level: string): number {
+  if (level === "dangerous") return 0;
+  if (level === "unsafe") return 1;
+  return 2;
 }

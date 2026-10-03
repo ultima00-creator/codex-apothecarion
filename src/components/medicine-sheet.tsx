@@ -47,7 +47,7 @@ export function MedicineSheet({ id }: { id: string }) {
               <option value={4}>4/4 · +2 h</option>
             </select>
           </label>
-          <AxisChart unit="fração da dose" xLabel="horas" points={points} tone={mark(`medicine:${row.id}`)} />
+          <AxisChart unit="fração da dose" xLabel="horas" points={points} tone={mark(`medicine:${row.id}`)} dash />
           <p className="text-sm">Nesta hora: {now == null ? "—" : now}</p>
         </>
       ) : null}

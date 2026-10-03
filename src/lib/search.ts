@@ -151,7 +151,7 @@ export function findWiki(slug: string) {
 export function routesFor(hit: Hit): string[] {
   if (hit.kind === "wiki") {
     const names = findWiki(hit.id)?.roas.map((roa) => (roa.name ?? "").toLowerCase()).filter(Boolean) ?? [];
-    return [...new Set(names)];
+    return [...new Set(names)].sort((a, b) => Number(b === "oral") - Number(a === "oral"));
   }
   if (hit.kind === "hormone") {
     const route = findHormone(hit.id)?.route_default;
