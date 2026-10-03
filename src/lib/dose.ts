@@ -21,8 +21,9 @@ export function prettyAmount(value: number): string {
 
 export function displayUnit(unit: string | null | undefined): string {
   if (!unit) return "mg";
-  if (unit === "μg" || unit === "µg" || unit === "ug") return "mcg";
-  if (unit === "mL") return "ml";
+  const key = unit.trim().toLowerCase();
+  if (key === "μg" || key === "µg" || key === "ug" || key === "mcg") return "μg";
+  if (key === "ml") return "ml";
   return unit;
 }
 
@@ -33,7 +34,7 @@ export function unitOf(kind: string, id: string, name: string): string {
     if (oral?.dose_units) return displayUnit(oral.dose_units);
   }
   const text = name.toLowerCase();
-  if (/clonidin|atensina/.test(text)) return "mcg";
+  if (/clonidin|atensina/.test(text)) return "μg";
   if (/butanodiol|butanediol|\bgbl\b|\bghb\b/.test(text)) return "ml";
   return "mg";
 }

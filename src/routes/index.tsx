@@ -5,7 +5,7 @@ import { DiaryChart } from "@/components/diary-chart";
 import { DiariumMark } from "@/components/marks";
 import { tradeLine } from "@/lib/brands";
 import { DoseDots } from "@/components/dose-face";
-import { dotCount } from "@/lib/dose";
+import { displayUnit, dotCount } from "@/lib/dose";
 import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
 import { armSignal, disarmSignal, signalArmed, signalStatus, testSignal } from "@/lib/signal";
@@ -86,7 +86,7 @@ function DiaryHome() {
                     <span className="muted-ink block text-sm">{clock}</span>
                     <span className="datum block">{row.name}</span>
                     {brands ? <span className="muted-ink block text-sm">{brands}</span> : null}
-                    <span className="block text-sm">{row.dose} {row.unit} {viaPt(row.route)}</span>
+                    <span className="block text-sm">{row.dose} {displayUnit(row.unit)} {viaPt(row.route)}</span>
                   </span>
                   {dots == null ? null : <DoseDots n={dots} />}
                 </Link>
@@ -107,7 +107,7 @@ function DiaryHome() {
                     <span className="journal-bar" style={{ background: row.tone }} />
                     <span className="min-w-0 flex-1">
                       <span className="datum block">{row.name}</span>
-                      <span className="block text-sm">{Math.round(row.dose * 1000) / 1000} {row.unit} {viaPt(row.route)}</span>
+                      <span className="block text-sm">{Math.round(row.dose * 1000) / 1000} {displayUnit(row.unit)} {viaPt(row.route)}</span>
                     </span>
                     {dots == null ? null : <DoseDots n={dots} mute />}
                   </Link>

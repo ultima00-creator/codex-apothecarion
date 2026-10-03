@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { DiaryChart } from "@/components/diary-chart";
 import { clock, dayKey, dayPlot, formatDay, loadDiary, removeIngestion, resolveCurve, type Ingestion } from "@/lib/diary";
+import { displayUnit } from "@/lib/dose";
 import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
 
@@ -30,7 +31,7 @@ function DayPage() {
                 {row.name}
               </Link>
               <span className="block text-sm">
-                {row.dose} {row.unit} · {viaPt(row.route)}
+                {row.dose} {displayUnit(row.unit)} · {viaPt(row.route)}
                 {row.route === "oral" ? ` · estômago ${row.stomachQuarters}/4` : ""}
               </span>
               {drawn === "none" ? <span className="block text-sm text-muted">Sem duração e sem meia-vida na ficha. Não entra no gráfico.</span> : null}

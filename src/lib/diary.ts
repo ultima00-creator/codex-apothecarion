@@ -3,6 +3,7 @@ import { delayHours, ownFraction, type Curve } from "@/lib/kinetics";
 import { mark } from "@/lib/mark";
 import { medicineCurve } from "@/lib/medicines";
 import { findHormone, findPeptide, findWiki } from "@/lib/search";
+import { displayUnit } from "@/lib/dose";
 import { viaPt } from "@/lib/pt";
 
 export type DiaryKind = "hormone" | "peptide" | "wiki" | "medicine";
@@ -304,7 +305,7 @@ export function dayPlot(rows: Ingestion[]): { points: Record<string, number | st
     return {
       id: `s${index}`,
       tone: mark(`${row.kind}:${row.substanceId}`),
-      text: `${pct}% do pico · ${row.dose} ${row.unit} · ${row.name} ${viaPt(row.route)} · ${clock}`,
+      text: `${pct}% do pico · ${row.dose} ${displayUnit(row.unit)} · ${row.name} ${viaPt(row.route)} · ${clock}`,
     };
   });
   return { points, series, nowLabel, captions };

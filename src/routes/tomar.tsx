@@ -11,7 +11,7 @@ import {
   type DiaryKind,
   type Ingestion,
 } from "@/lib/diary";
-import { doseScale, unitOf } from "@/lib/dose";
+import { displayUnit, doseScale, unitOf } from "@/lib/dose";
 import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
 import { findHormone, findPeptide, findWiki, hitById, routesFor, search, type Hit } from "@/lib/search";
@@ -170,7 +170,7 @@ function TakePage() {
                     <div className="dose-pills">
                       {past.map((value) => (
                         <button key={value} type="button" className="dose-pill" onClick={() => choose(hit, value)}>
-                          {value} {row.unit}
+                          {value} {displayUnit(row.unit)}
                         </button>
                       ))}
                       <button type="button" className="dose-pill on" onClick={() => choose(hit, null)}>Outra dose</button>
@@ -261,22 +261,20 @@ function TakePage() {
               </button>
             ) : null}
           </div>
-          <label className="glass-card block">
-            <span className="flex items-end justify-between gap-3">
-              <input
-                className="field"
-                inputMode="decimal"
-                value={custom}
-                placeholder="Dose"
-                onChange={(event) => {
-                  const next = event.target.value.replace(",", ".");
-                  if (next !== "" && !/^\d*\.?\d*$/.test(next)) return;
-                  setCustom(next);
-                  setDose(next === "" || next === "." ? null : Number(next));
-                }}
-              />
-              <b className="text-2xl">{unitFor(picked)}</b>
-            </span>
+          <label className="dose-entry">
+            <input
+              className="field"
+              inputMode="decimal"
+              value={custom}
+              placeholder="Dose"
+              onChange={(event) => {
+                const next = event.target.value.replace(",", ".");
+                if (next !== "" && !/^\d*\.?\d*$/.test(next)) return;
+                setCustom(next);
+                setDose(next === "" || next === "." ? null : Number(next));
+              }}
+            />
+            <b className="dose-unit">{unitFor(picked)}</b>
           </label>
         </section>
       ) : null}
