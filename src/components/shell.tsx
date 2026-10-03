@@ -15,7 +15,7 @@ export function Shell({ children }: { children: ReactNode }) {
     <div className={`mx-auto min-h-screen max-w-3xl px-4 pb-28 pt-5 ${path.startsWith("/protocolos") ? "wing-gene" : "wing-base"}`}>
       <header className="mast">
         <div className="flex items-center gap-3">
-          <img src="/helix-bio.png" alt="" className="helix-banner" />
+          <img src="/helix-bio.png" alt="" className="helix-banner iron-mark" />
           <div>
             <p className="text-xs tracking-[0.28em] text-bronze uppercase">Codex</p>
             <p className="font-display text-3xl leading-none">Apothecarion</p>

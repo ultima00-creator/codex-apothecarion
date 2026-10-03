@@ -30,6 +30,7 @@ const baseName: Record<string, string> = {
   "Human Growth Hormone (HGH) (1mg ≈ 3 IU)": "Hormônio do crescimento",
   Semaglutide: "Semaglutida",
   Tirzepatide: "Tirzepatida",
+  Durateston: "Durateston",
 };
 const formWord: [string, string][] = [
   ["Hexahydrobenzylcarbonate", "hexaidrobenzilcarbonato"],
@@ -165,6 +166,33 @@ function NumericField({
   );
 }
 
+function VolumeDose({
+  concentration,
+  onApply,
+}: {
+  concentration: number;
+  onApply: (mg: number) => void;
+}) {
+  const [ml, setMl] = useState(0.1);
+  const [conc, setConc] = useState(concentration);
+  const mg = Math.round(ml * conc * 1000) / 1000;
+  return (
+    <div className="glass-inset space-y-2 p-3">
+      <p className="kicker">ml para mg</p>
+      <div className="grid grid-cols-2 gap-2">
+        <label className="block text-sm">ml
+          <NumericField value={ml} min={0} step={0.01} onChange={setMl} />
+        </label>
+        <label className="block text-sm">mg/ml
+          <NumericField value={conc} min={0} step={1} onChange={setConc} />
+        </label>
+      </div>
+      <p className="text-sm">{ml} ml × {conc} mg/ml = {mg} mg</p>
+      <button type="button" className="chip" onClick={() => onApply(mg)}>Usar {mg} mg na dose</button>
+    </div>
+  );
+}
+
 function CyclePage() {
   const [weeks, setWeeks] = useState(16);
   const [lines, setLines] = useState<CycleLine[]>([blank(16)]);
@@ -242,6 +270,11 @@ function CyclePage() {
                   </select>
                 </label>
               ) : null}
+              <VolumeDose
+                key={line.substanceId}
+                concentration={line.substanceId === "testosterone-durateston" ? 250 : 100}
+                onApply={(dose) => patch(index, { dose })}
+              />
               <div className="grid grid-cols-2 gap-2">
                 <label className="block text-sm">Dose (mg)
                   <NumericField value={line.dose} min={0} step={0.1} onChange={(dose) => patch(index, { dose })} />

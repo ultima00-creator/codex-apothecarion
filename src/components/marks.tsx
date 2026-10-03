@@ -1,9 +1,9 @@
 export function DiariumMark({ className = "size-10" }: { className?: string }) {
-  return <img src="/diarium-mix.png" alt="" className={`object-cover ${className}`} />;
+  return <img src="/diarium-mix.png" alt="" className={`iron-mark object-cover ${className}`} />;
 }
 
 export function GeneSeedMark({ className = "size-16" }: { className?: string }) {
-  return <img src="/gene-seed-clear.png" alt="" className={`vial-mark object-cover ${className}`} />;
+  return <img src="/gene-seed-clear.png" alt="" className={`iron-mark vial-mark object-cover ${className}`} />;
 }
 
 export function MateriaMark({ className = "size-6" }: { className?: string }) {

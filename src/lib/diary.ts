@@ -3,6 +3,7 @@ import { delayHours, ownFraction, type Curve } from "@/lib/kinetics";
 import { mark } from "@/lib/mark";
 import { medicineCurve } from "@/lib/medicines";
 import { findHormone, findPeptide, findWiki } from "@/lib/search";
+import { viaPt } from "@/lib/pt";
 
 export type DiaryKind = "hormone" | "peptide" | "wiki" | "medicine";
 
@@ -228,6 +229,7 @@ export function resolveCurve(kind: DiaryKind, id: string): Ingestion["curve"] {
 }
 
 export type DiarySeries = { id: string; name: string; curve: Ingestion["curve"]; tone: string };
+export type DiaryCaption = { id: string; tone: string; text: string };
 
 export function curveKind(curve: Curve | null): Ingestion["curve"] {
   if (!curve) return "none";
@@ -236,9 +238,9 @@ export function curveKind(curve: Curve | null): Ingestion["curve"] {
   return "none";
 }
 
-export function dayPlot(rows: Ingestion[]): { points: Record<string, number | string | null>[]; series: DiarySeries[] } {
+export function dayPlot(rows: Ingestion[]): { points: Record<string, number | string | null>[]; series: DiarySeries[]; nowLabel: string | null; captions: DiaryCaption[] } {
   const plotted = rows.filter((row) => resolveCurve(row.kind, row.substanceId) !== "none");
-  if (plotted.length === 0) return { points: [], series: [] };
+  if (plotted.length === 0) return { points: [], series: [], nowLabel: null, captions: [] };
   const start = Math.min(...plotted.map((row) => new Date(row.takenAt).getTime()));
   let spanHours = 18;
   for (const row of plotted) {
@@ -259,11 +261,20 @@ export function dayPlot(rows: Ingestion[]): { points: Record<string, number | st
   }));
   const points: Record<string, number | string | null>[] = [];
   const step = spanHours > 36 ? 60 * 60 * 1000 : 15 * 60 * 1000;
-  for (let t = start; t <= end; t += step) {
+  const now = Date.now();
+  let nowLabel: string | null = null;
+  let nowDistance = Number.POSITIVE_INFINITY;
+  const labelAt = (t: number) => {
     const fromStart = (t - start) / 3600000;
-    const point: Record<string, number | string | null> = {
-      x: spanHours > 36 ? `${Math.floor(fromStart / 24)}d ${String(Math.floor(fromStart % 24)).padStart(2, "0")}h` : new Date(t).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-    };
+    return spanHours > 36 ? `${Math.floor(fromStart / 24)}d ${String(Math.floor(fromStart % 24)).padStart(2, "0")}h` : new Date(t).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  };
+  for (let t = start; t <= end; t += step) {
+    const point: Record<string, number | string | null> = { x: labelAt(t) };
+    const distance = Math.abs(t - now);
+    if (distance < nowDistance) {
+      nowDistance = distance;
+      nowLabel = String(point.x);
+    }
     plotted.forEach((row, index) => {
       const hours = (t - new Date(row.takenAt).getTime()) / 3600000;
       const kind = resolveCurve(row.kind, row.substanceId);
@@ -277,7 +288,26 @@ export function dayPlot(rows: Ingestion[]): { points: Record<string, number | st
     });
     points.push(point);
   }
-  return { points, series };
+  const captions = plotted.map((row, index) => {
+    const hours = (now - new Date(row.takenAt).getTime()) / 3600000;
+    const kind = resolveCurve(row.kind, row.substanceId);
+    let fraction: number | null = null;
+    if (kind === "duration") {
+      const line = wikiLine(row.substanceId, row.route);
+      fraction = line ? durationAt(hours, line.line) : null;
+    } else {
+      const curve = curveOf(row.kind, row.substanceId);
+      fraction = curve ? ownFraction(curve, row.dose, hours, row.route, row.stomachQuarters) : null;
+    }
+    const pct = Math.round((fraction ?? 0) * 100);
+    const clock = new Date(row.takenAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return {
+      id: `s${index}`,
+      tone: mark(`${row.kind}:${row.substanceId}`),
+      text: `${pct}% do pico · ${row.dose} ${row.unit} · ${row.name} ${viaPt(row.route)} · ${clock}`,
+    };
+  });
+  return { points, series, nowLabel, captions };
 }
 
 function round(value: number | null): number | null {

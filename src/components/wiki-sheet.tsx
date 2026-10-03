@@ -1,4 +1,5 @@
 import { findWiki, wikiTitle } from "@/lib/search";
+import { tradeLine } from "@/lib/brands";
 import { classePt, nomePt, tempoPt, viaPt } from "@/lib/pt";
 
 const levelLabel: Record<string, string> = {
@@ -34,7 +35,9 @@ export function WikiSheet({ slug }: { slug: string }) {
         <p className="text-xs tracking-[0.2em] text-bronze uppercase">Wiki</p>
         <h2 className="subject">{wikiTitle(row.slug, row.name)}</h2>
         {row.classes.length > 0 ? <p className="text-muted">{row.classes.map(classePt).join(" · ")}</p> : null}
-        {row.commonNames.length > 0 ? <p className="text-sm">Também: {row.commonNames.join(", ")}</p> : null}
+        {row.commonNames.length > 0 || tradeLine(wikiTitle(row.slug, row.name), row.commonNames) ? (
+          <p className="text-sm">Também: {tradeLine(wikiTitle(row.slug, row.name), row.commonNames) || row.commonNames.join(", ")}</p>
+        ) : null}
       </header>
       {row.lead_pt ? <p>{row.lead_pt}</p> : <p className="text-muted">A página não trouxe um parágrafo de abertura.</p>}
       <p className="text-sm">Meia-vida de eliminação: não está na ficha salva. A duração abaixo não substitui.</p>

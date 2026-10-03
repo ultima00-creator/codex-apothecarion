@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-parchment: #3c1f66;
-  --color-plate: #241433;
-  --color-ink: #f7fafc;
-  --color-bronze: #d4c4ea;
-  --color-muted: #efe8f8;
-  --color-rule: #6d548c;
-  --color-wine: #9d1c2f;
-  --color-olive: #b9a4d4;
-  --color-slate: #e4d8f2;
+  --color-parchment: #1c1816;
+  --color-plate: #2c2623;
+  --color-ink: #f6f1ea;
+  --color-bronze: #e24b3a;
+  --color-muted: #c9beb4;
+  --color-rule: #6e5e56;
+  --color-wine: #8e2430;
+  --color-olive: #d7c3b8;
+  --color-slate: #efe6de;
   --font-display: "Cormorant Garamond", Georgia, serif;
   --font-sans: "Source Sans 3", "Segoe UI", sans-serif;
 }
@@ -26,11 +26,11 @@
     font-variant-numeric: tabular-nums lining-nums;
     font-feature-settings: "tnum" 1, "lnum" 1;
     min-height: 100vh;
-    background-color: #3c1f66;
+    background-color: #14110f;
     background-image:
-      radial-gradient(ellipse at 50% 0%, rgba(186, 120, 255, 0.3), transparent 55%),
-      repeating-linear-gradient(0deg, rgba(220, 190, 255, 0.08) 0 1px, transparent 1px 4px),
-      repeating-linear-gradient(90deg, rgba(220, 190, 255, 0.05) 0 1px, transparent 1px 22px);
+      radial-gradient(ellipse at 50% 0%, rgba(180, 48, 36, 0.28), transparent 52%),
+      linear-gradient(180deg, rgba(90, 84, 80, 0.35), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(255, 236, 220, 0.04) 0 1px, transparent 1px 3px);
   }
   body::before {
     content: "";
@@ -38,7 +38,7 @@
     inset: 0;
     pointer-events: none;
     z-index: -1;
-    background: repeating-linear-gradient(0deg, rgba(230, 210, 255, 0.07) 0 1px, transparent 1px 18px);
+    background: repeating-linear-gradient(105deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 6px);
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -54,39 +54,39 @@
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 0.85rem;
-  border: 1px solid rgba(200, 160, 245, 0.32);
-  background: linear-gradient(180deg, rgba(92, 40, 150, 0.5), rgba(36, 14, 72, 0.56));
+  border: 1px solid rgba(226, 75, 58, 0.35);
+  background: linear-gradient(180deg, rgba(88, 78, 72, 0.42), rgba(28, 22, 20, 0.55));
   padding: 0.45rem 0.7rem 0.55rem;
-  box-shadow: inset 0 0 24px rgba(200, 160, 255, 0.14);
-  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 10px 28px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(16px);
 }
 
 .plate {
   position: relative;
-  border: 1px solid rgba(200, 160, 245, 0.34);
+  border: 1px solid rgba(255, 220, 200, 0.18);
   background:
-    linear-gradient(180deg, rgba(98, 42, 160, 0.48), rgba(32, 12, 64, 0.56)),
-    repeating-linear-gradient(0deg, rgba(220, 190, 255, 0.06) 0 1px, transparent 1px 5px);
+    linear-gradient(180deg, rgba(120, 108, 100, 0.34), rgba(28, 22, 20, 0.5)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 4px);
   box-shadow:
-    0 0 24px rgba(90, 30, 150, 0.24),
-    inset 0 0 28px rgba(140, 70, 210, 0.12);
-  backdrop-filter: blur(10px);
+    0 16px 40px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(18px);
   padding: 1.5rem 0.95rem 0.4rem;
 }
 
 .plate-hazard {
   height: 0.7rem;
   margin: 1rem -0.95rem 0;
-  background: repeating-linear-gradient(-58deg, rgba(28, 10, 56, 0.28) 0 8px, rgba(160, 90, 210, 0.24) 8px 14px);
+  background: repeating-linear-gradient(-58deg, rgba(40, 16, 14, 0.35) 0 8px, rgba(176, 56, 42, 0.28) 8px 14px);
 }
 
 .codex-seal {
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  border: 1px solid rgba(200, 160, 245, 0.3);
-  background: linear-gradient(180deg, rgba(88, 36, 148, 0.48), rgba(32, 12, 64, 0.56));
-  box-shadow: inset 0 0 18px rgba(200, 160, 255, 0.12);
+  border: 1px solid rgba(226, 75, 58, 0.32);
+  background: linear-gradient(180deg, rgba(96, 82, 76, 0.4), rgba(32, 24, 22, 0.55));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
   padding: 0.55rem 0.75rem;
 }
 
@@ -100,10 +100,10 @@
   position: fixed;
   inset-inline: 0;
   bottom: 0;
-  border-top: 1px solid rgba(200, 160, 245, 0.32);
-  background: linear-gradient(180deg, rgba(72, 28, 120, 0.7), rgba(28, 10, 56, 0.76));
-  box-shadow: inset 0 0 16px rgba(200, 160, 255, 0.12);
-  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(226, 75, 58, 0.35);
+  background: linear-gradient(180deg, rgba(72, 62, 58, 0.72), rgba(22, 16, 14, 0.82));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px);
 }
 
 .helix-banner {
@@ -116,8 +116,8 @@
 
 .wing-gene .plate {
   background:
-    linear-gradient(180deg, rgba(92, 38, 154, 0.46), rgba(30, 12, 62, 0.54)),
-    repeating-linear-gradient(0deg, rgba(220, 190, 255, 0.06) 0 1px, transparent 1px 5px);
+    linear-gradient(180deg, rgba(110, 48, 40, 0.28), rgba(28, 20, 18, 0.52)),
+    repeating-linear-gradient(0deg, rgba(255, 220, 200, 0.04) 0 1px, transparent 1px 5px);
 }
 
 .plate-motto {
@@ -157,17 +157,17 @@
 
 .crystal-line {
   position: relative;
-  border: 1px solid rgba(200, 160, 245, 0.26);
-  background: rgba(28, 10, 56, 0.28);
-  box-shadow: inset 0 0 16px rgba(180, 120, 255, 0.1);
+  border: 1px solid rgba(226, 75, 58, 0.28);
+  background: rgba(28, 22, 20, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .field {
   width: 100%;
   min-height: 2.75rem;
-  border: 1px solid rgba(220, 190, 255, 0.36);
-  background: rgba(28, 10, 56, 0.22);
-  color: #f4f8fb;
+  border: 1px solid rgba(255, 220, 200, 0.22);
+  background: rgba(20, 16, 14, 0.28);
+  color: #f6f1ea;
   font-weight: 500;
   padding: 0.5rem 0.75rem;
 }
@@ -176,16 +176,16 @@
 
 .chip {
   min-height: 2.75rem;
-  border: 1px solid rgba(220, 190, 255, 0.36);
-  background: rgba(28, 10, 56, 0.22);
-  color: #f4f8fb;
+  border: 1px solid rgba(255, 220, 200, 0.22);
+  background: rgba(20, 16, 14, 0.28);
+  color: #f6f1ea;
   font-weight: 500;
   padding: 0.35rem 0.7rem;
 }
 
 .chip-on {
-  border-color: #f4f7fa;
-  color: #f4f7fa;
+  border-color: #f3e6df;
+  color: #fff7f4;
 }
 
 .kicker {
@@ -344,7 +344,16 @@
   color: #ffd0c4;
 }
 
-.plate .chart-ink .recharts-tooltip-wrapper,
+.plate .glass-card,
+.plate .glass-card span,
+.plate .glass-card p,
+.plate .glass-card li,
+.plate .glass-card .datum,
+.plate .glass-card .kicker {
+  background-image: none;
+  -webkit-text-fill-color: #2a211c;
+  color: #2a211c;
+}
 .plate .chart-ink .recharts-tooltip-wrapper span,
 .plate .chart-ink .recharts-tooltip-wrapper p,
 .plate .chart-ink .recharts-default-tooltip,
@@ -354,15 +363,86 @@
   color: #111;
 }
 
+.iron-mark {
+  filter: sepia(0.7) saturate(2.4) hue-rotate(312deg) brightness(0.92) contrast(1.15);
+}
+
+.glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 250, 246, 0.88);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  padding: 0.85rem;
+}
+
+.glass-inset {
+  border: 1px solid rgba(226, 75, 58, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.journal-list {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 250, 246, 0.08);
+}
+
+.journal-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 4.5rem;
+  padding: 0.7rem 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.journal-bar {
+  width: 0.28rem;
+  align-self: stretch;
+  border-radius: 999px;
+}
+
+.dose-dots {
+  display: grid;
+  grid-template-columns: repeat(5, 0.55rem);
+  gap: 0.18rem;
+}
+
+.dose-dots i {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.dose-dots i.on {
+  background: #1a120f;
+}
+
+.fab {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 5.2rem;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 999px;
+  background: #0a84ff;
+  color: white;
+  font-size: 2rem;
+  line-height: 1;
+  box-shadow: 0 8px 20px rgba(10, 132, 255, 0.35);
+}
+
 .codex-seal .datum {
   background-image: repeating-linear-gradient(
     102deg,
-    #fff8dc 0 2px,
-    #f0d48a 2px 4px,
-    #a8742e 4px 5px,
-    #fff1c2 5px 7px,
-    #8a5a1c 7px 8px,
-    #e8c56b 8px 12px
+    #f8e4dc 0 2px,
+    #e07060 2px 4px,
+    #8a3028 4px 5px,
+    #fff1ea 5px 7px,
+    #6e241c 7px 8px,
+    #c44a3c 8px 12px
   );
   -webkit-background-clip: text;
   background-clip: text;

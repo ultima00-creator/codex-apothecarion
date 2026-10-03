@@ -11,6 +11,7 @@ import {
 } from "@/lib/diary";
 import { findHormone, findPeptide, hitById, routesFor, search, type Hit } from "@/lib/search";
 import { saveNote } from "@/lib/store";
+import { bandWord, doseBand, doseScale, unitOf } from "@/lib/dose";
 import { viaPt } from "@/lib/pt";
 
 export const Route = createFileRoute("/tomar")({
@@ -31,8 +32,7 @@ function referenceDose(hit: Hit): number | null {
 }
 
 function unitFor(hit: Hit): string {
-  if (hit.kind === "wiki") return "unidade";
-  return "mg";
+  return unitOf(hit.kind, hit.id, hit.title);
 }
 
 function TakePage() {
@@ -131,7 +131,18 @@ function TakePage() {
       {picked ? (
         <section className="space-y-3 border-t border-rule pt-3">
           <h2 className="subject">{picked.title}</h2>
-          <p className="text-sm text-muted">{picked.kind === "wiki" ? "Ficha da wiki. Duração não é meia-vida." : picked.kind === "medicine" ? "Remédio. Meia-vida em fração da dose, não concentração." : "Dose em mg, a unidade da curva."}</p>
+          <p className="text-sm text-muted">{picked.detail === "compound" ? "Compound" : picked.detail}</p>
+          {(() => {
+            const scale = doseScale(picked.kind, picked.id, route);
+            if (!scale) return null;
+            const band = dose == null ? 0 : doseBand(picked.kind, picked.id, route, dose);
+            return (
+              <p className="text-sm">
+                Limiar {scale.threshold ?? "—"} · leve {scale.light ?? "—"} · comum {scale.common ?? "—"} · forte {scale.strong ?? "—"} · pesada {scale.heavy ?? "—"} {scale.unit}
+                {band > 0 ? ` · ${bandWord[band]}` : ""}
+              </p>
+            );
+          })()}
           <div className="flex flex-wrap gap-2">
             {history.map((value) => (
               <button key={value} type="button" className={dose === value ? "chip chip-on" : "chip"} onClick={() => { setDose(value); setCustom(""); }}>
@@ -175,11 +186,11 @@ function TakePage() {
             <label className="block text-sm">
               Estômago cheio
               <select className="field mt-1" value={quarters} onChange={(e) => setQuarters(Number(e.target.value))}>
-                <option value={0}>vazio</option>
-                <option value={1}>1/4 · +0,5 h</option>
-                <option value={2}>2/4 · +1 h</option>
-                <option value={3}>3/4 · +1,5 h</option>
-                <option value={4}>4/4 · +2 h</option>
+                <option value={0}>vazio · ~0 h</option>
+                <option value={1}>1/4 · ~0,5 h</option>
+                <option value={2}>meio · ~1 h</option>
+                <option value={3}>cheio · ~1,5 h</option>
+                <option value={4}>muito cheio · ~2 h</option>
               </select>
             </label>
           ) : route ? (

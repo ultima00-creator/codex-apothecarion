@@ -1,3 +1,4 @@
+import { tradeLine, tradeNames } from "@/lib/brands";
 import { findMedicine, medicines } from "@/lib/medicines";
 import catalog from "@/data/catalog.json";
 
@@ -103,13 +104,15 @@ export function search(query: string): Hit[] {
   const hit = (hay: string) => forms.some((item) => hay.includes(item));
   for (const row of medicines) {
     if (hiddenMedicine.has(row.id)) continue;
-    const hay = norm([row.name, row.className, ...row.aliases].join(" "));
-    if (hit(hay)) hits.push({ kind: "medicine", id: row.id, title: row.name, detail: "compound" });
+    const names = tradeNames(row.name, row.aliases);
+    const hay = norm([row.name, row.className, ...row.aliases, ...names].join(" "));
+    if (hit(hay)) hits.push({ kind: "medicine", id: row.id, title: row.name, detail: tradeLine(row.name, row.aliases) || "compound" });
   }
   for (const row of catalog.wiki) {
-    const hay = norm([wikiTitle(row.slug, row.name), row.name, ...row.commonNames].join(" "));
+    const title = wikiTitle(row.slug, row.name);
+    const hay = norm([title, row.name, ...row.commonNames, ...tradeNames(title, row.commonNames)].join(" "));
     if (hit(hay)) {
-      hits.push({ kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "compound" });
+      hits.push({ kind: "wiki", id: row.slug, title, detail: tradeLine(title, row.commonNames) || "compound" });
     }
   }
   return hits.slice(0, 40);
@@ -122,10 +125,11 @@ export function listCompounds(): Hit[] {
   const hits: Hit[] = [];
   for (const row of medicines) {
     if (hiddenMedicine.has(row.id)) continue;
-    hits.push({ kind: "medicine", id: row.id, title: row.name, detail: "compound" });
+    hits.push({ kind: "medicine", id: row.id, title: row.name, detail: tradeLine(row.name, row.aliases) || "compound" });
   }
   for (const row of catalog.wiki) {
-    hits.push({ kind: "wiki", id: row.slug, title: wikiTitle(row.slug, row.name), detail: "compound" });
+    const title = wikiTitle(row.slug, row.name);
+    hits.push({ kind: "wiki", id: row.slug, title, detail: tradeLine(title, row.commonNames) || "compound" });
   }
   hits.sort((a, b) => a.title.localeCompare(b.title, "pt"));
   compoundList = hits;
@@ -168,6 +172,16 @@ export function plotCompounds() {
     label: `${row.compound} ${row.form ?? ""}`.trim(),
     curve: row.curve,
   }));
+  const prop = catalog.hormones.find((row) => row.id === "testosterone-propionate");
+  if (prop) {
+    hormones.push({
+      kind: "hormone" as const,
+      id: "testosterone-durateston",
+      compound: "Durateston",
+      label: "Durateston",
+      curve: prop.curve,
+    });
+  }
   const peptides = catalog.peptides.map((row) => ({
     kind: "peptide" as const,
     id: row.id,

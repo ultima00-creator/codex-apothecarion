@@ -3,7 +3,10 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { dismissNotice, dayPlot, formatDay, groupDays, loadDiary, loadNotices, weekday, type EndedNotice, type Ingestion } from "@/lib/diary";
 import { DiaryChart } from "@/components/diary-chart";
 import { DiariumMark } from "@/components/marks";
+import { tradeLine } from "@/lib/brands";
+import { doseBand } from "@/lib/dose";
 import { mark } from "@/lib/mark";
+import { viaPt } from "@/lib/pt";
 import { armSignal, disarmSignal, signalArmed, signalStatus, testSignal } from "@/lib/signal";
 
 export const Route = createFileRoute("/")({ component: DiaryHome });
@@ -22,6 +25,14 @@ function DiaryHome() {
   }, []);
   const days = groupDays(rows);
   const plot = dayPlot(rows);
+  const ordered = [...rows].sort((a, b) => b.takenAt.localeCompare(a.takenAt));
+  const totals = new Map<string, { name: string; unit: string; dose: number; tone: string }>();
+  for (const row of rows) {
+    const key = `${row.kind}:${row.substanceId}:${row.unit}`;
+    const current = totals.get(key) ?? { name: row.name, unit: row.unit, dose: 0, tone: mark(`${row.kind}:${row.substanceId}`) };
+    current.dose += row.dose;
+    totals.set(key, current);
+  }
   return (
     <main>
       <header className="mb-3 flex items-center gap-3">
@@ -55,30 +66,69 @@ function DiaryHome() {
         </span>
       </Link>
       <div className="mb-4">
-        <DiaryChart points={plot.points} series={plot.series} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
+        <DiaryChart points={plot.points} series={plot.series} captions={plot.captions} nowLabel={plot.nowLabel} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
       </div>
-      {days.length === 0 ? (
+      {ordered.length === 0 ? (
         <p className="lede">Nenhum composto em efeito, Frater. Quando a duração se encerra, a linha sai e permanece o aviso.</p>
-      ) : null}
-      <ul>
-        {days.map((day) => {
-          const names = [...new Set(day.rows.map((row) => row.name))].join(", ");
-          return (
-            <li key={day.key} className="border-b border-rule">
-              <Link to="/dia/$day" params={{ day: day.key }} className="flex min-h-16 gap-3 py-3">
-                <span className="w-1 shrink-0 border-l-4" style={{ borderColor: mark(`${day.rows[0].kind}:${day.rows[0].substanceId}`) }} />
+      ) : (
+        <ul className="journal-list">
+          {ordered.map((row) => {
+            const when = new Date(row.takenAt);
+            const clock = when.toLocaleString("pt-BR", { weekday: "short", hour: "2-digit", minute: "2-digit" });
+            const brands = tradeLine(row.name);
+            return (
+              <li key={row.id} className="journal-row">
+                <span className="journal-bar" style={{ background: mark(`${row.kind}:${row.substanceId}`) }} />
                 <span className="min-w-0 flex-1">
-          <span className="datum block">{formatDay(day.key)}</span>
-                  <span className="block truncate">{names}</span>
-                  <span className="block text-sm text-muted">{weekday(day.key)}</span>
+                  <span className="block text-sm text-muted">{clock}</span>
+                  <span className="datum block">{row.name}</span>
+                  {brands ? <span className="block text-sm text-muted">{brands}</span> : null}
+                  <span className="block text-sm">{row.dose} {row.unit} {viaPt(row.route)}</span>
                 </span>
-                <span className="text-sm text-muted">{day.rows.length}</span>
+                <DoseDots n={doseBand(row.kind, row.substanceId, row.route, row.dose)} />
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {totals.size > 0 ? (
+        <section className="mt-5">
+          <p className="kicker">Dose acumulada</p>
+          <ul className="journal-list mt-2">
+            {[...totals.values()].map((row) => (
+              <li key={`${row.name}-${row.unit}`} className="journal-row">
+                <span className="journal-bar" style={{ background: row.tone }} />
+                <span className="min-w-0 flex-1">
+                  <span className="datum block">{row.name}</span>
+                  <span className="block text-sm">{Math.round(row.dose * 1000) / 1000} {row.unit}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {days.length > 1 ? (
+        <ul className="mt-4">
+          {days.map((day) => (
+            <li key={day.key} className="border-b border-rule">
+              <Link to="/dia/$day" params={{ day: day.key }} className="flex min-h-12 items-center justify-between py-2 text-sm">
+                <span>{formatDay(day.key)}</span>
+                <span className="text-muted">{weekday(day.key)} · {day.rows.length}</span>
               </Link>
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      ) : null}
+      <Link to="/tomar" search={{ kind: "", id: "" }} className="fab" aria-label="Novo composto">+</Link>
     </main>
+  );
+}
+
+function DoseDots({ n }: { n: number }) {
+  return (
+    <span className="dose-dots" aria-label={n ? `${n} de 5` : undefined}>
+      {[0, 1, 2, 3, 4].map((col) => <i key={col} className={col < n ? "on" : ""} />)}
+    </span>
   );
 }
 
