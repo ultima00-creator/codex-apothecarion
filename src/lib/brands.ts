@@ -66,8 +66,8 @@ const extra: [string, string[]][] = [
   ["metformina", ["Glifage"]],
   ["losartana", ["Cozaar"]],
   ["atenolol", ["Atenol"]],
-  ["butanodiol", ["BDO", "1,4-B"]],
-  ["butanediol", ["BDO", "1,4-B"]],
+  ["1,4-butanediol", ["BDO", "1,4-B"]],
+  ["1,4-butanodiol", ["BDO", "1,4-B"]],
 ];
 
 function named(own: string, key: string): boolean {

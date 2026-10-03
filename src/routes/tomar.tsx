@@ -33,8 +33,11 @@ const stomach = [
   { quarters: 4, name: "muito cheio", delay: "~2 h" },
 ] as const;
 
-function defaultRoute(hit: Hit): string {
-  return routesFor(hit)[0] ?? "";
+const declaredRoutes = ["oral", "sublingual", "buccal", "insufflated", "inhaled", "smoked", "intramuscular", "subcutaneous", "intravenous", "rectal", "transdermal", "topical"];
+
+function routeChoices(hit: Hit): string[] {
+  const listed = routesFor(hit);
+  return listed.length > 0 ? listed : declaredRoutes;
 }
 
 function referenceDose(hit: Hit): number | null {
@@ -67,7 +70,8 @@ function TakePage() {
   const [step, setStep] = useState<"buscar" | "dose" | "fechar">("buscar");
   const [dose, setDose] = useState<number | null>(null);
   const [custom, setCustom] = useState("");
-  const [route, setRoute] = useState("oral");
+  const [route, setRoute] = useState("");
+  const [repeat, setRepeat] = useState(false);
   const [quarters, setQuarters] = useState(0);
   const [when, setWhen] = useState(nowLocal);
   const [note, setNote] = useState("");
@@ -79,7 +83,8 @@ function TakePage() {
     const hit = hitById(preset.kind, preset.id);
     if (!hit) return;
     setPicked(hit);
-    setRoute(defaultRoute(hit));
+    setRoute("");
+    setRepeat(false);
     setDose(null);
     setCustom("");
     setStep("dose");
@@ -91,14 +96,22 @@ function TakePage() {
 
   function choose(hit: Hit, nextDose: number | null) {
     setPicked(hit);
-    setRoute(defaultRoute(hit) || diary.find((row) => row.kind === hit.kind && row.substanceId === hit.id)?.route || "oral");
     setDose(nextDose);
     setCustom(nextDose == null ? "" : String(nextDose));
-    setStep(nextDose == null ? "dose" : "fechar");
+    if (nextDose != null) {
+      const prior = [...diary].reverse().find((row) => row.kind === hit.kind && row.substanceId === hit.id && row.dose === nextDose && row.route);
+      setRoute(prior?.route ?? "");
+      setRepeat(Boolean(prior?.route));
+      setStep("fechar");
+      return;
+    }
+    setRoute("");
+    setRepeat(false);
+    setStep("dose");
   }
 
   function register() {
-    if (!picked || dose == null || dose < 0) return;
+    if (!picked || dose == null || dose < 0 || !route) return;
     saveIngestion({
       kind: picked.kind,
       substanceId: picked.id,
@@ -128,10 +141,10 @@ function TakePage() {
           <button type="button" className="text-sm text-bronze" onClick={() => setStep(step === "fechar" ? "dose" : "buscar")}>Cancelar</button>
         )}
         {step === "dose" ? (
-          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose)} onClick={() => setStep("fechar")}>Seguir</button>
+          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={() => setStep("fechar")}>Seguir</button>
         ) : null}
         {step === "fechar" ? (
-          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose)} onClick={register}>Registrar</button>
+          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={register}>Registrar</button>
         ) : null}
       </div>
 
@@ -205,26 +218,40 @@ function TakePage() {
       {picked && step === "dose" ? (
         <section className="space-y-3">
           <h1 className="screen-title font-display">{picked.title}</h1>
-          <p className="kicker">{viaPt(route)} · dose</p>
+          <p className="kicker">{repeat ? `repetição · ${viaPt(route)}` : "dose nova"}</p>
           {subtitle(picked) ? <p className="text-sm text-muted">{subtitle(picked)}</p> : null}
-          {scale ? (
+          {repeat ? (
+            <p className="text-sm text-muted">Via da tomada anterior: {viaPt(route)}.</p>
+          ) : (
+            <div className="glass-card">
+              <p className="text-sm">Via. Obrigatória quando a dose não é repetição.</p>
+              <div className="dose-pills mt-2">
+                {routeChoices(picked).map((item) => (
+                  <button key={item} type="button" className={route === item ? "dose-pill on" : "dose-pill"} onClick={() => setRoute(item)}>
+                    {viaPt(item)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+            {scale ? (
             <div className="glass-card">
               <DoseScaleView scale={scale} dose={dose} />
             </div>
           ) : (
             <p className="text-sm text-muted">Sem faixa de dose nesta ficha. A unidade continua {unitFor(picked)}.</p>
           )}
-          {routesFor(picked).length > 1 ? (
-            <label className="block text-sm">
-              Via
-              <select className="field mt-1" value={route} onChange={(event) => setRoute(event.target.value)}>
-                {routesFor(picked).map((item) => <option key={item} value={item}>{viaPt(item)}</option>)}
-              </select>
-            </label>
-          ) : null}
           <div className="dose-pills">
             {history.map((value) => (
-              <button key={value} type="button" className={dose === value ? "dose-pill on" : "dose-pill"} onClick={() => { setDose(value); setCustom(String(value)); }}>
+              <button key={value} type="button" className={dose === value ? "dose-pill on" : "dose-pill"} onClick={() => {
+                setDose(value);
+                setCustom(String(value));
+                const prior = [...diary].reverse().find((row) => row.kind === picked.kind && row.substanceId === picked.id && row.dose === value && row.route);
+                if (prior?.route) {
+                  setRoute(prior.route);
+                  setRepeat(true);
+                }
+              }}>
                 {value} {unitFor(picked)}
               </button>
             ))}
@@ -257,7 +284,7 @@ function TakePage() {
       {picked && step === "fechar" ? (
         <section className="space-y-3">
           <h1 className="screen-title font-display">Fechar registro</h1>
-          <p className="kicker">{picked.title} · {dose} {unitFor(picked)}</p>
+          <p className="kicker">{picked.title} · {dose} {unitFor(picked)} · {viaPt(route)}</p>
           <div className="glass-card space-y-3">
             <label className="block text-sm">
               Hora
@@ -287,7 +314,7 @@ function TakePage() {
               <button type="button" className="text-sm text-bronze" onClick={() => setShowNote(true)}>+ Nota</button>
             )}
           </div>
-          <button type="button" className="go w-full" disabled={dose == null || Number.isNaN(dose)} onClick={register}>Registrar</button>
+          <button type="button" className="go w-full" disabled={dose == null || Number.isNaN(dose) || !route} onClick={register}>Registrar</button>
         </section>
       ) : null}
     </main>

@@ -70,7 +70,7 @@ function DiaryHome() {
         <DiaryChart points={plot.points} series={plot.series} captions={plot.captions} nowLabel={plot.nowLabel} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
       </div>
       {ordered.length === 0 ? (
-        <p className="lede">Nenhum composto em efeito, Frater. Quando a duração se encerra, a linha sai e permanece o aviso.</p>
+        <p className="lede">Nenhum composto em efeito, Frater. O registro entra pela database.</p>
       ) : (
         <ul className="journal-list">
           {ordered.map((row) => {
@@ -129,7 +129,6 @@ function DiaryHome() {
           ))}
         </ul>
       ) : null}
-      <Link to="/tomar" search={{ kind: "", id: "" }} className="fab" aria-label="Novo composto">+</Link>
     </main>
   );
 }
