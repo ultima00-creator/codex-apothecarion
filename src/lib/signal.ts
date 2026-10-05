@@ -57,19 +57,28 @@ function remember(ids: Set<string>) {
 }
 
 export async function heraldEnded(): Promise<void> {
-  if (!signalArmed() || !("Notification" in window) || Notification.permission !== "granted") return;
+  const notices = settleDiary();
+  const fresh = notices.filter((notice) => !firedIds().has(notice.id));
+  if (fresh.length > 0) window.dispatchEvent(new Event("apothecarion-settled"));
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
   const seen = firedIds();
-  let fresh = false;
-  for (const notice of settleDiary()) {
-    if (seen.has(notice.id)) continue;
+  let wrote = false;
+  for (const notice of fresh) {
     seen.add(notice.id);
-    fresh = true;
+    wrote = true;
     const body = notice.word === "efeito" ? "O efeito acabou." : "O tempo desta curva acabou.";
     await fireSignal(notice.name, body, notice.id);
   }
-  if (!fresh) return;
-  remember(seen);
-  window.dispatchEvent(new Event("apothecarion-settled"));
+  if (wrote) remember(seen);
+}
+
+export async function pledgeAlarm(): Promise<void> {
+  localStorage.setItem(ARMED, "on");
+  if ("Notification" in window && !(ios() && !installedHome()) && Notification.permission === "default") {
+    await Notification.requestPermission();
+  }
+  registerHerald();
+  window.dispatchEvent(new Event("apothecarion-alarms"));
 }
 
 export async function armSignal(): Promise<"on" | "denied" | "need-home" | "missing"> {
@@ -99,7 +108,6 @@ export function watchHerald(): () => void {
   const armTimers = () => {
     for (const handle of timers.values()) window.clearTimeout(handle);
     timers.clear();
-    if (!signalArmed()) return;
     const now = Date.now();
     for (const row of upcomingEnds(now)) {
       const wait = row.end - now + 500;
@@ -117,9 +125,14 @@ export function watchHerald(): () => void {
     if (!document.hidden) void heraldEnded().then(armTimers);
   };
   document.addEventListener("visibilitychange", onVis);
+  const onAlarm = () => {
+    void heraldEnded().then(armTimers);
+  };
+  window.addEventListener("apothecarion-alarms", onAlarm);
   return () => {
     window.clearInterval(poll);
     document.removeEventListener("visibilitychange", onVis);
+    window.removeEventListener("apothecarion-alarms", onAlarm);
     for (const handle of timers.values()) window.clearTimeout(handle);
   };
 }

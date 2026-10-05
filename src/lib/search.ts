@@ -168,7 +168,9 @@ export function plotCompounds() {
   const hormones = catalog.hormones.filter((row) => row.id !== "progesterone-vaginal").map((row) => ({
     kind: "hormone" as const,
     id: row.id,
-    compound: row.compound,
+    compound: row.compound === "Estradiol" && (row.route_default === "intramuscular" || /intramuscular|cypionate|valerate|benzoate|enanthate/i.test(row.form ?? ""))
+      ? "Estradiol Injetável"
+      : row.compound,
     label: `${row.compound} ${row.form ?? ""}`.trim(),
     curve: row.curve,
   }));

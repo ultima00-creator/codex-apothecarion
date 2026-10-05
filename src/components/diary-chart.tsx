@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { DiaryCaption, DiarySeries } from "@/lib/diary";
+import { ChartMark } from "@/components/relic-marks";
+import { campaignTick } from "@/components/campaign-ink";
+import { ChartLens } from "@/components/chart-lens";
 
 export function DiaryChart({
   points,
@@ -18,43 +21,36 @@ export function DiaryChart({
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   if (series.length === 0) {
-    return <p className="text-sm text-muted">{empty}</p>;
+    return <p className="void-note"><ChartMark className="ico" />{empty}</p>;
   }
   const lines = captions.length > 0 ? captions : series.map((item) => ({ id: item.id, tone: item.tone, text: item.name }));
   return (
-    <figure className="chart-ink glass-card">
-      <div className="h-56 w-full">
-        {ready ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={points}>
-              <CartesianGrid stroke="rgba(90,70,64,0.35)" />
-              <XAxis dataKey="x" stroke="#8a7b72" tick={{ fill: "#2a211c", fontSize: 11 }} minTickGap={18} />
-              <YAxis hide domain={[0, 1]} />
-              <Tooltip
-                contentStyle={{ background: "#fff", color: "#111", border: "1px solid #2a211c" }}
-                labelStyle={{ color: "#111" }}
-                itemStyle={{ color: "#111" }}
-              />
-              {nowLabel ? <ReferenceLine x={nowLabel} stroke="#1a120f" strokeWidth={2} label={{ value: "Agora", fill: "#1a120f", fontSize: 11, position: "top" }} /> : null}
-              {series.map((item) => (
-                <Area
-                  key={item.id}
-                  type="monotone"
-                  dataKey={item.id}
-                  name={item.name}
-                  stroke={item.tone}
-                  fill={item.tone}
-                  fillOpacity={0.28}
-                  strokeDasharray={item.curve === "half_life" ? "5 4" : item.curve === "duration" ? "2 3" : undefined}
-                  strokeWidth={2.5}
-                  connectNulls
-                />
-              ))}
-            </AreaChart>
-          </ResponsiveContainer>
-        ) : null}
-      </div>
-      <ul className="mt-2 space-y-1 text-sm text-[#2a211c]">
+    <figure className="campaign-chart">
+      <ChartLens data={points}>
+        {(view) => (
+          <div className="lore-screen h-56 w-full">
+            {ready ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={view} barCategoryGap="18%" barGap={2} margin={{ top: 8, right: 6, left: 0, bottom: 0 }}>
+                  <CartesianGrid stroke="rgba(180, 150, 110, 0.16)" vertical={false} />
+                  <XAxis dataKey="x" stroke="#8d7356" tick={campaignTick} tickLine={false} minTickGap={12} />
+                  <YAxis hide domain={[0, (max: number) => Math.max(1, max || 1)]} />
+                  <Tooltip
+                    contentStyle={{ background: "#140e0c", color: "#cbb892", border: "1px solid #6a3030" }}
+                    labelStyle={{ color: "#cbb892" }}
+                    itemStyle={{ color: "#e7d3b0" }}
+                  />
+                  {nowLabel && view.some((point) => point.x === nowLabel) ? <ReferenceLine x={nowLabel} stroke="#cbb892" strokeWidth={1} label={{ value: "Agora", fill: "#cbb892", fontSize: 11, position: "top" }} /> : null}
+                  {series.map((item) => (
+                    <Bar key={item.id} dataKey={item.id} name={item.name} fill={item.tone} maxBarSize={28} />
+                  ))}
+                </BarChart>
+              </ResponsiveContainer>
+            ) : null}
+          </div>
+        )}
+      </ChartLens>
+      <ul className="mt-2 space-y-1 text-sm">
         {lines.map((item) => (
           <li key={item.id} className="flex gap-2">
             <span className="mt-1 inline-block w-1 shrink-0 self-stretch" style={{ background: item.tone }} />

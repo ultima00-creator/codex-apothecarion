@@ -16,17 +16,14 @@ export function DoseScaleView({ scale, dose }: { scale: DoseScale; dose: number 
   return (
     <div className="dose-scale">
       <div className="dose-scale-row">
-        {marks.map((mark, index) => (
+        {marks.map((mark) => (
           <span key={mark.key} className="dose-slot">
-            {index > 0 ? <b className="sep">–</b> : null}
-            <span>
-              <b className={`num band-${mark.key}`}>{mark.show ?? ""}</b>
-              <b className={`name band-${mark.key}`}>{mark.name}</b>
-            </span>
+            <b className={`num band-${mark.key}`}>{mark.show ?? "—"}</b>
+            <b className={`name band-${mark.key}`}>{mark.name}</b>
           </span>
         ))}
-        <b className="unit">{scale.unit}</b>
       </div>
+      <b className="unit">{scale.unit}</b>
       {phrase ? (
         <p className="dose-phrase">
           <b className={dose == null ? "" : `band-${bandWord[bandIndex(scale, dose)]}`}>{phrase}</b>

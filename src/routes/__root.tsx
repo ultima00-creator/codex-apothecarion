@@ -8,9 +8,9 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" },
       { title: "Codex:Apothecarion" },
-      { name: "theme-color", content: "#121416" },
+      { name: "theme-color", content: "#060602" },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon-bio.png" },
@@ -19,7 +19,7 @@ export const Route = createRootRoute({
       { rel: "apple-touch-icon", href: "/__grok/icon-180.png" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Source+Sans+3:wght@400;500;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Source+Sans+3:wght@400;500;600&display=swap",
       },
     ],
   }),

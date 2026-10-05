@@ -74,8 +74,48 @@ export function saveCycle(entry: Omit<Cycle, "id" | "savedAt">): Cycle {
   return row;
 }
 
+export const EDIT_CYCLE = "apothecarion-edit-cycle";
+
 export function removeCycle(id: string) {
   write(CYCLES, loadCycles().filter((row) => row.id !== id));
+}
+
+export function replaceCycle(id: string, entry: { name: string; weeks: number; lines: Cycle["lines"] }): Cycle | null {
+  const rows = loadCycles();
+  const index = rows.findIndex((row) => row.id === id);
+  if (index < 0) return null;
+  const next = { ...rows[index], name: entry.name.trim(), weeks: entry.weeks, lines: entry.lines, savedAt: new Date().toISOString() };
+  rows[index] = next;
+  write(CYCLES, rows);
+  return next;
+}
+
+export function renameCycle(id: string, name: string) {
+  const trimmed = name.trim();
+  if (!trimmed) return loadCycles();
+  const rows = loadCycles().map((row) => (row.id === id ? { ...row, name: trimmed } : row));
+  write(CYCLES, rows);
+  return rows;
+}
+
+export function duplicateCycle(id: string): Cycle | null {
+  const row = loadCycles().find((item) => item.id === id);
+  if (!row) return null;
+  return saveCycle({
+    name: `${row.name} cópia`,
+    weeks: row.weeks,
+    lines: row.lines.map((line) => ({ ...line })),
+    adjuncts: (row.adjuncts ?? []).map((item) => ({ ...item })),
+  });
+}
+
+export function removeAdjunct(cycleId: string, wing: CycleAdjunct["wing"], substanceId: string) {
+  const rows = loadCycles().map((row) => {
+    if (row.id !== cycleId) return row;
+    return { ...row, adjuncts: (row.adjuncts ?? []).filter((item) => !(item.wing === wing && item.substanceId === substanceId)) };
+  });
+  write(CYCLES, rows);
+  return rows;
 }
 
 export function addAdjunct(cycleId: string, adjunct: CycleAdjunct) {

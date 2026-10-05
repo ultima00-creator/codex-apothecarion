@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdministracaoRouteImport } from './routes/administracao'
 import { Route as AgumentariumRouteImport } from './routes/agumentarium'
 import { Route as CodexRouteImport } from './routes/codex'
 import { Route as ConditionariumRouteImport } from './routes/conditionarium'
@@ -22,6 +23,11 @@ import { Route as AbrirKindIdRouteImport } from './routes/abrir.$kind.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdministracaoRoute = AdministracaoRouteImport.update({
+  id: '/administracao',
+  path: '/administracao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AgumentariumRoute = AgumentariumRouteImport.update({
@@ -67,6 +73,7 @@ const AbrirKindIdRoute = AbrirKindIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
   '/agumentarium': typeof AgumentariumRoute
   '/codex': typeof CodexRoute
   '/conditionarium': typeof ConditionariumRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
   '/agumentarium': typeof AgumentariumRoute
   '/codex': typeof CodexRoute
   '/conditionarium': typeof ConditionariumRoute
@@ -90,6 +98,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
   '/agumentarium': typeof AgumentariumRoute
   '/codex': typeof CodexRoute
   '/conditionarium': typeof ConditionariumRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/administracao'
     | '/agumentarium'
     | '/codex'
     | '/conditionarium'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/administracao'
     | '/agumentarium'
     | '/codex'
     | '/conditionarium'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/administracao'
     | '/agumentarium'
     | '/codex'
     | '/conditionarium'
@@ -137,6 +149,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdministracaoRoute: typeof AdministracaoRoute
   AgumentariumRoute: typeof AgumentariumRoute
   CodexRoute: typeof CodexRoute
   ConditionariumRoute: typeof ConditionariumRoute
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/administracao': {
+      id: '/administracao'
+      path: '/administracao'
+      fullPath: '/administracao'
+      preLoaderRoute: typeof AdministracaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/agumentarium': {
@@ -217,6 +237,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdministracaoRoute: AdministracaoRoute,
   AgumentariumRoute: AgumentariumRoute,
   CodexRoute: CodexRoute,
   ConditionariumRoute: ConditionariumRoute,

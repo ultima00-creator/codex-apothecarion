@@ -1,6 +1,6 @@
 import { durationAt, durationEnd, parseSpan, type Timeline } from "@/lib/duration";
 import { delayHours, ownFraction, type Curve } from "@/lib/kinetics";
-import { mark } from "@/lib/mark";
+import { inkFor } from "@/lib/substance-face";
 import { medicineCurve } from "@/lib/medicines";
 import { findHormone, findPeptide, findWiki } from "@/lib/search";
 import { displayUnit } from "@/lib/dose";
@@ -76,6 +76,12 @@ function effectLimit(row: Ingestion): { hours: number; word: EndedNotice["word"]
   return null;
 }
 
+export function doseHorizon(row: Ingestion): Date | null {
+  const limit = effectLimit(row);
+  if (!limit || limit.hours <= 0) return null;
+  return new Date(new Date(row.takenAt).getTime() + limit.hours * 3600000);
+}
+
 export function upcomingEnds(now = Date.now()): { id: string; name: string; end: number; word: EndedNotice["word"] }[] {
   return read().flatMap((row) => {
     const limit = effectLimit(row);
@@ -116,6 +122,10 @@ export function loadNotices(): EndedNotice[] {
 
 export function dismissNotice(id: string) {
   localStorage.setItem(ENDED, JSON.stringify(notices().filter((item) => item.id !== id)));
+}
+
+export function clearNotices() {
+  localStorage.setItem(ENDED, "[]");
 }
 
 export function loadDiary(): Ingestion[] {
@@ -239,26 +249,54 @@ export function curveKind(curve: Curve | null): Ingestion["curve"] {
   return "none";
 }
 
+export type FusedDose = {
+  key: string;
+  kind: DiaryKind;
+  substanceId: string;
+  name: string;
+  doses: Ingestion[];
+};
+
+export function fuseIngestions(rows: Ingestion[]): FusedDose[] {
+  const map = new Map<string, FusedDose>();
+  const ordered = [...rows].sort((a, b) => a.takenAt.localeCompare(b.takenAt));
+  for (const row of ordered) {
+    const key = `${row.kind}:${row.substanceId}`;
+    const found = map.get(key);
+    if (found) found.doses.push(row);
+    else map.set(key, { key, kind: row.kind, substanceId: row.substanceId, name: row.name, doses: [row] });
+  }
+  return [...map.values()].sort((a, b) => b.doses[b.doses.length - 1].takenAt.localeCompare(a.doses[a.doses.length - 1].takenAt));
+}
+
+function fractionAt(row: Ingestion, hours: number): number | null {
+  const kind = resolveCurve(row.kind, row.substanceId);
+  if (kind === "duration") {
+    const line = wikiLine(row.substanceId, row.route);
+    return line ? durationAt(hours, line.line) : null;
+  }
+  if (kind === "none") return null;
+  const curve = curveOf(row.kind, row.substanceId);
+  return curve ? ownFraction(curve, row.dose, hours, row.route, row.stomachQuarters) : null;
+}
+
 export function dayPlot(rows: Ingestion[]): { points: Record<string, number | string | null>[]; series: DiarySeries[]; nowLabel: string | null; captions: DiaryCaption[] } {
   const plotted = rows.filter((row) => resolveCurve(row.kind, row.substanceId) !== "none");
   if (plotted.length === 0) return { points: [], series: [], nowLabel: null, captions: [] };
+  const groups = fuseIngestions(plotted);
   const start = Math.min(...plotted.map((row) => new Date(row.takenAt).getTime()));
-  let spanHours = 18;
+  let end = start + 6 * 3600 * 1000;
   for (const row of plotted) {
-    const kind = resolveCurve(row.kind, row.substanceId);
-    const half = curveOf(row.kind, row.substanceId)?.half_life_days;
-    if (half && kind !== "duration") spanHours = Math.max(spanHours, Math.min(half * 24, 24 * 6));
-    if (kind === "duration") {
-      const line = wikiLine(row.substanceId, row.route);
-      if (line) spanHours = Math.max(spanHours, Math.min(durationEnd(line.line) + 2, 48));
-    }
+    const horizon = doseHorizon(row);
+    const taken = new Date(row.takenAt).getTime();
+    end = Math.max(end, horizon ? horizon.getTime() : taken + 6 * 3600 * 1000);
   }
-  const end = start + spanHours * 3600 * 1000;
-  const series = plotted.map((row, index) => ({
+  const spanHours = (end - start) / 3600000;
+  const series = groups.map((group, index) => ({
     id: `s${index}`,
-    name: row.name,
-    curve: resolveCurve(row.kind, row.substanceId),
-    tone: mark(`${row.kind}:${row.substanceId}`),
+    name: group.name,
+    curve: resolveCurve(group.kind, group.substanceId),
+    tone: inkFor(group.kind, group.substanceId),
   }));
   const points: Record<string, number | string | null>[] = [];
   const step = spanHours > 36 ? 60 * 60 * 1000 : 15 * 60 * 1000;
@@ -276,36 +314,36 @@ export function dayPlot(rows: Ingestion[]): { points: Record<string, number | st
       nowDistance = distance;
       nowLabel = String(point.x);
     }
-    plotted.forEach((row, index) => {
-      const hours = (t - new Date(row.takenAt).getTime()) / 3600000;
-      const kind = resolveCurve(row.kind, row.substanceId);
-      if (kind === "duration") {
-        const line = wikiLine(row.substanceId, row.route);
-        point[`s${index}`] = line ? round(durationAt(hours, line.line)) : null;
-        return;
+    groups.forEach((group, index) => {
+      let sum = 0;
+      let any = false;
+      for (const row of group.doses) {
+        const hours = (t - new Date(row.takenAt).getTime()) / 3600000;
+        const value = fractionAt(row, hours);
+        if (value == null) continue;
+        any = true;
+        sum += value;
       }
-      const curve = curveOf(row.kind, row.substanceId);
-      point[`s${index}`] = curve ? round(ownFraction(curve, row.dose, hours, row.route, row.stomachQuarters)) : null;
+      point[`s${index}`] = any ? round(sum) : null;
     });
     points.push(point);
   }
-  const captions = plotted.map((row, index) => {
-    const hours = (now - new Date(row.takenAt).getTime()) / 3600000;
-    const kind = resolveCurve(row.kind, row.substanceId);
-    let fraction: number | null = null;
-    if (kind === "duration") {
-      const line = wikiLine(row.substanceId, row.route);
-      fraction = line ? durationAt(hours, line.line) : null;
-    } else {
-      const curve = curveOf(row.kind, row.substanceId);
-      fraction = curve ? ownFraction(curve, row.dose, hours, row.route, row.stomachQuarters) : null;
+  const captions = groups.map((group, index) => {
+    let sum = 0;
+    for (const row of group.doses) {
+      const hours = (now - new Date(row.takenAt).getTime()) / 3600000;
+      sum += fractionAt(row, hours) ?? 0;
     }
-    const pct = Math.round((fraction ?? 0) * 100);
-    const clock = new Date(row.takenAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    const parts = group.doses.map((row) => {
+      const clock = new Date(row.takenAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      const horizon = doseHorizon(row);
+      const until = horizon ? horizon.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null;
+      return `${row.dose} ${displayUnit(row.unit)} · ${viaPt(row.route)} · ${clock}${until ? ` · até ~${until}` : ""}`;
+    });
     return {
       id: `s${index}`,
-      tone: mark(`${row.kind}:${row.substanceId}`),
-      text: `${pct}% do pico · ${row.dose} ${displayUnit(row.unit)} · ${row.name} ${viaPt(row.route)} · ${clock}`,
+      tone: inkFor(group.kind, group.substanceId),
+      text: `${Math.round(sum * 100)}% agora · ${group.name} · ${parts.join(" + ")}`,
     };
   });
   return { points, series, nowLabel, captions };

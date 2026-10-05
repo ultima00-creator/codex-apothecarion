@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { CycleChart } from "@/components/cycle-chart";
-import { GeneSeedMark } from "@/components/marks";
+import { ChartMark, VialMark } from "@/components/relic-marks";
+import { faceFor } from "@/lib/substance-face";
 import { panels, type CycleLine, type PlotCompound } from "@/lib/cycle";
 import { plotCompounds } from "@/lib/search";
-import { loadCycles, removeCycle, saveCycle, type Cycle } from "@/lib/store";
-import { wingCopy } from "@/lib/wings";
+import { loadCycles, replaceCycle, saveCycle, EDIT_CYCLE, type Cycle } from "@/lib/store";
 
 export const Route = createFileRoute("/protocolos")({ component: CyclePage });
 
@@ -16,6 +16,7 @@ const baseName: Record<string, string> = {
   Boldenone: "Boldenona",
   "Boldenone Undecylenate (Equipoise)": "Boldenona undecileno",
   Estradiol: "Estradiol",
+  "Estradiol Injetável": "Estradiol injetável",
   Progesterone: "Progesterona",
   "T3 (Triiodothyronine)": "T3",
   Trenbolone: "Trembolona",
@@ -24,7 +25,7 @@ const baseName: Record<string, string> = {
   Masteron: "Masteron",
   "Mesterolone (Proviron)": "Mesterolona",
   "Nandrolone (Deca/NPP)": "Nandrolona",
-  "Dihydroboldenone (DHB)": "Diidroboldenona",
+  "Dihydroboldenone (DHB)": "Dihidroboldenona",
   Primobolan: "Primobolan",
   "HCG (100 IU ≈ 0.01 mg / 10 μg)": "HCG",
   "Human Growth Hormone (HGH) (1mg ≈ 3 IU)": "Hormônio do crescimento",
@@ -86,30 +87,6 @@ function declaredDays(days: number, weeks: number) {
   return Math.min(cap, Math.max(1, Math.round(days)));
 }
 
-function WingDoor({
-  to,
-  wing,
-  label,
-  open,
-}: {
-  to: "/agumentarium" | "/conditionarium";
-  wing: "agumentarium" | "conditionarium";
-  label: string;
-  open: boolean;
-}) {
-  const body = (
-    <>
-      <img src={wingCopy[wing].seal} alt="" className="size-16 shrink-0 object-cover" />
-      <span>
-        <span className="block text-xs tracking-[0.28em] uppercase">{label}</span>
-        <span className="datum block text-xl">{wingCopy[wing].title}</span>
-      </span>
-    </>
-  );
-  if (!open) return <div className="codex-seal seal-off" aria-disabled="true">{body}</div>;
-  return <Link to={to} className="codex-seal">{body}</Link>;
-}
-
 function formLabel(form: string | null | undefined) {
   if (!form || form === "None") return "";
   let text = form;
@@ -118,7 +95,7 @@ function formLabel(form: string | null | undefined) {
 }
 
 function blank(weeks: number): CycleLine {
-  return { substanceId: "testosterone-enanthate", kind: "hormone", dose: 250, every: 7, start: 1, end: weeks * 7 };
+  return { substanceId: "testosterone-enanthate", kind: "hormone", dose: 10, every: 1, start: 1, end: weeks * 7 };
 }
 
 function NumericField({
@@ -194,11 +171,24 @@ function VolumeDose({
 }
 
 function CyclePage() {
-  const [weeks, setWeeks] = useState(16);
-  const [lines, setLines] = useState<CycleLine[]>([blank(16)]);
+  const [weeks, setWeeks] = useState(10);
+  const [lines, setLines] = useState<CycleLine[]>([]);
   const [name, setName] = useState("");
   const [saved, setSaved] = useState<Cycle[]>([]);
-  useEffect(() => setSaved(loadCycles()), []);
+  const [editing, setEditing] = useState<string | null>(null);
+  useEffect(() => {
+    const loaded = loadCycles();
+    setSaved(loaded);
+    const id = sessionStorage.getItem(EDIT_CYCLE);
+    if (!id) return;
+    sessionStorage.removeItem(EDIT_CYCLE);
+    const row = loaded.find((item) => item.id === id);
+    if (!row) return;
+    setEditing(row.id);
+    setName(row.name);
+    setWeeks(row.weeks);
+    setLines(row.lines.map((line) => ({ ...line, start: Math.max(1, line.start) })));
+  }, []);
   const drawn = useMemo(() => panels(compounds, lines, weeks), [lines, weeks]);
 
   function patch(index: number, next: Partial<CycleLine>) {
@@ -213,21 +203,20 @@ function CyclePage() {
 
   return (
     <main className="space-y-5">
-      <header className="flex items-center gap-3">
-        <GeneSeedMark className="size-14 shrink-0" />
-        <div>
-          <p className="kicker">Gene-Seed</p>
-          <h1 className="screen-title font-display">Implantation</h1>
-          <p className="kicker mt-1">Matéria Medica</p>
-        </div>
+      <header className="gene-head">
+        <img src="/relics/gene-vault.png" alt="" className="vault-mini" />
+        <p className="kicker">Gene-Seed</p>
+        <h1 className="screen-title font-display">Implantation</h1>
+        <p className="kicker">Matéria Medica</p>
       </header>
       <p className="lede">A dose é a que o Frater declara. Não é prescrição. Agumentarium e Conditionarium acendem com uma Implantation guardada.</p>
-      <div className="space-y-3">
-        <WingDoor to="/agumentarium" wing="agumentarium" label="Combat-Stimm" open={saved.length > 0} />
-        <WingDoor to="/conditionarium" wing="conditionarium" label="Med-Stimm" open={saved.length > 0} />
+      <div className="command-bar">
+        {saved.length > 0 ? <Link to="/agumentarium" className="command-key">Combat-Stimm</Link> : <span className="command-key is-off">Combat-Stimm</span>}
+        {saved.length > 0 ? <Link to="/conditionarium" className="command-key">Med-Stimm</Link> : <span className="command-key is-off">Med-Stimm</span>}
+        <Link to="/administracao" className="command-key">Administração</Link>
       </div>
-      <label className="block text-sm">
-        Semanas do gráfico
+      <label className="week-row text-sm">
+        <span className="kicker-row"><ChartMark className="ico" /> Semanas do gráfico</span>
         <NumericField value={weeks} min={1} onChange={commitWeeks} />
       </label>
       <ul className="space-y-4">
@@ -235,8 +224,15 @@ function CyclePage() {
           const family = families.find((item) => item.options.some((option) => option.kind === line.kind && option.id === line.substanceId)) ?? families[0];
           const second = family.options.length > 1;
           const secondLabel = family.options.some((option) => esterWord.test(option.label)) ? "Éster" : "Forma";
+          const option = family.options.find((item) => item.id === line.substanceId) ?? family.options[0];
+          const face = faceFor(option.compound, option.label);
+          const src = face?.src ?? (option.kind === "peptide" ? "/relics/bottle-green.png" : "/relics/bottle-gold.png");
+          const ink = { color: face?.color ?? (option.kind === "peptide" ? "#6aaa78" : "#c6a15a") };
           return (
             <li key={index} className="crystal-line space-y-2 p-3">
+              <div className="seed-pick">
+                <img src={src} alt="" className="seed-mark" />
+                <div className="min-w-0 flex-1 space-y-2">
               <label className="block text-sm">
                 Implantes Progenoides
                 <select
@@ -270,16 +266,20 @@ function CyclePage() {
                   </select>
                 </label>
               ) : null}
+                </div>
+              </div>
               <VolumeDose
                 key={line.substanceId}
                 concentration={line.substanceId === "testosterone-durateston" ? 250 : 100}
                 onApply={(dose) => patch(index, { dose })}
               />
               <div className="grid grid-cols-2 gap-2">
-                <label className="block text-sm">Dose (mg)
+                <label className="block text-sm">
+                  <VialMark className="ico" style={ink} /> Dose (mg)
                   <NumericField value={line.dose} min={0} step={0.1} onChange={(dose) => patch(index, { dose })} />
                 </label>
-                <label className="block text-sm">A cada (dias)
+                <label className="block text-sm">
+                  <ChartMark className="ico" style={ink} /> A cada (dias)
                   <NumericField value={line.every} min={0.5} step={0.5} onChange={(every) => patch(index, { every })} />
                 </label>
                 <label className="block text-sm">Do dia
@@ -289,15 +289,16 @@ function CyclePage() {
                   <NumericField value={line.end} min={1} onChange={(end) => patch(index, { end })} />
                 </label>
               </div>
-              <button type="button" className="min-h-11 text-sm underline" onClick={() => setLines((rows) => rows.filter((_, i) => i !== index))}>
-                Tirar linha
+              <button type="button" className="command-key" onClick={() => setLines((rows) => rows.filter((_, i) => i !== index))}>
+                Tirar
               </button>
             </li>
           );
         })}
       </ul>
-      <button type="button" className="min-h-11 border border-bronze px-4" onClick={() => setLines((rows) => [...rows, blank(weeks)])}>
-        Acrescentar implante progenoide
+      {lines.length === 0 ? <p className="text-sm">Nenhum implante nesta Implantation. Acrescente só o que for guardar.</p> : null}
+      <button type="button" className="command-key" onClick={() => setLines((rows) => [...rows, blank(weeks)])}>
+        Acrescentar
       </button>
       {drawn.length === 0 ? <p className="text-sm">Nenhuma linha na Implantation.</p> : <p className="text-sm text-muted">Traçado visual da Implantation. Não é medição.</p>}
       {drawn.map((panel) => <CycleChart key={panel.key} panel={panel} />)}
@@ -334,39 +335,22 @@ function CyclePage() {
         <label className="block text-sm">Nome da Implantation
           <input className="field mt-1" value={name} onChange={(e) => setName(e.target.value)} />
         </label>
+        {editing ? <p className="text-sm text-muted">Esta gravação atualiza a Implantation aberta. Não cria outra.</p> : null}
         <button
           type="button"
-          className="min-h-11 border border-bronze px-4"
+          className="command-key"
           disabled={!name.trim() || lines.length === 0}
           onClick={() => {
-            saveCycle({ name: name.trim(), weeks, lines });
+            if (editing) replaceCycle(editing, { name: name.trim(), weeks, lines });
+            else {
+              saveCycle({ name: name.trim(), weeks, lines });
+              setName("");
+            }
             setSaved(loadCycles());
-            setName("");
           }}
         >
-          Guardar Implantation
+          {editing ? "Atualizar" : "Guardar"}
         </button>
-        <ul className="space-y-3">
-          {saved.map((row) => (
-            <li key={row.id} className="border-t border-rule pt-3">
-              <p className="datum">{row.name}</p>
-              <p className="text-sm text-muted">{row.weeks} semanas · {row.lines.length} linhas</p>
-              <button
-                type="button"
-                className="min-h-11 text-sm underline"
-                onClick={() => {
-                  setWeeks(row.weeks);
-                  setLines(row.lines.map((line) => ({ ...line, start: Math.max(1, line.start) })));
-                }}
-              >
-                Abrir
-              </button>
-              <button type="button" className="ml-4 min-h-11 text-sm underline" onClick={() => { removeCycle(row.id); setSaved(loadCycles()); }}>
-                Remover
-              </button>
-            </li>
-          ))}
-        </ul>
       </section>
     </main>
   );

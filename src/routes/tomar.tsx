@@ -16,6 +16,8 @@ import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
 import { findHormone, findPeptide, findWiki, hitById, routesFor, search, type Hit } from "@/lib/search";
 import { saveNote } from "@/lib/store";
+import { pledgeAlarm } from "@/lib/signal";
+import { openCalendar, syncAlarmCalendar } from "@/lib/alarms";
 
 export const Route = createFileRoute("/tomar")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -110,7 +112,7 @@ function TakePage() {
     setStep("dose");
   }
 
-  function register() {
+  async function register() {
     if (!picked || dose == null || dose < 0 || !route) return;
     saveIngestion({
       kind: picked.kind,
@@ -124,6 +126,9 @@ function TakePage() {
       curve: resolveCurve(picked.kind, picked.id),
     });
     if (note.trim()) saveNote(picked.title, note.trim());
+    const ics = syncAlarmCalendar(loadDiary());
+    if (ics) openCalendar(ics, "Codex-alarmes.ics");
+    await pledgeAlarm();
     navigate({ to: "/" });
   }
 

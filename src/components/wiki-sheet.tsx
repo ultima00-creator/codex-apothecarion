@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Area, AreaChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { DoseScaleView } from "@/components/dose-face";
 import { tradeLine } from "@/lib/brands";
 import { doseScale } from "@/lib/dose";
 import { durationAt, durationEnd, type Timeline } from "@/lib/duration";
 import { wikiLine } from "@/lib/diary";
-import { mark } from "@/lib/mark";
 import { classePt, nomePt, tempoPt, viaPt } from "@/lib/pt";
+import { BookMark, ChartMark, VialMark } from "@/components/relic-marks";
+import { campaignTick } from "@/components/campaign-ink";
 import { findWiki, wikiTitle } from "@/lib/search";
+import { inkFor } from "@/lib/substance-face";
 
 const levelLabel: Record<string, string> = {
   dangerous: "perigo",
@@ -74,17 +76,17 @@ function DurationPlot({ line, tone, oral }: { line: Timeline; tone: string; oral
           <button type="button" className="dose-pill" onClick={() => setStart(new Date())}>Agora</button>
         </span>
       </div>
-      <div className="h-52 w-full">
+      <div className="lore-screen h-52 w-full">
         {ready ? (
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={plot.points}>
-            <CartesianGrid stroke="rgba(90,70,64,0.35)" />
-            <XAxis dataKey="x" stroke="#8a7b72" tick={{ fill: "#2a211c", fontSize: 11 }} minTickGap={18} />
+          <BarChart data={plot.points} barCategoryGap="34%" margin={{ top: 8, right: 6, left: 0, bottom: 0 }}>
+            <CartesianGrid stroke="rgba(180, 150, 110, 0.16)" vertical={false} />
+            <XAxis dataKey="x" stroke="#8d7356" tick={campaignTick} tickLine={false} minTickGap={18} />
             <YAxis hide domain={[0, 1]} />
-            <Tooltip contentStyle={{ background: "#fff", color: "#111", border: "1px solid #2a211c" }} />
-            {plot.nowLabel ? <ReferenceLine x={plot.nowLabel} stroke="#1a120f" strokeWidth={2} label={{ value: "Agora", fill: "#1a120f", fontSize: 11, position: "top" }} /> : null}
-            <Area type="monotone" dataKey="y" stroke={tone} fill={tone} fillOpacity={0.28} strokeDasharray="5 4" strokeWidth={2.5} name="duração citada" />
-          </AreaChart>
+            <Tooltip contentStyle={{ background: "#140e0c", color: "#cbb892", border: "1px solid #6a3030" }} />
+            {plot.nowLabel ? <ReferenceLine x={plot.nowLabel} stroke="#cbb892" strokeWidth={1} label={{ value: "Agora", fill: "#cbb892", fontSize: 11, position: "top" }} /> : null}
+            <Bar dataKey="y" fill={tone} maxBarSize={22} name="duração citada" />
+          </BarChart>
         </ResponsiveContainer>
         ) : null}
       </div>
@@ -117,21 +119,18 @@ export function WikiSheet({ slug }: { slug: string }) {
   const roa = row.roas.find((item) => (item.name ?? "").toLowerCase() === route) ?? row.roas[0];
   const scale = roa ? doseScale("wiki", slug, route) : null;
   const line = wikiLine(slug, route);
-  const tone = mark(`wiki:${slug}`);
+  const tone = inkFor("wiki", slug);
+  const ink = { color: inkFor("wiki", slug), WebkitTextFillColor: inkFor("wiki", slug) };
   const ordered = [...row.interactions].sort((a, b) => rank(a.level) - rank(b.level));
   return (
     <article className="space-y-4">
       <header>
-        <p className="kicker">Wiki</p>
+        <p className="kicker kicker-row"><BookMark className="ico" /> Wiki</p>
         <h2 className="subject">{title}</h2>
         {brands ? <p className="text-sm text-muted">{brands}</p> : null}
       </header>
-      <p className="glass-card flex items-center justify-between">
-        <span>Cor no Diarium</span>
-        <i className="swatch" style={{ background: tone }} />
-      </p>
       <section className="glass-card space-y-2">
-        <p className="kicker">Resumo</p>
+        <p className="kicker kicker-row"><BookMark className="ico" /> Resumo</p>
         {row.lead_pt ? <p>{row.lead_pt}</p> : <p>A página não trouxe um parágrafo de abertura.</p>}
         {row.classes.length > 0 ? (
           <p className="time-chips">
@@ -141,7 +140,7 @@ export function WikiSheet({ slug }: { slug: string }) {
       </section>
       <section className="space-y-2">
         <div className="flex items-end justify-between gap-3">
-          <h3 className="section-label">Dose</h3>
+          <h3 className="section-label"><VialMark className="ico" style={ink} /> Dose</h3>
           {routes.length > 1 ? (
             <select className="field w-auto" value={route} onChange={(event) => setVia(event.target.value)}>
               {routes.map((item) => <option key={item} value={item}>{viaPt(item)}</option>)}
@@ -156,7 +155,7 @@ export function WikiSheet({ slug }: { slug: string }) {
         ) : <p className="text-sm">Sem faixa de dose nesta via.</p>}
       </section>
       <section className="space-y-2">
-        <h3 className="section-label">Duração</h3>
+        <h3 className="section-label"><ChartMark className="ico" style={ink} /> Duração</h3>
         {line ? <DurationPlot line={line.line} tone={tone} oral={route === "oral"} /> : <p className="text-sm">Sem duração nesta ficha. A curva não é inventada.</p>}
         {roa ? (
           <div className="glass-card">
@@ -172,7 +171,7 @@ export function WikiSheet({ slug }: { slug: string }) {
         ) : null}
       </section>
       <section className="space-y-2">
-        <h3 className="section-label">Interações</h3>
+        <h3 className="section-label"><VialMark className="ico" /> Interações</h3>
         <p className="text-sm text-muted">
           {row.interaction_quality === "analogy" ? "Analogia de classe. Não é interação citada nesta ficha." : row.interaction_quality === "cited" ? "Citada na ficha." : "Sem interação nesta ficha."}
         </p>

@@ -1,6 +1,7 @@
 import { level, ownFraction, remainingFraction, type Curve } from "@/lib/kinetics";
 import { mark } from "@/lib/mark";
 import { findHormone } from "@/lib/search";
+import { faceFor, shade } from "@/lib/substance-face";
 
 export type CycleKind = "hormone" | "peptide";
 
@@ -52,6 +53,13 @@ export type Panel = {
   series: { id: string; name: string; tone: string }[];
 };
 
+function toneFor(compound: string, form: string | null | undefined, slot: number): string {
+  const face = faceFor(compound, form);
+  if (face) return shade(face.color, slot);
+  if (/estrad/i.test(compound)) return shade("#d07aa8", slot);
+  return shade(mark(`hormone:${compound}`), slot);
+}
+
 const durateston = [
   { id: "testosterone-propionate", share: 30 / 250, name: "Propionato" },
   { id: "testosterone-phenylpropionate", share: 60 / 250, name: "Fenilpropionato" },
@@ -82,7 +90,7 @@ export function panels(compounds: PlotCompound[], lines: CycleLine[], weeks: num
         group.rows.push({
           id,
           name: `${part.name} · ${Math.round(mg * 10) / 10} mg`,
-          tone: mark(`hormone:${part.id}`),
+          tone: toneFor("Testosterone", part.name, group.rows.length),
           y: (day) => ownFraction(hormone.curve, mg, day * 24, "intramuscular", 0) ?? 0,
         });
       });
@@ -104,7 +112,7 @@ export function panels(compounds: PlotCompound[], lines: CycleLine[], weeks: num
     group.rows.push({
       id,
       name: compound.label,
-      tone: mark(`${line.kind}:${line.substanceId}`),
+      tone: toneFor(compound.compound, compound.label, group.rows.length),
       y: (day) => atDay(compound.curve, line.dose, taken, day),
     });
     groups.set(key, group);

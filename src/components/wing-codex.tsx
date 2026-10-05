@@ -22,8 +22,8 @@ export function WingCodex({ wing }: { wing: WingId }) {
   if (saved.length === 0) {
     return (
       <main className="space-y-4">
-        <header className="flex items-center gap-3">
-          <img src={copy.seal} alt="" className="size-16 object-cover" />
+        <header className="kicker-row">
+          <img src={wing === "agumentarium" ? "/relics/needle-red.png" : "/relics/needle-green.png"} alt="" className="needle-door" />
           <div>
             <p className="kicker">Selo fechado</p>
             <h1 className="screen-title font-display">{copy.title}</h1>
@@ -32,7 +32,7 @@ export function WingCodex({ wing }: { wing: WingId }) {
         <p>{copy.line}</p>
       <p className="text-sm text-muted">{copy.aside}</p>
         <p className="text-sm text-muted">O selo não abre sem uma Implantation guardada, Frater.</p>
-        <Link to="/protocolos" className="text-sm text-bronze">Voltar ao Gene-Seed</Link>
+        <Link to="/protocolos" className="back-key">Voltar</Link>
       </main>
     );
   }
@@ -42,8 +42,8 @@ export function WingCodex({ wing }: { wing: WingId }) {
 
   return (
     <main className="space-y-4">
-      <header className="flex items-center gap-3">
-        <img src={copy.seal} alt="" className="size-16 object-cover" />
+      <header className="kicker-row">
+        {wing === "agumentarium" ? <img src="/relics/needle-red.png" alt="" className="needle-door" /> : <img src="/relics/needle-green.png" alt="" className="needle-door" />}
         <div>
           <p className="kicker">Database</p>
           <h1 className="screen-title font-display">{copy.title}</h1>
@@ -52,12 +52,16 @@ export function WingCodex({ wing }: { wing: WingId }) {
       <p>{copy.line}</p>
       <p className="text-sm text-muted">{copy.aside}</p>
       <p className="text-sm text-muted">O composto entra numa Implantation já guardada. A duração, em dias, não passa da dela.</p>
+      <Link to="/protocolos" className="back-key">Voltar</Link>
       {wingCompounds(wing).length === 0 ? <p className="text-sm">A database deste selo ainda aguarda os compostos. A organização já está pronta.</p> : null}
-      <ul>
+      <ul className="wing-list">
         {listed.map((row) => {
           const on = favs.includes(row.id);
           return (
-            <li key={row.id} className="border-b border-rule py-3">
+            <li key={row.id} className="wing-item">
+              <div className="wing-row">
+                <img src={wing === "agumentarium" ? "/relics/needle-red.png" : "/relics/needle-green.png"} alt="" className="needle-row" />
+                <div className="min-w-0 flex-1">
               <p className="datum">{row.name}</p>
               <p className="lede line-clamp-2">{row.className || "sem classe"}</p>
               {open === row.id ? (
@@ -131,6 +135,8 @@ export function WingCodex({ wing }: { wing: WingId }) {
                 <button type="button" className="chip" onClick={() => setOpen(open === row.id ? null : row.id)}>Ler</button>
                 <button type="button" className={on ? "chip chip-on" : "chip"} onClick={() => setFavs(toggleWingFav(wing, row.id))}>{on ? "Marcado" : "Favorito"}</button>
                 <button type="button" className="chip chip-on" onClick={() => setOpen(row.id)}>Incluir</button>
+              </div>
+              </div>
               </div>
             </li>
           );

@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { loadFavs, toggleFav, type Fav } from "@/lib/favorites";
-import { hitById, listCompounds, search, type Hit } from "@/lib/search";
+import { findMedicine } from "@/lib/medicines";
+import { findHormone, findWiki, hitById, listCompounds, search, type Hit } from "@/lib/search";
+import { faceFor } from "@/lib/substance-face";
+import { classePt } from "@/lib/pt";
 
 export const Route = createFileRoute("/codex")({ component: CodexPage });
 
@@ -19,43 +22,79 @@ function CodexPage() {
 
   return (
     <main className="space-y-4">
-      <header className="flex items-center gap-3">
-        <img src="/codex-mix.png" alt="" className="size-16 object-cover" />
+      <header className="codex-mast">
+        <img src="/relics/sigil-codex.png" alt="" className="sigil sigil-lg" />
         <div>
           <p className="kicker">Database</p>
           <h1 className="screen-title font-display">Compound Codex</h1>
         </div>
       </header>
-      <p className="text-sm text-muted">Leia a ficha, marque o que deve ficar à mão, ou registre o uso, Frater.</p>
-      <label className="block text-sm">
-        Busca na database
-        <input className="field mt-1" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="nomeie o composto" />
-      </label>
-      {showFavs ? (
-        <section className="space-y-2">
-          {marked.length === 0 ? <p className="text-sm">A database ainda não tem registros pessoais, mas ela suporta.</p> : <p className="kicker">Favoritos.</p>}
-          <ul>{marked.map((hit) => <CodexRow key={`${hit.kind}-${hit.id}`} hit={hit} favs={favs} onToggle={flip} />)}</ul>
+      <input className="field" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nomeie o composto" aria-label="Busca na database" />
+      {showFavs && marked.length > 0 ? (
+        <section>
+          <p className="kicker">Marcados</p>
+          <ul className="codex-list">{marked.map((hit) => <CodexRow key={`fav-${hit.kind}-${hit.id}`} hit={hit} favs={favs} onToggle={flip} />)}</ul>
         </section>
       ) : null}
-      <section className="space-y-2">
-        <p className="kicker">compounds</p>
-        <ul>{(showFavs ? listCompounds() : hits).map((hit) => <CodexRow key={`${hit.kind}-${hit.id}`} hit={hit} favs={favs} onToggle={flip} />)}</ul>
-      </section>
+      <ul className="codex-list">{(showFavs ? listCompounds() : hits).map((hit) => <CodexRow key={`${hit.kind}-${hit.id}`} hit={hit} favs={favs} onToggle={flip} />)}</ul>
     </main>
   );
 }
 
+function classKey(hit: Hit): string {
+  if (hit.kind === "hormone") return "hormone";
+  if (hit.kind === "peptide") return "peptide";
+  const raw = hit.kind === "medicine"
+    ? findMedicine(hit.id)?.className ?? ""
+    : hit.kind === "wiki"
+      ? findWiki(hit.id)?.classes[0] ?? ""
+      : "";
+  return raw.toLowerCase();
+}
+
+function bottleFor(key: string, kind: Hit["kind"]): string {
+  if (kind === "hormone" || key.includes("habit")) return "/relics/bottle-gold.png";
+  if (kind === "peptide" || key.includes("cannabin") || key.includes("nootrop") || !key) return "/relics/bottle-green.png";
+  if (key.includes("beta") || key.includes("angiotensina")) return "/relics/bottle-blue.png";
+  if (key.includes("stimul")) return "/relics/bottle-red.png";
+  if (key.includes("aromatase") || key.includes("eugero") || key.includes("gabapentin")) return "/relics/bottle-orange.png";
+  if (key.includes("estrog") || key.includes("modulador") || key.includes("psyche") || key.includes("entact") || key.includes("hallucin")) return "/relics/bottle-magenta.png";
+  if (key.includes("dopamin") || key.includes("opioid") || key.includes("antipsych")) return "/relics/bottle-violet.png";
+  if (key.includes("benzo") || key.includes("depress") || key.includes("dissoci") || key.includes("deliri") || key.includes("fosfodiesterase") || key.includes("ssri") || key.includes("antidepress")) return "/relics/bottle-teal.png";
+  const files = ["bottle-blue", "bottle-gold", "bottle-red", "bottle-orange", "bottle-magenta", "bottle-violet", "bottle-teal", "bottle-green"];
+  let hash = 0;
+  for (const char of key) hash = (hash * 33 + char.charCodeAt(0)) >>> 0;
+  return `/relics/${files[hash % files.length]}.png`;
+}
+
+function iconFor(hit: Hit): string {
+  if (hit.kind === "hormone") {
+    const row = findHormone(hit.id);
+    const face = row ? faceFor(row.compound, row.form) : null;
+    if (face) return face.src;
+  }
+  return bottleFor(classKey(hit), hit.kind);
+}
+
 function CodexRow({ hit, favs, onToggle }: { hit: Hit; favs: Fav[]; onToggle: (hit: Hit) => void }) {
   const on = favs.some((item) => item.kind === hit.kind && item.id === hit.id);
+  const key = classKey(hit);
   return (
-    <li className="border-b border-rule py-3">
-      <p className="datum">{hit.title}</p>
-      <p className="text-sm text-muted">{hit.detail}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
-        <Link to="/abrir/$kind/$id" params={{ kind: hit.kind, id: hit.id }} className="chip">Ler</Link>
-        <button type="button" className={on ? "chip chip-on" : "chip"} onClick={() => onToggle(hit)}>{on ? "Marcado" : "Favorito"}</button>
-        <Link to="/tomar" search={{ kind: hit.kind, id: hit.id }} className="chip chip-on">Usar</Link>
-      </div>
+    <li className="disp-tile">
+      <Link to="/abrir/$kind/$id" params={{ kind: hit.kind, id: hit.id }} className="disp-hit">
+        <img src={iconFor(hit)} alt="" className="substance-mark" />
+        <span className="min-w-0">
+          <span className="datum block">{hit.title}</span>
+          <span className="tile-meta block">{classLine(key, hit.kind)}</span>
+        </span>
+      </Link>
+      <button type="button" className={on ? "disp-mark on" : "disp-mark"} aria-label={on ? "Desmarcar" : "Favorito"} onClick={() => onToggle(hit)} />
     </li>
   );
+}
+
+function classLine(key: string, kind: Hit["kind"]): string {
+  if (kind === "hormone") return "hormônio";
+  if (kind === "peptide") return "peptídeo";
+  return key ? classePt(key) : "composto";
 }

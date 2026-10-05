@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { DiaryChart } from "@/components/diary-chart";
-import { clock, dayKey, dayPlot, formatDay, loadDiary, removeIngestion, resolveCurve, type Ingestion } from "@/lib/diary";
+import { clock, dayKey, dayPlot, formatDay, fuseIngestions, loadDiary, removeIngestion, resolveCurve, type Ingestion } from "@/lib/diary";
 import { displayUnit } from "@/lib/dose";
-import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
+import { BookMark, VialMark } from "@/components/relic-marks";
+import { inkFor } from "@/lib/substance-face";
 
 export const Route = createFileRoute("/dia/$day")({ component: DayPage });
 
@@ -16,32 +17,33 @@ function DayPage() {
   return (
     <main className="space-y-4">
       <Link to="/" className="text-sm text-bronze">Diarium</Link>
-      <h1 className="screen-title font-display">{formatDay(day)}</h1>
+      <h1 className="screen-title font-display kicker-row"><BookMark className="ico ico-lg" /> {formatDay(day)}</h1>
       <DiaryChart points={plot.points} series={plot.series} />
       {rows.length === 0 ? <p className="text-sm">Nada em efeito neste dia.</p> : null}
       <ul>
-        {rows.map((row) => {
-          const drawn = resolveCurve(row.kind, row.substanceId);
+        {fuseIngestions(rows).map((group) => {
+          const drawn = resolveCurve(group.kind, group.substanceId);
           return (
-          <li key={row.id} className="flex items-start gap-3 border-t border-rule py-3">
-            <span className="w-1 shrink-0 self-stretch border-l-4" style={{ borderColor: mark(`${row.kind}:${row.substanceId}`) }} />
+          <li key={group.key} className="flex items-start gap-3 border-t border-rule py-3">
+            <VialMark className="ico" style={{ color: inkFor(group.kind, group.substanceId) }} />
             <span className="min-w-0 flex-1">
-              <span className="block text-sm text-muted">{clock(row.takenAt)}</span>
-              <Link to="/abrir/$kind/$id" params={{ kind: row.kind, id: row.substanceId }} className="datum">
-                {row.name}
+              <Link to="/abrir/$kind/$id" params={{ kind: group.kind, id: group.substanceId }} className="datum">
+                {group.name}
               </Link>
-              <span className="block text-sm">
-                {row.dose} {displayUnit(row.unit)} · {viaPt(row.route)}
-                {row.route === "oral" ? ` · estômago ${row.stomachQuarters}/4` : ""}
-              </span>
+              {group.doses.map((row) => (
+                <span key={row.id} className="block text-sm">
+                  {clock(row.takenAt)} · {row.dose} {displayUnit(row.unit)} · {viaPt(row.route)}
+                  {row.route === "oral" ? ` · estômago ${row.stomachQuarters}/4` : ""}
+                </span>
+              ))}
               {drawn === "none" ? <span className="block text-sm text-muted">Sem duração e sem meia-vida na ficha. Não entra no gráfico.</span> : null}
-              {drawn === "duration" ? <span className="block text-sm text-muted">Linha do tempo da ficha. Não é meia-vida medida.</span> : null}
+              {drawn === "duration" ? <span className="block text-sm text-muted">As curvas desta substância estão fundidas. Não é meia-vida medida.</span> : null}
             </span>
             <button
               type="button"
               className="min-h-11 text-sm underline"
               onClick={() => {
-                removeIngestion(row.id);
+                for (const row of group.doses) removeIngestion(row.id);
                 setRows(loadDiary().filter((item) => dayKey(item.takenAt) === day));
               }}
             >

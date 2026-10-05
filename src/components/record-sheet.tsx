@@ -5,6 +5,8 @@ import { citedSeries, fractionSeries, level, remainingFraction, type Curve } fro
 import { mark } from "@/lib/mark";
 import { classePt, viaPt } from "@/lib/pt";
 import { wikiByCompound } from "@/lib/search";
+import { VialMark } from "@/components/relic-marks";
+import { faceFor } from "@/lib/substance-face";
 
 type Record = {
   id: string;
@@ -39,8 +41,9 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
     <article className="space-y-5">
       <header>
         <p className="text-xs tracking-[0.2em] text-bronze uppercase">{kind === "peptide" ? "Peptídeo" : "Hormônio"}</p>
-        <h2 className="subject">{record.compound}</h2>
+        <h2 className="subject kicker-row"><VialMark className="ico" style={{ color: faceFor(record.compound, record.form)?.color ?? (kind === "peptide" ? "#6aaa78" : "#c6a15a") }} /> {record.compound}</h2>
         <p className="text-muted">{record.form}</p>
+        <Link to="/tomar" search={{ kind: kind === "peptide" ? "peptide" : "hormone", id: record.id }} className="go mt-3 inline-flex items-center">Registrar</Link>
         <p className="mt-2 text-sm">Meia-vida: {curve.half_life_days ?? "—"} dias. Classe: {wiki ? wiki.classes.map(classePt).join(", ") : "sem ficha na wiki"}. Descrição: {wiki?.lead_pt ? "da wiki, abaixo" : "a wiki não tem esta página"}.</p>
       </header>
       {wiki?.lead_pt ? <p>{wiki.lead_pt}</p> : null}
