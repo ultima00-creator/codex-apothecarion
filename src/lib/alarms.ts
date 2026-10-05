@@ -64,6 +64,29 @@ function eventBlock(input: { uid: string; sequence: number; end: Date; title: st
   ].join("\r\n");
 }
 
+export function reminderSlips(rows: Ingestion[], now = Date.now()): { name: string; when: string; phrase: string }[] {
+  const today = new Date(now);
+  const dayStart = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const slips: { name: string; when: string; phrase: string }[] = [];
+  for (const group of fuseIngestions(rows)) {
+    const ends = group.doses.flatMap((row) => {
+      const end = doseHorizon(row);
+      return end && end.getTime() > now ? [end] : [];
+    });
+    if (ends.length === 0) continue;
+    const end = new Date(Math.max(...ends.map((item) => item.getTime())));
+    const clock = end.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    const days = Math.round((dayStart(end) - dayStart(today)) / 86400000);
+    const when = days <= 0 ? `hoje às ${clock}` : days === 1 ? `amanhã às ${clock}` : `dia ${end.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })} às ${clock}`;
+    slips.push({
+      name: group.name,
+      when,
+      phrase: `Lembra-me ${when}: fim do efeito do ${group.name}`,
+    });
+  }
+  return slips;
+}
+
 export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): string | null {
   const previous = readLot();
   const prior = new Map(previous.map((item) => [item.uid, item]));

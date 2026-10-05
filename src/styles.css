@@ -1200,6 +1200,65 @@
   height: 2.7rem;
 }
 
+.reminder-slip {
+  margin: 0.15rem 0 0.7rem;
+  padding: 0.7rem 0.75rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(196, 168, 112, 0.38);
+  background: rgba(8, 8, 9, 0.72);
+}
+
+.reminder-slip ul {
+  margin: 0.55rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reminder-slip li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+}
+
+.reminder-slip li span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.reminder-slip b,
+.reminder-slip li span span {
+  color: #f3eadc;
+  -webkit-text-fill-color: #f3eadc;
+  text-align: left;
+}
+
+.reminder-slip li span span {
+  font-size: 0.78rem;
+}
+
+.reminder-slip button {
+  flex: none;
+  min-height: 2.2rem;
+  padding: 0 0.7rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(196, 168, 112, 0.45);
+  background: transparent;
+  color: #f3eadc;
+  -webkit-text-fill-color: #f3eadc;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reminder-slip > button {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
 .clear-alarms {
   display: block;
   width: 100%;
