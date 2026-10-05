@@ -7,6 +7,7 @@ import { classePt, viaPt } from "@/lib/pt";
 import { wikiByCompound } from "@/lib/search";
 import { VialMark } from "@/components/relic-marks";
 import { faceFor } from "@/lib/substance-face";
+import { briefLead } from "@/components/wiki-sheet";
 
 type Record = {
   id: string;
@@ -46,7 +47,7 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
         <Link to="/tomar" search={{ kind: kind === "peptide" ? "peptide" : "hormone", id: record.id }} className="go mt-3 inline-flex items-center">Registrar</Link>
         <p className="mt-2 text-sm">Meia-vida: {curve.half_life_days ?? "—"} dias. Classe: {wiki ? wiki.classes.map(classePt).join(", ") : "sem ficha na wiki"}. Descrição: {wiki?.lead_pt ? "da wiki, abaixo" : "a wiki não tem esta página"}.</p>
       </header>
-      {wiki?.lead_pt ? <p>{wiki.lead_pt}</p> : null}
+      {wiki?.lead_pt ? <p>{briefLead(wiki.lead_pt)}</p> : null}
 
       {cited && now ? (
         <section className="space-y-3">

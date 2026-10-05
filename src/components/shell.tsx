@@ -1,6 +1,5 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { watchHerald } from "@/lib/signal";
 import { flavorFor } from "@/lib/flavor";
 
 const links = [
@@ -11,8 +10,11 @@ const links = [
 
 export function Shell({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (state) => state.location.pathname });
+  const scroller = useRef<HTMLDivElement>(null);
   const metal = ["/codex", "/protocolos", "/administracao", "/agumentarium", "/conditionarium", "/abrir", "/tomar"].some((item) => path === item || path.startsWith(`${item}/`));
-  useEffect(() => watchHerald(), []);
+  useEffect(() => {
+    scroller.current?.scrollTo(0, 0);
+  }, [path]);
   useEffect(() => {
     const stop = (event: Event) => event.preventDefault();
     document.addEventListener("gesturestart", stop);
@@ -40,7 +42,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <div className={metal ? "plate plate-metal" : "plate"}>
-        <div className="plate-scroll">
+        <div className="plate-scroll" ref={scroller}>
           {children}
           <div className="plate-hazard" aria-hidden="true" />
         </div>

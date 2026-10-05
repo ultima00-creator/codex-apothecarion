@@ -131,7 +131,7 @@ export function WikiSheet({ slug }: { slug: string }) {
       </header>
       <section className="glass-card space-y-2">
         <p className="kicker kicker-row"><BookMark className="ico" /> Resumo</p>
-        {row.lead_pt ? <p>{row.lead_pt}</p> : <p>A página não trouxe um parágrafo de abertura.</p>}
+        {row.lead_pt ? <p>{briefLead(row.lead_pt)}</p> : <p>A página não trouxe um parágrafo de abertura.</p>}
         {row.classes.length > 0 ? (
           <p className="time-chips">
             {row.classes.map((item) => <span key={item} className="dose-pill">{classePt(item)}</span>)}
@@ -199,4 +199,24 @@ function rank(level: string): number {
   if (level === "dangerous") return 0;
   if (level === "unsafe") return 1;
   return 2;
+}
+
+export function briefLead(text: string): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (!clean) return "";
+  const sentences = clean.match(/[^.!?]+[.!?]+(?:\s+|$)/g);
+  if (!sentences) {
+    const cut = clean.slice(0, 260);
+    const at = Math.max(cut.lastIndexOf(";"), cut.lastIndexOf(","), cut.lastIndexOf(" "));
+    return `${(at > 80 ? cut.slice(0, at) : cut).trim()}.`;
+  }
+  let out = "";
+  for (const sentence of sentences) {
+    const next = out ? `${out} ${sentence.trim()}` : sentence.trim();
+    if (out && next.length > 380) break;
+    out = next;
+    const count = out.match(/[.!?]/g)?.length ?? 0;
+    if (count >= 2) break;
+  }
+  return out.trim();
 }

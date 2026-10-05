@@ -16,7 +16,6 @@ import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
 import { findHormone, findPeptide, findWiki, hitById, routesFor, search, type Hit } from "@/lib/search";
 import { saveNote } from "@/lib/store";
-import { pledgeAlarm } from "@/lib/signal";
 import { openCalendar, syncAlarmCalendar } from "@/lib/alarms";
 
 export const Route = createFileRoute("/tomar")({
@@ -126,7 +125,6 @@ function TakePage() {
     if (note.trim()) saveNote(picked.title, note.trim());
     const ics = syncAlarmCalendar(loadDiary());
     if (ics) openCalendar(ics, "Codex-alarmes.ics");
-    await pledgeAlarm();
     navigate({ to: "/" });
   }
 
