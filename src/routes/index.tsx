@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { dayPlot, doseHorizon, formatDay, fuseIngestions, groupDays, loadDiary, weekday, type Ingestion } from "@/lib/diary";
-import { openCalendar, reminderSlips, syncAlarmCalendar } from "@/lib/alarms";
+import { openCalendar, syncAlarmCalendar } from "@/lib/alarms";
 import { DiaryChart } from "@/components/diary-chart";
 import { BookMark, VialMark } from "@/components/relic-marks";
 import { inkFor } from "@/lib/substance-face";
@@ -19,17 +19,7 @@ function DiaryHome() {
   }, []);
   const days = groupDays(rows);
   const plot = dayPlot(rows);
-  const [copied, setCopied] = useState("");
   const ordered = fuseIngestions(rows);
-  const slips = reminderSlips(rows);
-  async function copyPhrase(text: string, key: string) {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch {
-      return;
-    }
-    setCopied(key);
-  }
   return (
     <main className="status">
       <header className="status-bar">
@@ -48,26 +38,6 @@ function DiaryHome() {
       >
         Rearmar
       </button>
-      {slips.length > 0 ? (
-        <section className="reminder-slip">
-          <p className="kicker">Lembretes</p>
-          <p className="text-sm text-muted">O app Lembretes não abre o arquivo. A frase já traz o dia e a hora. Dita ao Siri ou cola num lembrete novo.</p>
-          <ul>
-            {slips.map((slip) => (
-              <li key={slip.name}>
-                <span>
-                  <b>{slip.name}</b>
-                  <span>{slip.phrase}</span>
-                </span>
-                <button type="button" onClick={() => copyPhrase(slip.phrase, slip.name)}>{copied === slip.name ? "Copiado" : "Copiar"}</button>
-              </li>
-            ))}
-          </ul>
-          <button type="button" onClick={() => copyPhrase(slips.map((slip) => slip.phrase).join("\n"), "todas")}>
-            {copied === "todas" ? "Copiado" : "Copiar todas"}
-          </button>
-        </section>
-      ) : null}
       <div className="status-void">
         <DiaryChart points={plot.points} series={plot.series} captions={plot.captions} nowLabel={plot.nowLabel} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
       </div>

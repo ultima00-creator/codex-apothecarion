@@ -35,10 +35,20 @@ function calendar(blocks: string[], method: "PUBLISH" | "CANCEL"): string {
     "PRODID:-//Codex Apothecarion//PT",
     "CALSCALE:GREGORIAN",
     `METHOD:${method}`,
-    "X-WR-CALNAME:Codex Apothecarion",
+    "X-WR-CALNAME:Apothecarion",
     ...blocks,
     "END:VCALENDAR",
     "",
+  ].join("\r\n");
+}
+
+function alarm(minutes: number): string {
+  return [
+    "BEGIN:VALARM",
+    "ACTION:DISPLAY",
+    `DESCRIPTION:O efeito acaba em ${minutes} minutos`,
+    `TRIGGER:-PT${minutes}M`,
+    "END:VALARM",
   ].join("\r\n");
 }
 
@@ -55,36 +65,17 @@ function eventBlock(input: { uid: string; sequence: number; end: Date; title: st
     input.cancelled ? "STATUS:CANCELLED" : "STATUS:CONFIRMED",
     `SUMMARY:${esc(input.title)}`,
     `DESCRIPTION:${esc(input.detail)}`,
-    "BEGIN:VALARM",
-    "ACTION:DISPLAY",
-    "DESCRIPTION:O efeito acabou",
-    "TRIGGER:PT0S",
-    "END:VALARM",
+    ...(input.cancelled ? [] : [alarm(10), alarm(5)]),
     "END:VEVENT",
   ].join("\r\n");
 }
 
-export function reminderSlips(rows: Ingestion[], now = Date.now()): { name: string; when: string; phrase: string }[] {
-  const today = new Date(now);
-  const dayStart = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-  const slips: { name: string; when: string; phrase: string }[] = [];
-  for (const group of fuseIngestions(rows)) {
-    const ends = group.doses.flatMap((row) => {
-      const end = doseHorizon(row);
-      return end && end.getTime() > now ? [end] : [];
-    });
-    if (ends.length === 0) continue;
-    const end = new Date(Math.max(...ends.map((item) => item.getTime())));
-    const clock = end.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-    const days = Math.round((dayStart(end) - dayStart(today)) / 86400000);
-    const when = days <= 0 ? `hoje às ${clock}` : days === 1 ? `amanhã às ${clock}` : `dia ${end.toLocaleDateString("pt-BR", { day: "numeric", month: "long" })} às ${clock}`;
-    slips.push({
-      name: group.name,
-      when,
-      phrase: `Lembra-me ${when}: fim do efeito do ${group.name}`,
-    });
-  }
-  return slips;
+function doseTotal(doses: Ingestion[]): string {
+  if (doses.length < 2) return "";
+  const unit = displayUnit(doses[0].unit);
+  if (doses.some((row) => displayUnit(row.unit) !== unit)) return "";
+  const total = Math.round(doses.reduce((sum, row) => sum + row.dose, 0) * 1000) / 1000;
+  return `Dose total ${total} ${unit}`;
 }
 
 export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): string | null {
@@ -110,13 +101,14 @@ export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): string |
       const until = horizon ? horizon.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : "sem fim";
       return `${row.dose} ${displayUnit(row.unit)} · ${viaPt(row.route)} · ${clock} · até ~${until}`;
     }).join(" + ");
+    const total = doseTotal(group.doses);
     blocks.push(eventBlock({
       uid,
       sequence,
       end,
       cancelled: false,
-      title: `Fim do efeito · ${group.name}`,
-      detail: `${detail}. Conjectura do fim do efeito.`,
+      title: `[Codex:Apothecarion] - ${group.name} [Fim efeito]`,
+      detail: `${total ? `${total}\n` : ""}${detail}. Conjectura do fim do efeito.`,
     }));
   }
   for (const old of prior.values()) {
