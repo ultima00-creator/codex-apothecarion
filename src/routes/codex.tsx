@@ -23,7 +23,7 @@ function CodexPage() {
   return (
     <main className="space-y-4">
       <header className="codex-mast">
-        <img src="/relics/sigil-codex.png" alt="" className="sigil sigil-lg" />
+        <img src="/relics/sword-i.png" alt="" className="ornament-sword" />
         <div>
           <p className="kicker">Database</p>
           <h1 className="screen-title font-display">Compound Codex</h1>

@@ -204,7 +204,7 @@ function CyclePage() {
   return (
     <main className="space-y-5">
       <header className="gene-head">
-        <img src="/relics/gene-vault.png" alt="" className="vault-mini" />
+        <img src="/relics/skull-shield.png" alt="" className="seal-skull" />
         <p className="kicker">Gene-Seed</p>
         <h1 className="screen-title font-display">Implantation</h1>
         <p className="kicker">Matéria Medica</p>

@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { watchHerald } from "@/lib/signal";
+import { flavorFor } from "@/lib/flavor";
 
 const links = [
   { to: "/", label: "Diarium" },
@@ -24,12 +25,18 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className={`shell mx-auto min-h-screen w-full max-w-3xl px-4 pt-5 ${path.startsWith("/protocolos") ? "wing-gene" : "wing-base"}`}>
       <header className="mast">
-        <div className="flex items-center gap-3">
-          <img src="/helix-bio.png" alt="" className="helix-banner iron-mark" />
+        <div className="mast-brand">
+          <img src="/app-icon.png" alt="" className="mast-seal" />
           <div>
             <p className="text-xs tracking-[0.28em] text-bronze uppercase">Codex</p>
             <p className="font-display text-3xl leading-none">Apothecarion</p>
+            <p className="flavor">{flavorFor(path)}</p>
           </div>
+        </div>
+        <div className="ornament-row" aria-hidden="true">
+          <img src="/relics/sword-i.png" alt="" className="ornament-sword" />
+          <img src="/relics/eagle.png" alt="" className="ornament-eagle" />
+          <img src="/relics/sword-ii.png" alt="" className="ornament-sword" />
         </div>
       </header>
       <div className={metal ? "plate plate-metal" : "plate"}>

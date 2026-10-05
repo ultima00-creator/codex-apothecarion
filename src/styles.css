@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-parchment: #16181b;
-  --color-plate: #22262b;
-  --color-ink: #f3f4f6;
-  --color-bronze: #c45a4e;
-  --color-muted: #b4bac1;
-  --color-rule: #5a6168;
-  --color-wine: #8e2430;
+  --color-parchment: #070605;
+  --color-plate: #120e0c;
+  --color-ink: #f4ead8;
+  --color-bronze: #c6a15a;
+  --color-muted: #b7a898;
+  --color-rule: #6a5340;
+  --color-wine: #8a1c24;
   --color-olive: #d7c3b8;
   --color-slate: #efe6de;
   --font-display: "Cormorant Garamond", Georgia, serif;
@@ -71,13 +71,15 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem;
   margin-bottom: 0;
   border-bottom: 0;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   border-radius: 1.15rem;
-  border: 1px solid rgba(176, 168, 162, 0.35);
-  background: linear-gradient(180deg, rgba(92, 98, 106, 0.48), rgba(22, 24, 28, 0.62));
+  border: 1px solid rgba(198, 161, 90, 0.45);
+  background: linear-gradient(180deg, rgba(42, 28, 18, 0.72), rgba(8, 7, 6, 0.88));
   padding: 0.45rem 0.7rem 0.55rem;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
   backdrop-filter: blur(16px);
@@ -143,12 +145,49 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-.helix-banner {
-  width: 3.4rem;
+.mast-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.mast-seal {
+  width: 3.3rem;
+  height: 3.3rem;
+  object-fit: contain;
+  flex: none;
+}
+
+.flavor {
+  margin: 0.15rem 0 0;
+  max-width: 18rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  color: #e7d3a1;
+  -webkit-text-fill-color: #e7d3a1;
+}
+
+.ornament-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.15rem;
+  flex: none;
+}
+
+.ornament-sword {
   height: 3.4rem;
-  object-fit: cover;
-  border: 0;
-  background: transparent;
+  width: auto;
+  object-fit: contain;
+}
+
+.ornament-eagle {
+  height: 2.3rem;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 0.35rem;
 }
 
 .wing-gene .plate {
@@ -1202,10 +1241,10 @@ html {
 }
 
 .plate {
-  border: 1px solid rgba(196, 168, 112, 0.55);
+  border: 1px solid rgba(198, 161, 90, 0.55);
   border-image: none;
   border-radius: 0.7rem;
-  background-color: rgba(8, 9, 11, 0.88);
+  background-color: rgba(8, 6, 5, 0.9);
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.65);
   padding: 0;
 }
@@ -1298,6 +1337,14 @@ html {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
+}
+
+.seal-skull {
+  display: block;
+  width: 2.1rem;
+  height: auto;
+  margin: 0 auto 0.15rem;
+  object-fit: contain;
 }
 
 .vault-mini {
