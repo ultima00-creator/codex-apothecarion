@@ -55,7 +55,35 @@ export type DoseScale = {
   };
 };
 
+const medicineBands: Record<string, [number, number, number, number, number]> = {
+  propranolol: [10, 20, 40, 80, 160],
+  atenolol: [25, 50, 50, 100, 200],
+  bisoprolol: [1.25, 2.5, 5, 10, 20],
+  carvedilol: [3.125, 6.25, 12.5, 25, 50],
+  "succinato-de-metoprolol": [25, 50, 100, 200, 400],
+  "tartarato-de-metoprolol-metoprolol": [25, 50, 100, 200, 400],
+  "cloridrato-de-sotalol": [40, 80, 160, 160, 320],
+  pindolol: [5, 5, 15, 30, 45],
+  nebivolol: [1.25, 2.5, 5, 10, 10],
+};
+
+function medicineScale(id: string): DoseScale | null {
+  const band = medicineBands[id];
+  if (!band) return null;
+  const [threshold, light, common, strong, heavy] = band;
+  return {
+    unit: "mg",
+    threshold,
+    light,
+    common,
+    strong,
+    heavy,
+    raw: { threshold, light, common, strong, heavy },
+  };
+}
+
 export function doseScale(kind: string, id: string, route: string): DoseScale | null {
+  if (kind === "medicine") return medicineScale(id);
   if (kind !== "wiki") return null;
   const row = findWiki(id);
   if (!row) return null;
@@ -122,12 +150,13 @@ export type ScaleMark = { key: "limiar" | "leve" | "comum" | "forte" | "pesada";
 
 export function scaleMarks(scale: DoseScale): ScaleMark[] {
   const forte = endNumber(scale.raw.strong);
+  const pesada = scale.heavy != null && (forte == null || scale.heavy > forte) ? prettyAmount(scale.heavy) : null;
   return [
     { key: "limiar", name: "limiar", show: scale.threshold == null ? null : prettyAmount(scale.threshold) },
     { key: "leve", name: "leve", show: endNumber(scale.raw.light) == null ? null : prettyAmount(endNumber(scale.raw.light) as number) },
     { key: "comum", name: "comum", show: endNumber(scale.raw.common) == null ? null : prettyAmount(endNumber(scale.raw.common) as number) },
     { key: "forte", name: "forte", show: forte == null ? null : prettyAmount(forte) },
-    { key: "pesada", name: "pesada", show: scale.strong == null && scale.heavy != null ? prettyAmount(scale.heavy) : null },
+    { key: "pesada", name: "pesada", show: pesada },
   ];
 }
 

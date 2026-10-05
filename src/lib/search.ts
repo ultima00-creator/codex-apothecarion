@@ -148,6 +148,19 @@ export function findWiki(slug: string) {
   return catalog.wiki.find((row) => row.slug === slug) ?? null;
 }
 
+function medicineRoutes(id: string): string[] {
+  const row = findMedicine(id);
+  const blob = norm(`${row?.name ?? ""} ${row?.className ?? ""}`);
+  if (/injetav|parenteral|intraven/.test(blob)) return ["intravenous"];
+  if (/intramusc/.test(blob)) return ["intramuscular"];
+  if (/subcutan/.test(blob)) return ["subcutaneous"];
+  if (/oftalm|otolog|topic|dermat|colir/.test(blob)) return ["topical"];
+  if (/inalat|aerossol|nasal/.test(blob)) return ["inhaled"];
+  if (/retal|suposit/.test(blob)) return ["rectal"];
+  if (/transderm|adesiv/.test(blob)) return ["transdermal"];
+  return ["oral"];
+}
+
 export function routesFor(hit: Hit): string[] {
   if (hit.kind === "wiki") {
     const names = findWiki(hit.id)?.roas.map((roa) => (roa.name ?? "").toLowerCase()).filter(Boolean) ?? [];
@@ -161,6 +174,7 @@ export function routesFor(hit: Hit): string[] {
     const route = findPeptide(hit.id)?.route_default;
     return route ? [route] : [];
   }
+  if (hit.kind === "medicine") return medicineRoutes(hit.id);
   return [];
 }
 

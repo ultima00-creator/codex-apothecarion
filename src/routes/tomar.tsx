@@ -35,11 +35,9 @@ const stomach = [
   { quarters: 4, name: "muito cheio", delay: "~2 h" },
 ] as const;
 
-const declaredRoutes = ["oral", "sublingual", "buccal", "insufflated", "inhaled", "smoked", "intramuscular", "subcutaneous", "intravenous", "rectal", "transdermal", "topical"];
-
 function routeChoices(hit: Hit): string[] {
   const listed = routesFor(hit);
-  return listed.length > 0 ? listed : declaredRoutes;
+  return listed.length > 0 ? listed : ["oral"];
 }
 
 function referenceDose(hit: Hit): number | null {
@@ -85,7 +83,7 @@ function TakePage() {
     const hit = hitById(preset.kind, preset.id);
     if (!hit) return;
     setPicked(hit);
-    setRoute("");
+    setRoute(routeChoices(hit).length === 1 ? routeChoices(hit)[0] : "");
     setRepeat(false);
     setDose(null);
     setCustom("");
@@ -107,7 +105,7 @@ function TakePage() {
       setStep("fechar");
       return;
     }
-    setRoute("");
+    setRoute(routeChoices(hit).length === 1 ? routeChoices(hit)[0] : "");
     setRepeat(false);
     setStep("dose");
   }
@@ -227,7 +225,7 @@ function TakePage() {
           {subtitle(picked) ? <p className="text-sm text-muted">{subtitle(picked)}</p> : null}
           {repeat ? (
             <p className="text-sm text-muted">Via da tomada anterior: {viaPt(route)}.</p>
-          ) : (
+          ) : routeChoices(picked).length > 1 ? (
             <div className="glass-card">
               <p className="text-sm">Via. Obrigatória quando a dose não é repetição.</p>
               <div className="dose-pills mt-2">
@@ -238,6 +236,8 @@ function TakePage() {
                 ))}
               </div>
             </div>
+          ) : (
+            <p className="text-sm text-muted">Via {viaPt(routeChoices(picked)[0] ?? "oral")}. É a via desta ficha.</p>
           )}
             {scale ? (
             <div className="glass-card">
