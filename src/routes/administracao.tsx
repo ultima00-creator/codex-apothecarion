@@ -31,7 +31,7 @@ function AdminPage() {
   return (
     <main className="space-y-4">
       <header className="gene-head">
-        <img src="/relics/sword-ii.png" alt="" className="ornament-sword" />
+        <img src="/relics/skull-shield.png" alt="" className="seal-skull" />
         <p className="kicker">Gene-Seed</p>
         <h1 className="screen-title font-display">Administração</h1>
       </header>

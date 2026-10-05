@@ -69,10 +69,9 @@
 
 .mast {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.35rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
   margin-bottom: 0;
   border-bottom: 0;
   border-bottom-left-radius: 0;
@@ -171,23 +170,38 @@
 }
 
 .ornament-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.15rem;
-  flex: none;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  min-height: 2.8rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(198, 161, 90, 0.4);
 }
 
 .ornament-sword {
-  height: 3.4rem;
+  height: 2.5rem;
   width: auto;
+  max-width: 1.1rem;
   object-fit: contain;
+  object-position: center bottom;
+}
+
+.ornament-row .ornament-sword:first-child {
+  justify-self: end;
+}
+
+.ornament-row .ornament-sword:last-child {
+  justify-self: start;
 }
 
 .ornament-eagle {
-  height: 2.3rem;
+  height: 1.85rem;
   width: auto;
+  max-width: 7.5rem;
   object-fit: contain;
-  margin-bottom: 0.35rem;
+  margin: 0 0.85rem;
 }
 
 .wing-gene .plate {
