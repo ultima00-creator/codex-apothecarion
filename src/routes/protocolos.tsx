@@ -14,7 +14,6 @@ const esterWord = /enanthate|cypionate|propionate|undecanoate|decanoate|acetate|
 const baseName: Record<string, string> = {
   Testosterone: "Testosterona",
   Boldenone: "Boldenona",
-  "Boldenone Undecylenate (Equipoise)": "Boldenona undecileno",
   Estradiol: "Estradiol",
   "Estradiol Injetável": "Estradiol injetável",
   Progesterone: "Progesterona",

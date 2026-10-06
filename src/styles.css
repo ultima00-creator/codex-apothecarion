@@ -181,10 +181,10 @@
 }
 
 .ornament-row {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
+  gap: 0.45rem;
   width: 100%;
   min-height: 2.8rem;
   padding-top: 0.7rem;
@@ -195,25 +195,31 @@
 .ornament-sword {
   height: 2.5rem;
   width: auto;
-  max-width: 1.1rem;
+  max-width: 1.15rem;
   object-fit: contain;
   object-position: center bottom;
-}
-
-.ornament-row .ornament-sword:first-child {
-  justify-self: end;
-}
-
-.ornament-row .ornament-sword:last-child {
-  justify-self: start;
+  flex: none;
 }
 
 .ornament-eagle {
   height: 1.85rem;
   width: auto;
-  max-width: 7.5rem;
+  max-width: 3.4rem;
   object-fit: contain;
-  margin: 0 1.15rem;
+  margin: 0;
+  flex: none;
+}
+
+.ornament-word {
+  flex: none;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: #e7d3a1;
+  -webkit-text-fill-color: #e7d3a1;
 }
 
 .wing-gene .plate {
@@ -1363,7 +1369,7 @@ html {
 
 .substance-mark,
 .seed-mark {
-  width: 1.15rem;
+  width: 1.85rem;
   height: 1.85rem;
   object-fit: contain;
   flex: none;

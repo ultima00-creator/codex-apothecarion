@@ -35,9 +35,11 @@ export function Shell({ children }: { children: ReactNode }) {
             <p className="flavor">{flavorFor(path)}</p>
           </div>
         </div>
-        <div className="ornament-row" aria-hidden="true">
+        <div className="ornament-row">
           <img src="/relics/sword-i.png" alt="" className="ornament-sword" />
+          <span className="ornament-word">Veritas</span>
           <img src="/relics/eagle.png" alt="" className="ornament-eagle" />
+          <span className="ornament-word">Violentia</span>
           <img src="/relics/sword-ii.png" alt="" className="ornament-sword" />
         </div>
       </header>
