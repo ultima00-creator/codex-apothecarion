@@ -29,13 +29,13 @@ function esc(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
 }
 
-function calendar(blocks: string[], method: "PUBLISH" | "CANCEL"): string {
+function calendar(blocks: string[]): string {
   return [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Codex Apothecarion//PT",
     "CALSCALE:GREGORIAN",
-    `METHOD:${method}`,
+    "METHOD:PUBLISH",
     "X-WR-CALNAME:Apothecarion",
     ...blocks,
     "END:VCALENDAR",
@@ -53,7 +53,7 @@ function alarm(minutes: number): string {
   ].join("\r\n");
 }
 
-function eventBlock(input: { uid: string; sequence: number; end: Date; title: string; detail: string; cancelled: boolean }): string {
+function eventBlock(input: { uid: string; sequence: number; end: Date; title: string; detail: string }): string {
   const start = input.end;
   const stop = new Date(start.getTime() + 5 * 60 * 1000);
   return [
@@ -63,10 +63,11 @@ function eventBlock(input: { uid: string; sequence: number; end: Date; title: st
     `DTSTART:${stamp(start)}`,
     `DTEND:${stamp(stop)}`,
     `SEQUENCE:${input.sequence}`,
-    input.cancelled ? "STATUS:CANCELLED" : "STATUS:CONFIRMED",
+    "STATUS:CONFIRMED",
     `SUMMARY:${esc(input.title)}`,
     `DESCRIPTION:${esc(input.detail)}`,
-    ...(input.cancelled ? [] : [alarm(10), alarm(5)]),
+    alarm(10),
+    alarm(5),
     "END:VEVENT",
   ].join("\r\n");
 }
@@ -106,33 +107,17 @@ export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): string |
       uid,
       sequence,
       end,
-      cancelled: false,
       title: `[Codex:Apothecarion] - ${group.name} [Fim efeito]`,
       detail: `${total ? `${total}\n` : ""}${detail}. Conjectura do fim do efeito.`,
     }));
   }
   writeLot(next);
   if (blocks.length === 0) return null;
-  return calendar(blocks, "PUBLISH");
+  return calendar(blocks);
 }
 
 export function openAlarmFiles(ics: string | null) {
   if (ics) openCalendar(ics, "Codex-alarmes.ics");
-}
-
-export function cancelAlarmCalendar(now = Date.now()): string | null {
-  const previous = readLot();
-  if (previous.length === 0) return null;
-  writeLot([]);
-  const blocks = previous.map((item) => eventBlock({
-    uid: item.uid,
-    sequence: item.sequence + 1,
-    end: new Date(now),
-    cancelled: true,
-    title: "[Codex:Apothecarion] - aviso removido",
-    detail: "Lote de alarmes apagado.",
-  }));
-  return calendar(blocks, "CANCEL");
 }
 
 export function openCalendar(ics: string, filename: string) {
