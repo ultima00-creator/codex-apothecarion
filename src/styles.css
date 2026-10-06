@@ -1117,6 +1117,8 @@
   background: rgba(8, 8, 9, 0.72);
   text-align: left;
 }
+
+.ledger-card {
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
