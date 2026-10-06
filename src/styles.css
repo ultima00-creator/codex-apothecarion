@@ -184,27 +184,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
   width: 100%;
-  min-height: 2.8rem;
-  padding-top: 0.7rem;
-  padding-bottom: 0.35rem;
+  min-height: 5.4rem;
+  padding-top: 0.45rem;
+  padding-bottom: 0.2rem;
   border-top: 1px solid rgba(198, 161, 90, 0.4);
 }
 
 .ornament-sword {
-  height: 2.5rem;
+  height: 5.2rem;
   width: auto;
-  max-width: 1.15rem;
+  max-width: 2.1rem;
   object-fit: contain;
-  object-position: center bottom;
+  object-position: center;
   flex: none;
 }
 
 .ornament-eagle {
-  height: 1.85rem;
+  height: 2.35rem;
   width: auto;
-  max-width: 3.4rem;
+  max-width: 4rem;
   object-fit: contain;
   margin: 0;
   flex: none;
@@ -214,8 +214,8 @@
   flex: none;
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   line-height: 1;
   color: #e7d3a1;
