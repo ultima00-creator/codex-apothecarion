@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { dayPlot, doseHorizon, formatDay, fuseIngestions, groupDays, loadDiary, weekday, type Ingestion } from "@/lib/diary";
-import { openCalendar, syncAlarmCalendar } from "@/lib/alarms";
+import { openAlarmFiles, syncAlarmCalendar } from "@/lib/alarms";
 import { DiaryChart } from "@/components/diary-chart";
 import { BookMark, VialMark } from "@/components/relic-marks";
 import { inkFor } from "@/lib/substance-face";
@@ -31,13 +31,11 @@ function DiaryHome() {
       <button
         type="button"
         className="clear-alarms"
-        onClick={() => {
-          const ics = syncAlarmCalendar(loadDiary());
-          if (ics) openCalendar(ics, "Codex-alarmes.ics");
-        }}
+        onClick={() => openAlarmFiles(syncAlarmCalendar(loadDiary()))}
       >
         Rearmar
       </button>
+      <p className="text-xs text-muted">O primeiro arquivo apaga os eventos do calendário Apothecarion. O segundo grava as ingestões ativas.</p>
       <div className="status-void">
         <DiaryChart points={plot.points} series={plot.series} captions={plot.captions} nowLabel={plot.nowLabel} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
       </div>

@@ -16,7 +16,7 @@ import { mark } from "@/lib/mark";
 import { viaPt } from "@/lib/pt";
 import { findHormone, findPeptide, findWiki, hitById, routesFor, search, type Hit } from "@/lib/search";
 import { saveNote } from "@/lib/store";
-import { openCalendar, syncAlarmCalendar } from "@/lib/alarms";
+import { openAlarmFiles, syncAlarmCalendar } from "@/lib/alarms";
 
 export const Route = createFileRoute("/tomar")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -123,8 +123,8 @@ function TakePage() {
       curve: resolveCurve(picked.kind, picked.id),
     });
     if (note.trim()) saveNote(picked.title, note.trim());
-    const ics = syncAlarmCalendar(loadDiary());
-    if (ics) openCalendar(ics, "Codex-alarmes.ics");
+    const files = syncAlarmCalendar(loadDiary());
+    openAlarmFiles(files);
     navigate({ to: "/" });
   }
 
@@ -142,7 +142,7 @@ function TakePage() {
           <button type="button" className="text-sm text-bronze" onClick={() => setStep(step === "fechar" ? "dose" : "buscar")}>Cancelar</button>
         )}
         {step === "dose" ? (
-          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={() => setStep("fechar")}>Seguir</button>
+          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={() => setStep("fechar")}>Adicionar</button>
         ) : null}
         {step === "fechar" ? (
           <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={register}>Registrar</button>
@@ -315,7 +315,6 @@ function TakePage() {
               <button type="button" className="text-sm text-bronze" onClick={() => setShowNote(true)}>+ Nota</button>
             )}
           </div>
-          <button type="button" className="go w-full" disabled={dose == null || Number.isNaN(dose) || !route} onClick={register}>Registrar</button>
         </section>
       ) : null}
     </main>
