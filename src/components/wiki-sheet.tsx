@@ -186,7 +186,7 @@ export function WikiSheet({ slug }: { slug: string }) {
           </div>
         ) : null}
       </section>
-      <Link to="/tomar" search={{ kind: "wiki", id: row.slug }} className="go inline-flex items-center">Registrar este composto</Link>
+      <Link to="/tomar" search={{ kind: "wiki", id: row.slug, edit: "" }} className="go inline-flex items-center">Registrar este composto</Link>
       <footer className="border-t border-rule pt-3 text-sm text-muted">
         <a className="underline" href={row.url}>{row.url}</a>
         <p className="mt-2">Colaboradores da PsychonautWiki, psychonautwiki.org, CC BY-SA 4.0.</p>

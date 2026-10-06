@@ -31,9 +31,12 @@ function DayPage() {
                 {group.name}
               </Link>
               {group.doses.map((row) => (
-                <span key={row.id} className="block text-sm">
-                  {clock(row.takenAt)} · {row.dose} {displayUnit(row.unit)} · {viaPt(row.route)}
-                  {row.route === "oral" ? ` · estômago ${row.stomachQuarters}/4` : ""}
+                <span key={row.id} className="ledger-dose">
+                  <span className="text-sm">
+                    {clock(row.takenAt)} · {row.dose} {displayUnit(row.unit)} · {viaPt(row.route)}
+                    {row.route === "oral" ? ` · estômago ${row.stomachQuarters}/4` : ""}
+                  </span>
+                  <Link to="/tomar" search={{ kind: "", id: "", edit: row.id }} className="ledger-edit">Editar</Link>
                 </span>
               ))}
               {drawn === "none" ? <span className="block text-sm text-muted">Sem duração e sem meia-vida na ficha. Não entra no gráfico.</span> : null}

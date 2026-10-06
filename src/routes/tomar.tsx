@@ -6,8 +6,10 @@ import {
   dosesFor,
   loadDiary,
   mostUsed,
+  removeIngestion,
   resolveCurve,
   saveIngestion,
+  updateIngestion,
   type DiaryKind,
   type Ingestion,
 } from "@/lib/diary";
@@ -22,6 +24,7 @@ export const Route = createFileRoute("/tomar")({
   validateSearch: (search: Record<string, unknown>) => ({
     kind: typeof search.kind === "string" ? search.kind : "",
     id: typeof search.id === "string" ? search.id : "",
+    edit: typeof search.edit === "string" ? search.edit : "",
   }),
   component: TakePage,
 });
@@ -76,7 +79,28 @@ function TakePage() {
   const [note, setNote] = useState("");
   const [kept, setKept] = useState("");
   const [showNote, setShowNote] = useState(false);
+  const [editing, setEditing] = useState("");
   useEffect(() => setDiary(loadDiary()), []);
+  useEffect(() => {
+    if (!preset.edit) return;
+    const row = loadDiary().find((item) => item.id === preset.edit);
+    if (!row) return;
+    const hit = hitById(row.kind, row.substanceId) ?? {
+      kind: row.kind,
+      id: row.substanceId,
+      title: row.name,
+      detail: "",
+    };
+    setPicked(hit);
+    setDose(row.dose);
+    setCustom(String(row.dose));
+    setRoute(row.route);
+    setQuarters(row.stomachQuarters);
+    setWhen(new Date(new Date(row.takenAt).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16));
+    setRepeat(true);
+    setEditing(row.id);
+    setStep("fechar");
+  }, [preset.edit]);
   useEffect(() => {
     if (!preset.kind || !preset.id) return;
     const hit = hitById(preset.kind, preset.id);
@@ -111,17 +135,29 @@ function TakePage() {
 
   async function register() {
     if (!picked || dose == null || dose < 0 || !route) return;
-    saveIngestion({
-      kind: picked.kind,
-      substanceId: picked.id,
-      name: picked.title,
-      dose,
-      unit: unitFor(picked),
-      route,
-      stomachQuarters: route === "oral" ? quarters : 0,
-      takenAt: new Date(when).toISOString(),
-      curve: resolveCurve(picked.kind, picked.id),
-    });
+    if (editing) {
+      updateIngestion(editing, {
+        name: picked.title,
+        dose,
+        unit: unitFor(picked),
+        route,
+        stomachQuarters: route === "oral" ? quarters : 0,
+        takenAt: new Date(when).toISOString(),
+        curve: resolveCurve(picked.kind, picked.id),
+      });
+    } else {
+      saveIngestion({
+        kind: picked.kind,
+        substanceId: picked.id,
+        name: picked.title,
+        dose,
+        unit: unitFor(picked),
+        route,
+        stomachQuarters: route === "oral" ? quarters : 0,
+        takenAt: new Date(when).toISOString(),
+        curve: resolveCurve(picked.kind, picked.id),
+      });
+    }
     if (note.trim()) saveNote(picked.title, note.trim());
     const files = syncAlarmCalendar(loadDiary());
     openAlarmFiles(files);
@@ -136,7 +172,7 @@ function TakePage() {
   return (
     <main className="space-y-4">
       <div className="step-bar">
-        {step === "buscar" ? (
+        {step === "buscar" || editing ? (
           <Link to="/" className="text-sm text-bronze">Cancelar</Link>
         ) : (
           <button type="button" className="text-sm text-bronze" onClick={() => setStep(step === "fechar" ? "dose" : "buscar")}>Cancelar</button>
@@ -145,7 +181,7 @@ function TakePage() {
           <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={() => setStep("fechar")}>Adicionar</button>
         ) : null}
         {step === "fechar" ? (
-          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={register}>Registrar</button>
+          <button type="button" className="go" disabled={dose == null || Number.isNaN(dose) || !route} onClick={register}>{editing ? "Guardar" : "Registrar"}</button>
         ) : null}
       </div>
 
@@ -284,7 +320,7 @@ function TakePage() {
 
       {picked && step === "fechar" ? (
         <section className="space-y-3">
-          <h1 className="screen-title font-display">Fechar registro</h1>
+          <h1 className="screen-title font-display">{editing ? "Editar registro" : "Fechar registro"}</h1>
           <p className="kicker">{picked.title} · {dose} {unitFor(picked)} · {viaPt(route)}</p>
           <div className="glass-card space-y-3">
             <label className="block text-sm">
@@ -315,6 +351,18 @@ function TakePage() {
               <button type="button" className="text-sm text-bronze" onClick={() => setShowNote(true)}>+ Nota</button>
             )}
           </div>
+          {editing ? (
+            <button
+              type="button"
+              className="text-sm text-bronze"
+              onClick={() => {
+                removeIngestion(editing);
+                navigate({ to: "/" });
+              }}
+            >
+              Tirar esta tomada
+            </button>
+          ) : null}
         </section>
       ) : null}
     </main>

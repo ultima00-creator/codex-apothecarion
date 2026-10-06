@@ -139,6 +139,10 @@ export function saveIngestion(entry: Omit<Ingestion, "id">): Ingestion {
   return row;
 }
 
+export function updateIngestion(id: string, patch: Partial<Omit<Ingestion, "id">>) {
+  write(read().map((row) => (row.id === id ? { ...row, ...patch, id } : row)));
+}
+
 export function removeIngestion(id: string) {
   write(read().filter((row) => row.id !== id));
 }

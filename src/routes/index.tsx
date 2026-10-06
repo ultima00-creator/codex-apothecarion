@@ -35,7 +35,6 @@ function DiaryHome() {
       >
         Rearmar
       </button>
-      <p className="text-xs text-muted">O primeiro arquivo apaga os eventos do calendário Apothecarion. O segundo grava as ingestões ativas.</p>
       <div className="status-void">
         <DiaryChart points={plot.points} series={plot.series} captions={plot.captions} nowLabel={plot.nowLabel} empty="O traçado visual surge quando um composto em efeito traz duração ou meia-vida." />
       </div>
@@ -48,28 +47,29 @@ function DiaryHome() {
       ) : (
         <ul className="ledger">
           {ordered.map((group) => (
-              <li key={group.key}>
-                <Link to="/abrir/$kind/$id" params={{ kind: group.kind, id: group.substanceId }}>
+              <li key={group.key} className="ledger-card">
+                <Link to="/abrir/$kind/$id" params={{ kind: group.kind, id: group.substanceId }} className="ledger-head">
                   <VialMark className="ico" style={{ color: inkFor(group.kind, group.substanceId) }} />
-                  <span className="ledger-copy">
-                    <span className="datum">{group.name}</span>
-                    {group.doses.map((row) => {
-                      const when = new Date(row.takenAt);
-                      const clock = when.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-                      const end = doseHorizon(row);
-                      const endClock = end ? end.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null;
-                      const endDay = end && end.toDateString() !== when.toDateString()
-                        ? end.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })
-                        : null;
-                      return (
-                        <span key={row.id} className="tile-meta">
-                          {clock} · {Math.round(row.dose * 1000) / 1000} {displayUnit(row.unit)}
-                          {endClock ? ` · até ~${endDay ? `${endDay} ` : ""}${endClock}` : ""}
-                        </span>
-                      );
-                    })}
-                  </span>
+                  <span className="datum">{group.name}</span>
                 </Link>
+                {group.doses.map((row) => {
+                  const when = new Date(row.takenAt);
+                  const clock = when.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+                  const end = doseHorizon(row);
+                  const endClock = end ? end.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : null;
+                  const endDay = end && end.toDateString() !== when.toDateString()
+                    ? end.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })
+                    : null;
+                  return (
+                    <div key={row.id} className="ledger-dose">
+                      <span className="tile-meta">
+                        {clock} · {Math.round(row.dose * 1000) / 1000} {displayUnit(row.unit)}
+                        {endClock ? ` · até ~${endDay ? `${endDay} ` : ""}${endClock}` : ""}
+                      </span>
+                      <Link to="/tomar" search={{ kind: "", id: "", edit: row.id }} className="ledger-edit">Editar</Link>
+                    </div>
+                  );
+                })}
               </li>
             ))}
         </ul>

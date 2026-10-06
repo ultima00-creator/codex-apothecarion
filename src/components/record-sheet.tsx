@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AxisChart } from "@/components/axis-chart";
-import { citedSeries, fractionSeries, level, remainingFraction, type Curve } from "@/lib/kinetics";
+import { citedSeries, fractionSeries, level, type Curve } from "@/lib/kinetics";
 import { mark } from "@/lib/mark";
 import { classePt, viaPt } from "@/lib/pt";
 import { wikiByCompound } from "@/lib/search";
@@ -24,7 +24,6 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
   const curve = record.curve;
   const cited = curve.model === "concentration" || curve.model === "amount" || curve.model === "release";
   const [dose, setDose] = useState(curve.dose_basis_mg ?? 1);
-  const [hours, setHours] = useState(0);
   const route = record.route_default;
   const [quarters, setQuarters] = useState(0);
   const wiki = wikiByCompound(record.compound);
@@ -35,8 +34,6 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
     [curve.half_life_days, route, quarters],
   );
   const now = cited ? level(curve, dose, curve.tmax_days ?? 0) : null;
-  const halfHours = (curve.half_life_days ?? 0) * 24;
-  const fracNow = curve.half_life_days ? remainingFraction(hours, halfHours, route, quarters) : null;
 
   return (
     <article className="space-y-5">
@@ -44,7 +41,7 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
         <p className="text-xs tracking-[0.2em] text-bronze uppercase">{kind === "peptide" ? "Peptídeo" : "Hormônio"}</p>
         <h2 className="subject kicker-row"><VialMark className="ico" style={{ color: faceFor(record.compound, record.form)?.color ?? (kind === "peptide" ? "#6aaa78" : "#c6a15a") }} /> {record.compound}</h2>
         <p className="text-muted">{record.form}</p>
-        <Link to="/tomar" search={{ kind: kind === "peptide" ? "peptide" : "hormone", id: record.id }} className="go mt-3 inline-flex items-center">Registrar</Link>
+        <Link to="/tomar" search={{ kind: kind === "peptide" ? "peptide" : "hormone", id: record.id, edit: "" }} className="go mt-3 inline-flex items-center">Registrar</Link>
         <p className="mt-2 text-sm">Meia-vida: {curve.half_life_days ?? "—"} dias. Classe: {wiki ? wiki.classes.map(classePt).join(", ") : "sem ficha na wiki"}. Descrição: {wiki?.lead_pt ? "da wiki, abaixo" : "a wiki não tem esta página"}.</p>
       </header>
       {wiki?.lead_pt ? <p>{briefLead(wiki.lead_pt)}</p> : null}
@@ -71,10 +68,6 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
       {!cited && curve.half_life_days ? (
         <section className="space-y-3">
           <p className="text-sm">Sem Tmax e sem Cmax. O gráfico é fração da dose, não concentração.</p>
-          <label className="block text-sm">
-            Horas desde a tomada
-            <input className="field mt-1" type="number" min={0} step="0.5" value={hours} onChange={(e) => setHours(Number(e.target.value))} />
-          </label>
           <p className="text-sm">Via catalogada: {viaPt(record.route_default)}.</p>
           {route === "oral" ? (
             <label className="block text-sm">
@@ -91,7 +84,6 @@ export function RecordSheet({ record, kind }: { record: Record; kind: "steroid_h
             <p className="text-sm text-muted">Fora da via oral o estômago não atrasa a metabolização hepática.</p>
           )}
           <AxisChart unit="fração da dose" xLabel="horas" points={fraction} tone={mark(`${kind === "peptide" ? "peptide" : "hormone"}:${record.id}`)} dash />
-          <p className="text-sm">Nesta hora: {fracNow == null ? "—" : fracNow} · regra do app, não medição.</p>
         </section>
       ) : null}
 

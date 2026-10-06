@@ -3,24 +3,22 @@ import { displayUnit } from "@/lib/dose";
 import { viaPt } from "@/lib/pt";
 
 const KEY = "apothecarion-alarm-lot";
-const RETIRED = "apothecarion-alarm-retired";
 
-type Stamp = { uid: string; sequence: number; end?: string };
+type Stamp = { uid: string; sequence: number };
 
-export type AlarmFiles = { cancel: string | null; publish: string | null };
-
-function readStamps(key: string): Stamp[] {
+function readLot(): Stamp[] {
   if (typeof localStorage === "undefined") return [];
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as Stamp[]) : [];
+    const raw = localStorage.getItem(KEY);
+    const parsed = raw ? (JSON.parse(raw) as Stamp[]) : [];
+    return parsed.filter((item) => item && typeof item.uid === "string");
   } catch {
     return [];
   }
 }
 
-function writeStamps(key: string, rows: Stamp[]) {
-  localStorage.setItem(key, JSON.stringify(rows));
+function writeLot(rows: Stamp[]) {
+  localStorage.setItem(KEY, JSON.stringify(rows));
 }
 
 function stamp(date: Date): string {
@@ -81,24 +79,11 @@ function doseTotal(doses: Ingestion[]): string {
   return `Dose total ${total} ${unit}`;
 }
 
-export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): AlarmFiles {
-  const known = new Map<string, Stamp>();
-  for (const item of [...readStamps(RETIRED), ...readStamps(KEY)]) known.set(item.uid, item);
-  for (const group of fuseIngestions(rows)) {
-    const legacy = `apothecarion-${group.kind}-${group.substanceId}@codex`;
-    if (!known.has(legacy)) known.set(legacy, { uid: legacy, sequence: 0 });
-  }
-  const cancelBlocks = [...known.values()].map((item) => eventBlock({
-    uid: item.uid,
-    sequence: item.sequence + 1,
-    end: item.end ? new Date(item.end) : new Date(now),
-    cancelled: true,
-    title: "[Codex:Apothecarion] - aviso removido",
-    detail: "Evento apagado do calendário Apothecarion.",
-  }));
-  const generation = now.toString(36);
+export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): string | null {
+  const previous = readLot();
+  const prior = new Map(previous.map((item) => [item.uid, item]));
   const next: Stamp[] = [];
-  const publishBlocks: string[] = [];
+  const blocks: string[] = [];
   for (const group of fuseIngestions(rows)) {
     const ends = group.doses.flatMap((row) => {
       const end = doseHorizon(row);
@@ -106,8 +91,10 @@ export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): AlarmFil
     });
     if (ends.length === 0) continue;
     const end = new Date(Math.max(...ends.map((item) => item.getTime())));
-    const uid = `apothecarion-${group.kind}-${group.substanceId}-${generation}@codex`;
-    next.push({ uid, sequence: 0, end: end.toISOString() });
+    const uid = `apothecarion-${group.kind}-${group.substanceId}@codex`;
+    const old = prior.get(uid);
+    const sequence = old ? old.sequence + 1 : 1;
+    next.push({ uid, sequence });
     const detail = group.doses.map((row) => {
       const clock = new Date(row.takenAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
       const horizon = doseHorizon(row);
@@ -115,47 +102,36 @@ export function syncAlarmCalendar(rows: Ingestion[], now = Date.now()): AlarmFil
       return `${row.dose} ${displayUnit(row.unit)} · ${viaPt(row.route)} · ${clock} · até ~${until}`;
     }).join(" + ");
     const total = doseTotal(group.doses);
-    publishBlocks.push(eventBlock({
+    blocks.push(eventBlock({
       uid,
-      sequence: 0,
+      sequence,
       end,
       cancelled: false,
       title: `[Codex:Apothecarion] - ${group.name} [Fim efeito]`,
       detail: `${total ? `${total}\n` : ""}${detail}. Conjectura do fim do efeito.`,
     }));
   }
-  const retired = [...known.values()].map((item) => ({ ...item, sequence: item.sequence + 1 }));
-  writeStamps(RETIRED, [...retired, ...next].slice(-300));
-  writeStamps(KEY, next);
-  return {
-    cancel: cancelBlocks.length > 0 ? calendar(cancelBlocks, "CANCEL") : null,
-    publish: publishBlocks.length > 0 ? calendar(publishBlocks, "PUBLISH") : null,
-  };
+  writeLot(next);
+  if (blocks.length === 0) return null;
+  return calendar(blocks, "PUBLISH");
 }
 
-export function openAlarmFiles(files: AlarmFiles) {
-  const queue = [
-    files.cancel ? { ics: files.cancel, filename: "Codex-apagar.ics" } : null,
-    files.publish ? { ics: files.publish, filename: "Codex-alarmes.ics" } : null,
-  ].filter((item): item is { ics: string; filename: string } => item != null);
-  queue.forEach((item, index) => {
-    window.setTimeout(() => openCalendar(item.ics, item.filename), index * 600);
-  });
+export function openAlarmFiles(ics: string | null) {
+  if (ics) openCalendar(ics, "Codex-alarmes.ics");
 }
 
 export function cancelAlarmCalendar(now = Date.now()): string | null {
-  const previous = [...readStamps(RETIRED), ...readStamps(KEY)];
+  const previous = readLot();
   if (previous.length === 0) return null;
+  writeLot([]);
   const blocks = previous.map((item) => eventBlock({
     uid: item.uid,
     sequence: item.sequence + 1,
-    end: item.end ? new Date(item.end) : new Date(now),
+    end: new Date(now),
     cancelled: true,
     title: "[Codex:Apothecarion] - aviso removido",
     detail: "Lote de alarmes apagado.",
   }));
-  writeStamps(KEY, []);
-  writeStamps(RETIRED, previous.map((item) => ({ ...item, sequence: item.sequence + 1 })).slice(-300));
   return calendar(blocks, "CANCEL");
 }
 

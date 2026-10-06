@@ -1,20 +1,18 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { AxisChart } from "@/components/axis-chart";
-import { fractionSeries, remainingFraction } from "@/lib/kinetics";
+import { fractionSeries } from "@/lib/kinetics";
 import { mark } from "@/lib/mark";
 import { findMedicine, medicineSource, pkSource } from "@/lib/medicines";
 
 export function MedicineSheet({ id }: { id: string }) {
   const row = findMedicine(id);
-  const [hours, setHours] = useState(0);
   const [quarters, setQuarters] = useState(0);
   const points = useMemo(
     () => (row?.halfLifeDays ? fractionSeries(row.halfLifeDays, "oral", quarters) : []),
     [row, quarters],
   );
   if (!row) return <p>Remédio fora do índice.</p>;
-  const now = row.halfLifeDays ? remainingFraction(hours, row.halfLifeDays * 24, "oral", quarters) : null;
   return (
     <article className="space-y-4">
       <header>
@@ -34,10 +32,6 @@ export function MedicineSheet({ id }: { id: string }) {
       {row.halfLifeDays ? (
         <>
           <label className="block text-sm">
-            Horas desde a tomada
-            <input className="field mt-1" type="number" min={0} step="0.5" value={hours} onChange={(e) => setHours(Number(e.target.value))} />
-          </label>
-          <label className="block text-sm">
             Estômago cheio
             <select className="field mt-1" value={quarters} onChange={(e) => setQuarters(Number(e.target.value))}>
               <option value={0}>vazio</option>
@@ -48,10 +42,9 @@ export function MedicineSheet({ id }: { id: string }) {
             </select>
           </label>
           <AxisChart unit="fração da dose" xLabel="horas" points={points} tone={mark(`medicine:${row.id}`)} dash />
-          <p className="text-sm">Nesta hora: {now == null ? "—" : now}</p>
         </>
       ) : null}
-      <Link to="/tomar" search={{ kind: "medicine", id: row.id }} className="inline-flex min-h-11 items-center text-sm underline">Usar este composto</Link>
+      <Link to="/tomar" search={{ kind: "medicine", id: row.id, edit: "" }} className="inline-flex min-h-11 items-center text-sm underline">Usar este composto</Link>
     </article>
   );
 }
